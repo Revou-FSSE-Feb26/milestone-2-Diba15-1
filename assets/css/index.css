@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&family=Quicksand:wght@300..700&display=swap');
+
+.heroAnimation {
+    animation: heroAnimation 1s ease-in-out;
+}
+
+.delaySpan {
+    animation: heroAnimation 5s ease-in-out;
+}
+
+.fade {
+    animation: fadeTransition 0.5s ease-in-out;
+}
+
+.fadeOut {
+    animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes heroAnimation {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeTransition {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
