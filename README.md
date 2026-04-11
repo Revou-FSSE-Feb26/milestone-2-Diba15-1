@@ -29,9 +29,9 @@ and our simple game that can be play from our website.
 
 ## 📸 Screenshots
 
-| Image | Description |
-|-------|-------------|
-|
+| Image                                                               | Description |
+|---------------------------------------------------------------------|-------------|
+| ![Screenshot of the resume](assets/images/screenshots/homepage.png) | Homepage    | 
 
 ## 📂 Project Structure
 
