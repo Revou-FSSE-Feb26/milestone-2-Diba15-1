@@ -39,7 +39,7 @@
                 }
 
                 main {
-                    @apply flex flex-col p-4;
+                    @apply flex flex-col p-4 gap-4;
                 }
 
                 footer {
@@ -91,21 +91,69 @@
                 .game-icon {
                     @apply text-6xl text-white/20 transition-all duration-500;
                 }
+
+                /*  Edit Modal  */
+                .edit-modal {
+                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
+                }
+
+                .edit-modal form {
+                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
+                    transition-all duration-500 w-xl mx-4;
+                }
+
+                .edit-modal form input {
+                    @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
+                }
             }
         </style>
     </head>
-    <body>
+    <body onload="showNameModal()">
         <header>
-
+            <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
+                    class="fa-solid fa-arrow-left"></i>Back to
+                Home</a>
+            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer" id="playerName"><i
+                    class="fa-solid fa-pencil"></i>Random Player</h1>
         </header>
 
         <main>
+            <h2 class="text-2xl font-title font-bold text-center text-white">Click Hero</h2>
+            <section id="game-container"
+                    class="w-full max-w-4xl mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
 
+
+
+            </section>
+
+            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
+                <a href="pokemon.html" class="flex items-center gap-2 btn-sub">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Pokemon
+                </a>
+                <a href="rps.html" id="next" class="btn">
+                    RPS
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </section>
         </main>
 
         <footer>
 
         </footer>
+
+        <div class="edit-modal hidden">
+            <form onsubmit="submitName()">
+                <div class="flex justify-between">
+                    <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
+                    <button onclick="clickShowNameModal()"
+                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <label class="text-white" for="name">Player Name</label>
+                <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>
+                <button class="btn-sub" type="submit">Save</button>
+            </form>
+        </div>
         <script src="../assets/javascript/games.js"></script>
     </body>
 </html>

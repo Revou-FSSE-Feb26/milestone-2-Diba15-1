@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <!-- make website responsive with meta viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Pokemon Games</title>
         <!-- Import Tailwind CSS -->
         <script
@@ -39,7 +41,7 @@
                 }
 
                 main {
-                    @apply flex flex-col p-4;
+                    @apply flex flex-col p-4 gap-4;
                 }
 
                 footer {
@@ -99,7 +101,7 @@
 
                 .edit-modal form {
                     @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
-                    transition-all duration-500 min-w-xl;
+                    transition-all duration-500 w-xl mx-4;
                 }
 
                 .edit-modal form input {
@@ -108,19 +110,32 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="showNameModal()">
         <header>
-            <a href="../index.html" class="flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i>Back to
+            <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
+                    class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
-            <h1 class="text-2xl font-title font-bold cursor-pointer" id="playerName"><i
+            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer" id="playerName"><i
                     class="fa-solid fa-pencil"></i>Random Player</h1>
         </header>
 
         <main>
+            <h2 class="text-2xl font-title font-bold text-center text-white">Pokemon Type Guess</h2>
             <section
-                    class="min-w-4xl mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
+                    class="w-full max-w-4xl mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
 
 
+            </section>
+
+            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
+                <a href="rps.html" class="flex items-center gap-2 btn-sub">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    RPS
+                </a>
+                <a href="clicker.html" id="next" class="btn">
+                    Click Hero
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
             </section>
         </main>
 
@@ -129,9 +144,14 @@
         </footer>
 
         <!--Edit Modal-->
-        <div class="edit-modal">
-            <form action="">
-                <label class="text-white" for="name">Input Player Name</label>
+        <div class="edit-modal hidden">
+            <form onsubmit="submitName()">
+                <div class="flex justify-between">
+                    <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
+                    <button onclick="clickShowNameModal()"
+                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <label class="text-white" for="name">Player Name</label>
                 <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>
                 <button class="btn-sub" type="submit">Save</button>
             </form>

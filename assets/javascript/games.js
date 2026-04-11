@@ -5,15 +5,34 @@ class Games {
         this.score = 0;
     }
 
+    setPlayerName(playerName) {
+        this.playerName = playerName;
+        localStorage.setItem('playerName', playerName);
+        document.getElementById('playerName').textContent = playerName;
+    }
+
+    // Rock Paper Scissors Game Section
     rps(playerChoice) {
         const choices = ['rock', 'paper', 'scissors'];
         const computerChoice = choices[Math.floor(Math.random() * choices.length)];
     }
 
+    playRps() {
+        const CONTAINER_RPS = document.getElementById('rps-container');
+        CONTAINER_RPS.innerHTML = `
+                <div class="font-default font-semibold text-2xl text-white" id="loading">
+                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                    <p>Loading...</p>
+                </div>
+            `
+    }
+
+    // Click Hero Game Section
     clickHero() {
 
     }
 
+    // Pokemon Game Section
     async guessPokemonType() {
         const pokemonTypes = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
         const baseApi = 'https://pokeapi.co/api/v2/';
@@ -34,7 +53,21 @@ class Games {
         }
 
         return data;
+    }
 
+    playPokemon() {
+
+    }
+
+    correctPokemon() {
+        this.score++;
+        localStorage.setItem('score', this.score);
+    }
+
+    // Other Section
+    finishGame() {
+        this.score = 0;
+        localStorage.removeItem('score');
     }
 }
 
@@ -46,7 +79,36 @@ if (localStorage.getItem('playerName'))  {
     games = new Games('Random Player');
 }
 
+function showNameModal() {
+    const editModal = document.querySelector('.edit-modal');
+
+    if (localStorage.getItem('playerName')) {
+        editModal.classList.add('hidden');
+    } else {
+        editModal.classList.remove('hidden');
+    }
+}
+
+function clickShowNameModal() {
+    const editModal = document.querySelector('.edit-modal');
+    editModal.classList.toggle('hidden');
+}
+
+function submitName() {
+    const name = document.getElementById('name').value;
+    const event = window.event;
+    games.setPlayerName(name);
+    showNameModal();
+
+    event.preventDefault();
+}
+
 const playerName = document.getElementById('playerName');
 playerName.textContent = games.playerName;
 
 console.log(games.guessPokemonType());
+
+//Play Function
+function playRps() {
+    games.playRps();
+}
