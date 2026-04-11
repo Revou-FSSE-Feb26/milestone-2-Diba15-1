@@ -53,3 +53,21 @@ window.addEventListener('scroll', () => {
     updateLinks('#navbar a');
     updateLinks('#mobile-menu a');
 });
+
+//Button redirect logic
+function redirectGame(gameType) {
+    switch (gameType) {
+        case "clicker":
+            window.location.href = 'pages/clicker.html';
+            break;
+        case "rps":
+            window.location.href = 'pages/rps.html';
+            break;
+        case "pokemon":
+            window.location.href = 'pages/pokemon.html';
+            break;
+        default:
+            window.location.href = 'pages/clicker.html';
+            break;
+    }
+}
