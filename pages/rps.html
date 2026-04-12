@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <!-- make website responsive with meta viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Rock Paper Scissors</title>
         <!-- Import Tailwind CSS -->
         <script
@@ -98,7 +100,7 @@
                 }
 
                 .edit-modal form {
-                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
                     transition-all duration-500 w-xl mx-4;
                 }
 
@@ -120,11 +122,60 @@
 
         <main>
             <section id="rps-container"
-                    class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
-                <h3 class="text-2xl font-title font-bold text-center text-white">Rock Paper Scissor</h3>
-                <button onclick="playRps()" class="btn cursor-pointer">Play Now!</button>
+                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                <!--Title Container-->
+                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
+                    <h3 class="text-2xl font-title font-bold text-center text-white">Rock Paper Scissor</h3>
+                    <button onclick="playRps()" class="btn cursor-pointer">Play Now!</button>
+                </div>
+                <!--Loading-->
+                <div class="font-default font-semibold text-2xl text-white hidden" id="loading">
+                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                    <p>Loading...</p>
+                </div>
+                <!--Game Container-->
+                <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
+                    <!--Header Like Score and stage-->
+                    <div id="gameHeaderContainer" class="flex justify-between w-full">
+                        <div class="font-title text-xl text-white">Score: <span id="playerScore">0</span></div>
+                    </div>
+                    <!--Game winner determine display-->
+                    <h3 id="determineWin" class="font-title font-bold text-2xl text-center text-white"></h3>
+                    <!--Game Display-->
+                    <div id="gameDisplayContainer" class="flex flex-col md:flex-row justify-around gap-4 w-full">
+                        <!--Player Container-->
+                        <div id="playerContainer"
+                             class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            font-bold font-title transition-all flex flex-col items-center gap-4">
+                            <h3 class="text-xl md:text-2xl">Player</h3>
+                            <div id="playerChoiceDisplay" class="text-6xl">??</div>
+                        </div>
+                        <!--Pemisah-->
+                        <div
+                                class="max-h-2 h-0.5 md:h-auto md:max-h-full bg-sub max-w-full md:w-0.5 rounded-full"></div>
+                        <!--Enemy Container-->
+                        <div id="enemyContainer"
+                             class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            font-bold font-title transition-all flex flex-col items-center gap-4">
+                            <h3 class="text-xl md:text-2xl">Computer</h3>
+                            <div id="enemyChoiceDisplay"
+                                 class="text-6xl">??
+                            </div>
+                        </div>
+                    </div>
+                    <!--Choice Container-->
+                    <div class="w-full flex justify-evenly">
+                        <div id="playerChoiceContainer" class="flex gap-4">
+                            <div onclick="rps(2)" class="btn-sub text-xl md:text-2xl cursor-pointer">🤚</div>
+                            <div onclick="rps(1)" class="btn-sub text-xl md:text-2xl cursor-pointer">✌️</div>
+                            <div onclick="rps(0)" class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
+                        </div>
+                        <button onclick="finishRps()" class="btn">Finish Game</button>
+                    </div>
+                </div>
             </section>
 
+            <!--Nav Container-->
             <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
                 <a href="clicker.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -141,12 +192,14 @@
 
         </footer>
 
+        <!--Modal for change display name-->
         <div class="edit-modal hidden">
             <form onsubmit="submitName()">
                 <div class="flex justify-between">
                     <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
                     <button onclick="clickShowNameModal()"
-                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <label class="text-white" for="name">Player Name</label>
                 <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>

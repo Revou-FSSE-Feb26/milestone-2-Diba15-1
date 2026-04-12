@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <!-- make website responsive with meta viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Clicker Hero</title>
         <!-- Import Tailwind CSS -->
         <script
@@ -98,7 +100,7 @@
                 }
 
                 .edit-modal form {
-                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
                     transition-all duration-500 w-xl mx-4;
                 }
 
@@ -118,12 +120,31 @@
         </header>
 
         <main>
-            <h2 class="text-2xl font-title font-bold text-center text-white">Click Hero</h2>
-            <section id="game-container"
-                    class="w-full max-w-4xl mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
+            <section id="clicker-container"
+                    class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
+                    <h3 class="text-2xl font-title font-bold text-center text-white">Click Hero</h3>
+                    <button onclick="playClickHero()" class="btn cursor-pointer">Play Now!</button>
+                </div>
 
+                <div class="font-default font-semibold text-2xl text-white hidden" id="loading">
+                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                    <p>Loading...</p>
+                </div>
 
+                <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
+                    <!--Header Like Score and stage-->
+                    <div id="gameHeaderContainer" class="flex justify-between w-full">
+                        <div class="font-title text-xl text-white">Score: <span id="playerScore">0</span></div>
+                    </div>
+                    <div id="gameDisplayContainer" class="flex flex-col md:flex-row justify-around gap-4 w-full">
 
+                    </div>
+                    <!--Choice Container-->
+                    <div id="playerChoiceContainer" class="flex gap-4">
+
+                    </div>
+                </div>
             </section>
 
             <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">

@@ -100,7 +100,7 @@
                 }
 
                 .edit-modal form {
-                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
                     transition-all duration-500 w-xl mx-4;
                 }
 
@@ -115,16 +115,37 @@
             <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
-            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer" id="playerName"><i
+            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                id="playerName"><i
                     class="fa-solid fa-pencil"></i>Random Player</h1>
         </header>
 
         <main>
-            <h2 class="text-2xl font-title font-bold text-center text-white">Pokemon Type Guess</h2>
             <section
-                    class="w-full max-w-4xl mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
+                    class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
+                    <h3 class="text-2xl font-title font-bold text-center text-white">Pokemon Type Guess</h3>
+                    <button onclick="playPokemon()" class="btn cursor-pointer">Play Now!</button>
+                </div>
 
+                <div class="font-default font-semibold text-2xl text-white hidden" id="loading">
+                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                    <p>Loading...</p>
+                </div>
 
+                <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
+                    <!--Header Like Score and stage-->
+                    <div id="gameHeaderContainer" class="flex justify-between w-full">
+                        <div class="font-title text-xl text-white">Score: <span id="playerScore">0</span></div>
+                    </div>
+                    <div id="gameDisplayContainer" class="flex flex-col md:flex-row justify-around gap-4 w-full">
+
+                    </div>
+                    <!--Choice Container-->
+                    <div id="playerChoiceContainer" class="flex gap-4">
+
+                    </div>
+                </div>
             </section>
 
             <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
@@ -148,8 +169,9 @@
             <form onsubmit="submitName()">
                 <div class="flex justify-between">
                     <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
-                    <button onclick="clickShowNameModal()"
-                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="clickShowNameModal()" type="button"
+                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <label class="text-white" for="name">Player Name</label>
                 <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>
