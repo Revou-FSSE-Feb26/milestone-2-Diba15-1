@@ -107,47 +107,77 @@
                 .edit-modal form input {
                     @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
                 }
+
+                .hero-button {
+                    @apply rounded-full font-title text-2xl text-white transition-all duration-75 inset-shadow-sm
+                    inset-shadow-black/50 shadow-sm shadow-black font-bold bg-main py-16 px-4;
+                }
+
+                .hero-button.auto-pressing, .hero-button:active {
+                    @apply translate-y-1 shadow-md scale-95 bg-sub;
+                    box-shadow: 0 0 20px rgba(255, 195, 0, 0.6);
+                }
             }
         </style>
     </head>
-    <body onload="showNameModal()">
+    <body onload="initGames()">
         <header>
             <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
-            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer" id="playerName"><i
+            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                id="playerName"><i
                     class="fa-solid fa-pencil"></i>Random Player</h1>
         </header>
 
         <main>
+            <!-- Background Decor -->
+            <div class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+            <div class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+
             <section id="clicker-container"
-                    class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
                 <div id="play-container" class="flex flex-col items-center justify-center gap-4">
                     <h3 class="text-2xl font-title font-bold text-center text-white">Click Hero</h3>
                     <button onclick="playClickHero()" class="btn cursor-pointer">Play Now!</button>
                 </div>
 
-                <div class="font-default font-semibold text-2xl text-white hidden" id="loading">
-                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                <div class="font-default font-semibold text-2xl text-white text-center hidden" id="loading">
+                    <div class="animate-bounce">️⚔️ 👆</div>
                     <p>Loading...</p>
                 </div>
 
                 <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
                     <!--Header Like Score and stage-->
-                    <div id="gameHeaderContainer" class="flex justify-between w-full">
-                        <div class="font-title text-xl text-white">Score: <span id="playerScore">0</span></div>
+                    <div id="gameHeaderContainer" class="flex justify-center w-full">
+                        <div
+                                class="font-title text-2xl text-white text-center font-bold"><span id="playerScore">0
+                        </span></div>
                     </div>
-                    <div id="gameDisplayContainer" class="flex flex-col md:flex-row justify-around gap-4 w-full">
-
+                    <div id="gameDisplayContainer" class="flex flex-col justify-around items-center gap-4">
+                        <h2 id="praiseText" class="font-title text-white text-2xl font-bold"></h2>
+                        <button onclick="clickHero()" id="hero-btn" class="hero-button">PUSH HERO</button>
                     </div>
                     <!--Choice Container-->
-                    <div id="playerChoiceContainer" class="flex gap-4">
-
+                    <div id="playerChoiceContainer" class="flex flex-col md:flex-row gap-4 w-full">
+                        <div onclick="upgradeATK()"
+                                class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center text-center">
+                            <h2 id="atk-price">10</h2>
+                            <h3>⚔️</h3>
+                            <h4>Upgrade ATK <span id="atk-max">1/10</span></h4>
+                        </div>
+                        <div onclick="addAuto()"
+                                class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center">
+                            <h2 id="auto-price">200</h2>
+                            <h3>👆</h3>
+                            <h4>Auto Click <span id="auto-status">OFF</span></h4>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
+            <section id="gameNav-container"
+                     class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
                 <a href="pokemon.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
                     Pokemon
@@ -168,7 +198,8 @@
                 <div class="flex justify-between">
                     <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
                     <button onclick="clickShowNameModal()"
-                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
                 <label class="text-white" for="name">Player Name</label>
                 <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>

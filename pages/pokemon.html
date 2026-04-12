@@ -110,7 +110,7 @@
             }
         </style>
     </head>
-    <body onload="showNameModal()">
+    <body onload="initGames()">
         <header>
             <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
@@ -121,6 +121,10 @@
         </header>
 
         <main>
+            <!-- Background Decor -->
+            <div class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+            <div class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+
             <section
                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
                 <div id="play-container" class="flex flex-col items-center justify-center gap-4">
@@ -148,7 +152,7 @@
                 </div>
             </section>
 
-            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between">
+            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
                 <a href="rps.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
                     RPS
