@@ -283,10 +283,8 @@ class Games {
     activeAuto() {
         const HERO_BTN = document.getElementById('hero-btn');
 
-        if (this.autoInterval) clearInterval(this.autoInterval);
-
         if (this.clickHero.auto) {
-            this.autoInterval = setInterval(() => {
+            setInterval(() => {
                 this.clickedHero();
 
                 HERO_BTN.classList.add('auto-pressing');
