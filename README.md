@@ -45,11 +45,12 @@ and our simple game that can be play from our website.
 
 ```bash
 milestone-2-Diba15-1/
-|-- assets/  # Assets Folder
-|   |-- images/ # Images Folder
-|   |-- css/ # CSS Folder
-|   |-- javascript/ # JS Folder
-|-- pages/ # Pages Folder
-|-- index.html
-|__ README.md
+├─assets # Assets Folder
+│  ├─css # CSS Folder
+│  ├─images # Images Folder Include Screenshots folder
+│  │  └─screenshots
+│  └─javascript # Javascript Folder
+├─pages # Pages Folder
+├─index.html # Homepage/Landing Page Folder
+└─README.md # Readme Documentation
 ```
