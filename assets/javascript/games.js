@@ -428,6 +428,7 @@ class Games {
 
     // Check answer logic
     checkAnswer(userGuess) {
+        // Safety check if currentData is not available
         if (!this.pokemon.currentData) return;
 
         const POKEMON_NAME = document.getElementById('pokemonName');
@@ -438,10 +439,12 @@ class Games {
         if (userGuess === this.pokemon.currentData.type) {
             // Correct Answer Logic
             POKEMON_NAME.textContent = this.pokemon.currentData.name.toUpperCase();
+            HINT_TEXT.textContent = "CORRECT! GET READY FOR THE NEXT POKEMON!";
             this.setScore(20);
 
             // Delay before next stage
             setTimeout(async () => {
+                // Check if stage clear or go to next stage with currentStage and maxStage
                 if (this.pokemon.currentStage < this.pokemon.maxStage) {
                     this.pokemon.currentStage++;
                     const nextData = await this.guessPokemonType();
@@ -458,9 +461,8 @@ class Games {
             this.pokemon.trials--;
             TRIAL_TEXT.textContent = `Lives: ${this.pokemon.trials}`;
 
-            // Give hint if trials
+            // Give hint if trials > 0
             if (this.pokemon.trials > 0) {
-                HINT_TEXT.classList.add('text-sub', 'animate-pulse');
                 const type = this.pokemon.currentData.type;
                 let hint;
 
