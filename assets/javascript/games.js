@@ -1,4 +1,8 @@
 class Games {
+    // Declaration private variables
+    #playerName;
+    #score;
+
     constructor(playerName) {
         // Centralized DOM Elements
         this.CONTAINER_GAME = document.getElementById('game-container');
@@ -7,8 +11,8 @@ class Games {
         this.SCORE_DISPLAY = document.getElementById('playerScore');
 
         // Player Data
-        this.playerName = localStorage.getItem('playerName') || playerName;
-        this.score = 0;
+        this.#playerName = localStorage.getItem('playerName') || playerName;
+        this.#score = 0;
         // this.stage = 0;
 
         // Leaderboard data structure, value is object that have gameType, playerName, and score
@@ -45,24 +49,30 @@ class Games {
     // Player Data Management
 
     setPlayerName(playerName) {
-        this.playerName = playerName;
+        this.#playerName = playerName;
         localStorage.setItem('playerName', playerName);
         document.getElementById('playerName').textContent = playerName;
     }
 
+    getPlayerName() {
+        return this.#playerName;
+    }
+
     setScore(score) {
+        this.#score += score;
+        localStorage.setItem('score', this.#score);
 
-        this.score += score;
-        localStorage.setItem('score', this.score);
-        console.log("Test Score: ", this.score)
+        this.SCORE_DISPLAY.innerHTML = this.#score;
+    }
 
-        this.SCORE_DISPLAY.innerHTML = this.score;
+    getScore() {
+        return this.#score;
     }
 
     resetScore() {
-        this.score = 0;
+        this.#score = 0;
         localStorage.removeItem('score');
-        this.SCORE_DISPLAY.innerHTML = this.score;
+        this.SCORE_DISPLAY.innerHTML = this.#score;
     }
 
     setLeaderboard(playerData) {
@@ -119,7 +129,7 @@ class Games {
                 ENEMY_CONTAINER.classList.remove('border-white/20')
                 this.determineWinner(playerChoice, COMPUTER_CHOICE.value);
             }
-        }, 200); // Berganti setiap 100ms
+        }, 200); // Change after 200ms
     }
 
     // Determine RPS winner function
@@ -174,7 +184,7 @@ class Games {
         WIN_TEXT.textContent = '';
 
         const PLAYER_DATA = {
-            gameType: 'rps', playerName: this.playerName, score: this.score
+            gameType: 'rps', playerName: this.getPlayerName(), score: this.getScore()
         }
 
         this.setLeaderboard(PLAYER_DATA);
@@ -187,7 +197,6 @@ class Games {
 
     // Click Hero container manage function
     playClickHero() {
-        const CONTAINER_CLICKER = document.getElementById('clicker-container');
         this.clickHero.atk = 1;
         this.clickHero.auto = false;
         this.clickHero.upPrice = 10
@@ -231,7 +240,7 @@ class Games {
         const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
         const MAX_ATK = 10;
 
-        if (this.clickHero.atk < MAX_ATK && this.score >= this.clickHero.upPrice) {
+        if (this.clickHero.atk < MAX_ATK && this.getScore() >= this.clickHero.upPrice) {
             this.setScore(-this.clickHero.upPrice);
 
             this.clickHero.atk += 1;
@@ -247,29 +256,24 @@ class Games {
             } else {
                 ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
             }
-
-            console.log(`Upgrade Berhasil! ATK sekarang: ${this.clickHero.atk}`);
-        } else {
-            console.log("Skor tidak cukup atau sudah level MAX!");
         }
     }
 
     // Add Auto Click logic
     addAuto() {
         const AUTO_STATUS = document.getElementById('auto-status');
-        const UP_PRICE = 200; // Harga tetap untuk Auto Click
+        const UP_PRICE = 200; // Price for auto click
 
-        if (!this.clickHero.auto && this.score >= UP_PRICE) {
+        if (!this.clickHero.auto && this.getScore() >= UP_PRICE) {
             this.setScore(-UP_PRICE);
 
             this.clickHero.auto = true;
             localStorage.setItem('auto', JSON.stringify(true));
 
             AUTO_STATUS.innerHTML = 'ON';
-            AUTO_STATUS.classList.add('text-green-500', 'font-bold'); // Sentuhan visual
+            AUTO_STATUS.classList.add('text-green-500', 'font-bold');
 
             this.activeAuto();
-            console.log("Auto Clicker Aktif!");
         }
     }
 
@@ -288,13 +292,6 @@ class Games {
 
             }, 500);
         }
-    }
-
-    // Reset Click Hero Data
-    resetClickHero() {
-        localStorage.removeItem('atk');
-        localStorage.removeItem('auto');
-        localStorage.removeItem('upPrice');
     }
 
     // Pokemon Game Section
@@ -434,9 +431,9 @@ class Games {
 
             // Give hint if trials
             if (this.pokemon.trials > 0) {
-                HINT_TEXT.classList.add('text-yellow-400', 'animate-pulse');
+                HINT_TEXT.classList.add('text-sub', 'animate-pulse');
                 const type = this.pokemon.currentData.type;
-                let hint = "";
+                let hint;
 
                 // Hint
                 switch (type) {
@@ -493,7 +490,7 @@ class Games {
                 HINT_TEXT.textContent = hint;
             } else {
                 // Game Over Logic
-                alert(`GAME OVER! Jawabannya adalah ${this.pokemon.currentData.type}.`);
+                alert(`GAME OVER! The answer is ${this.pokemon.currentData.type}.`);
                 this.finishPokemonGame();
             }
         }
@@ -502,7 +499,7 @@ class Games {
     // Reset Pokemon game data and return to play container
     finishPokemonGame() {
         const PLAYER_DATA = {
-            gameType: 'pokemon', playerName: this.playerName, score: this.score
+            gameType: 'pokemon', playerName: this.getPlayerName(), score: this.getScore()
         };
         this.setLeaderboard(PLAYER_DATA);
 
@@ -527,13 +524,9 @@ class Games {
     }
 }
 
-let games;
-
-if (localStorage.getItem('playerName')) {
-    games = new Games(localStorage.getItem('playerName'));
-} else {
-    games = new Games('Random Player');
-}
+const NAME_ELEMENT = document.getElementById('playerName');
+NAME_ELEMENT.textContent = localStorage.getItem('playerName') || 'Random Player';
+let games = new Games(localStorage.getItem('playerName') || 'Random Player');
 
 function initGames() {
     const editModal = document.querySelector('.edit-modal');
@@ -551,19 +544,13 @@ function clickShowNameModal() {
     editModal.classList.toggle('hidden');
 }
 
-function submitName() {
+function submitName(e) {
     const name = document.getElementById('name').value;
-    const event = window.event;
     games.setPlayerName(name);
-    showNameModal();
+    clickShowNameModal();
 
-    event.preventDefault();
+    e.preventDefault();
 }
-
-const playerName = document.getElementById('playerName');
-playerName.textContent = games.playerName;
-
-console.log(games.guessPokemonType());
 
 //RPS Section
 function playRps() {

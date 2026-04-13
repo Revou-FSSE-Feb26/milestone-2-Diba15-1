@@ -114,9 +114,11 @@
             <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
-            <h1 onclick="clickShowNameModal()" class="text-lg md:text-2xl font-title font-bold cursor-pointer"
-                id="playerName"><i
-                    class="fa-solid fa-pencil"></i>Random Player</h1>
+            <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
+                <i class="fa-solid fa-pencil"></i>
+                <h1 class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                    id="playerName">Random Player</h1>
+            </div>
         </header>
 
         <main>
@@ -198,7 +200,7 @@
 
         <!--Modal for change display name-->
         <div class="edit-modal hidden">
-            <form onsubmit="submitName()">
+            <form onsubmit="submitName(event)">
                 <div class="flex justify-between">
                     <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
                     <button onclick="clickShowNameModal()"
