@@ -67,16 +67,19 @@ class Games {
 
     // Player Data Management
 
+    // Set player name and store in localStorage, also update the display
     setPlayerName(playerName) {
         this.#playerName = playerName;
         localStorage.setItem('playerName', playerName);
         document.getElementById('playerName').textContent = playerName;
     }
 
+    // Get player name
     getPlayerName() {
         return this.#playerName;
     }
 
+    // Score Management, setScore will add score and update display, getScore will return current score, resetScore will reset score to 0 and update display
     setScore(score) {
         this.#score += score;
         localStorage.setItem('score', this.#score);
@@ -84,16 +87,19 @@ class Games {
         this.SCORE_DISPLAY.innerHTML = this.#score;
     }
 
+    // Get current score
     getScore() {
         return this.#score;
     }
 
+    // Reset score to 0 and update display, also remove score from localStorage
     resetScore() {
         this.#score = 0;
         localStorage.removeItem('score');
         this.SCORE_DISPLAY.innerHTML = this.#score;
     }
 
+    // Set leaderboard data, push new player data to leaderboard array and store in localStorage
     setLeaderboard(playerData) {
         this.leaderboard.push(playerData);
         localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
@@ -177,6 +183,7 @@ class Games {
         }
     }
 
+    // Finish RPS game
     finishRps() {
         const PLAYER_CONTAINER = document.getElementById('playerContainer');
         const ENEMY_CONTAINER = document.getElementById('enemyContainer');
@@ -204,6 +211,7 @@ class Games {
         // Reset Win Text
         WIN_TEXT.textContent = '';
 
+        // Save player data to leaderboard and reset score
         const PLAYER_DATA = {
             gameType: 'rps', playerName: this.getPlayerName(), score: this.getScore()
         }
@@ -212,6 +220,7 @@ class Games {
 
         this.resetScore()
 
+        // Give user feedback about their score and leaderboard
         const rpsLeaderboard = this.leaderboard
             .filter(entry => entry.gameType === 'rps')
             .map(entry => `${entry.playerName}: ${entry.score}`)
@@ -224,13 +233,16 @@ class Games {
 
     // Click Hero container manage function
     playClickHero() {
+        // Reset Click Hero data
         this.clickHero.atk = 1;
         this.clickHero.auto = false;
         this.clickHero.upPrice = 10
-
+        this.clickHero.milestones.forEach(m => m.isReached = false);
+        
         this.CONTAINER_PLAY.classList.add('hidden')
         this.LOADING.classList.remove('hidden')
-
+        
+        // Show game container after 3 seconds and reset score
         setTimeout(() => {
             this.LOADING.classList.add('hidden')
             this.CONTAINER_GAME.classList.toggle('hidden');
@@ -241,6 +253,7 @@ class Games {
 
     // Click Hero
     clickedHero() {
+        // Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
         const PRAISE_TEXT = document.getElementById('praiseText');
@@ -264,6 +277,8 @@ class Games {
 
     // Upgrade ATK logic
     upgradeAtk() {
+        // Check if player has enough score to upgrade, if yes then reduce score by upgrade price, 
+        // increase atk by 1, and double the upgrade price, also save atk and upgrade price to localStorage
         const ATK_UP = document.getElementById('atk-max');
         const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
         const MAX_ATK = 10;
@@ -289,6 +304,9 @@ class Games {
 
     // Add Auto Click logic
     addAuto() {
+        // Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
+        // set auto click to true, save auto click status to localStorage, 
+        // and start auto click interval, also update auto click status display
         const AUTO_STATUS = document.getElementById('auto-status');
         const UP_PRICE = 200; // Price for auto click
 
@@ -305,9 +323,12 @@ class Games {
         }
     }
 
+    // Activate auto click functionality
     activeAuto() {
         const HERO_BTN = document.getElementById('hero-btn');
 
+        // If auto click is active, start an interval that clicks the hero every 500ms, 
+        // also add a pressing animation to the button
         if (this.clickHero.auto) {
             setInterval(() => {
                 this.clickedHero();
@@ -327,7 +348,9 @@ class Games {
     // Fetch random Pokemon type and data from PokeAPI
     async guessPokemonType() {
         try {
+            // List of Pokemon types to randomly select from
             const pokemonTypes = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
+            // Base API URL for PokeAPI
             const baseApi = 'https://pokeapi.co/api/v2/';
 
             // Randomly select a type
@@ -360,15 +383,19 @@ class Games {
 
     // Pokemon game container manage function
     async playPokemon() {
+        // Hide play container, show loading
         this.CONTAINER_PLAY.classList.add('hidden');
         this.LOADING.classList.remove('hidden');
 
+        // Reset Pokemon game data
         this.pokemon.currentStage = 1;
         this.pokemon.trials = 5;
         this.resetScore();
 
+        // Fetch Pokemon data and render game after loading
         const data = await this.guessPokemonType();
 
+        // If data is successfully fetched, show game container, else show alert and return to play container
         if (data) {
             setTimeout(() => {
                 this.LOADING.classList.add('hidden');
@@ -408,17 +435,15 @@ class Games {
         // Generate types button
         const types = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
 
-        CHOICE_CONTAINER.innerHTML = ''; // Clear previous button
-
+        // Clear previous button
+        CHOICE_CONTAINER.innerHTML = ''; 
+        
         types.forEach(type => {
             const btn = document.createElement('button');
             btn.innerText = type.toUpperCase();
 
             // Styling button
-            btn.className = `
-                bg-main hover:bg-yellow-400 text-white font-title text-xs py-3 rounded-xl 
-                border-b-4 border-black/20 active:border-b-0 active:translate-y-1 transition-all
-            `;
+            btn.className = `btn-types`;
 
             // Event listener for each button
             btn.onclick = () => this.checkAnswer(type);
@@ -426,7 +451,7 @@ class Games {
         });
     }
 
-    // Check answer logic
+    // Check answer logic when player clicks type button
     checkAnswer(userGuess) {
         // Safety check if currentData is not available
         if (!this.pokemon.currentData) return;
@@ -556,6 +581,7 @@ class Games {
     }
 }
 
+// Init Games section include function and elements
 const NAME_ELEMENT = document.getElementById('playerName');
 NAME_ELEMENT.textContent = localStorage.getItem('playerName') || 'Random Player';
 let games = new Games(localStorage.getItem('playerName') || 'Random Player');
