@@ -49,19 +49,6 @@
             }
 
             @layer components {
-                .highlight-text {
-                    @apply text-sub transition-colors duration-300;
-                }
-
-                /*Navbar*/
-                .active {
-                    @apply font-bold text-main;
-                }
-
-                .active::after {
-                    content: "";
-                    @apply absolute bottom-0 left-0 w-full h-0.5;
-                }
 
                 /*Button*/
                 .btn {
@@ -76,21 +63,9 @@
                 }
 
                 /* Game Card Styling */
-                .game-card {
-                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
-                    transition-all duration-500 hover:-translate-y-3 hover:border-main hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-main/10;
-                }
-
-                .image-container {
-                    @apply relative aspect-[16/10] rounded-[1.5rem] bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden flex items-center justify-center;
-                }
 
                 .game-card:hover .game-icon {
                     @apply scale-125 rotate-12 text-main;
-                }
-
-                .game-icon {
-                    @apply text-6xl text-white/20 transition-all duration-500;
                 }
 
                 /*  Edit Modal  */
@@ -171,7 +146,7 @@
                     <!--Choice Container-->
                     <div
                             class="w-full flex flex-col sm:flex-row justify-center sm:justify-evenly items-center gap-4 sm:gap-4">
-                        <div id="playerChoiceContainer" class="flex gap-4">
+                        <div id="playerChoiceContainer" class="flex flex-wrap gap-4 justify-center items-center">
                             <div onclick="rps(2)" class="btn-sub text-xl md:text-2xl cursor-pointer">🤚</div>
                             <div onclick="rps(1)" class="btn-sub text-xl md:text-2xl cursor-pointer">✌️</div>
                             <div onclick="rps(0)" class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
@@ -195,7 +170,9 @@
         </main>
 
         <footer>
-
+            <div class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
+                <p>© 2026 Revofun. All rights reserved.</p>
+            </div>
         </footer>
 
         <!--Modal for change display name-->
