@@ -13,9 +13,13 @@ and our simple game that can be play from our website.
 
 ## 📋 Features
 
-| Feature | Description |
-|---------|-------------|
-|
+| Feature                | Description                                                           |
+|------------------------|-----------------------------------------------------------------------|
+| Player Data Management | System that manage player name, score, and leaderboard                |
+| Click Hero             | ATK Upgrade system, Auto click system, and milestone achivement.      |
+| Rock Paper Scissors    | Shuffle animation.                                                    |
+| Pokemon Game           | Integrations reliable Pokemon API, stage progression, and hint system |
+| General Features       | Modal system, persistent storage, animations, and error handling      |
 
 ---
 
@@ -26,12 +30,16 @@ and our simple game that can be play from our website.
 - HTML: Used for structuring the content of the resume.
 - Tailwind CSS: Used for styling the resume and making it visually appealing.
 - JavaScript: Used for adding interactivity, such as click navbar.
+- PokeAPI: Used for fetching pokemon data.
 
 ## 📸 Screenshots
 
-| Image                                                               | Description |
-|---------------------------------------------------------------------|-------------|
-| ![Screenshot of the resume](assets/images/screenshots/homepage.png) | Homepage    | 
+| Image                                                                 | Description         |
+|-----------------------------------------------------------------------|---------------------|
+| ![Screenshot of the resume](assets/images/screenshots/homepage.png)   | Homepage            | 
+| ![Screenshot of the resume](assets/images/screenshots/click_hero.png) | Click Hero          |
+| ![Screenshot of the resume](assets/images/screenshots/rps.png)        | Rock Paper Scissors |
+| ![Screenshot of the resume](assets/images/screenshots/pokemon.png)    | Pokemon Game        |
 
 ## 📂 Project Structure
 
