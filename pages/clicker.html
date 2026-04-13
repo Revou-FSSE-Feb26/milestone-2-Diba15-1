@@ -3,15 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <!-- make website responsive with meta viewport -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Clicker Hero</title>
         <!-- Import Tailwind CSS -->
         <script
-                src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <link rel="stylesheet" href="../assets/css/index.css">
         <!--  Import Font Awesome  -->
         <script src="https://kit.fontawesome.com/c0f92099a8.js"
-                crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script>
 
         <style type="text/tailwindcss">
             @theme {
@@ -34,17 +34,13 @@
                 }
 
                 header {
-                    @apply flex justify-between items-center py-4 px-8 bg-gray-800/70 text-white sticky top-0
+                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0
                     bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
                     transition-colors duration-300;
                 }
 
                 main {
                     @apply flex flex-col p-4 gap-4;
-                }
-
-                footer {
-
                 }
             }
 
@@ -89,64 +85,87 @@
     </head>
     <body onload="initGames()">
         <header>
-            <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
+            <a href="../index.html"
+                class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
             <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
                 <i class="fa-solid fa-pencil"></i>
-                <h1 class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                <h1
+                    class="text-lg md:text-2xl font-title font-bold cursor-pointer"
                     id="playerName">Random Player</h1>
             </div>
         </header>
 
         <main>
             <!-- Background Decor -->
-            <div class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
-            <div class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+            <div
+                class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+            <div
+                class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
 
+            <!-- Clicker Game Container -->
             <section id="clicker-container"
-                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
-                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
-                    <h3 class="text-2xl font-title font-bold text-center text-white">Click Hero</h3>
-                    <button onclick="playClickHero()" class="btn cursor-pointer">Play Now!</button>
+                class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                <div id="play-container"
+                    class="flex flex-col items-center justify-center gap-4">
+                    <h3
+                        class="text-2xl font-title font-bold text-center text-white">Click
+                        Hero</h3>
+                    <p
+                        class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="playClickHero()"
+                        class="btn cursor-pointer">Play Now!</button>
                 </div>
 
-                <div class="font-default font-semibold text-2xl text-white text-center hidden" id="loading">
+                <div
+                    class="font-default font-semibold text-2xl text-white text-center hidden"
+                    id="loading">
                     <div class="animate-bounce">️⚔️ 👆</div>
                     <p>Loading...</p>
                 </div>
 
-                <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
+                <div id="game-container"
+                    class="flex flex-col justify-center items-center gap-8 w-full hidden">
                     <!--Header Like Score and stage-->
-                    <div id="gameHeaderContainer" class="flex justify-center w-full">
+                    <div id="gameHeaderContainer"
+                        class="flex justify-center w-full">
                         <div
-                                class="font-title text-2xl text-white text-center font-bold"><span id="playerScore">0
-                        </span></div>
+                            class="font-title text-2xl text-white text-center font-bold"><span
+                                id="playerScore">0
+                            </span></div>
                     </div>
-                    <div id="gameDisplayContainer" class="flex flex-col justify-around items-center gap-4">
-                        <h2 id="praiseText" class="font-title text-white text-2xl font-bold"></h2>
-                        <button onclick="clickHero()" id="hero-btn" class="hero-button">PUSH HERO</button>
+                    <div id="gameDisplayContainer"
+                        class="flex flex-col justify-around items-center gap-4">
+                        <h2 id="praiseText"
+                            class="font-title text-white text-2xl font-bold"></h2>
+                        <button onclick="clickHero()" id="hero-btn"
+                            class="hero-button">PUSH HERO</button>
                     </div>
                     <!--Choice Container-->
-                    <div id="playerChoiceContainer" class="flex flex-col md:flex-row gap-4 w-full">
+                    <div id="playerChoiceContainer"
+                        class="flex flex-col md:flex-row gap-4 w-full">
                         <div onclick="upgradeATK()"
-                                class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center text-center">
+                            class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center text-center">
                             <h2 id="atk-price">10</h2>
                             <h3>⚔️</h3>
                             <h4>Upgrade ATK <span id="atk-max">1/10</span></h4>
                         </div>
                         <div onclick="addAuto()"
-                                class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center">
+                            class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center">
                             <h2 id="auto-price">200</h2>
                             <h3>👆</h3>
-                            <h4>Auto Click <span id="auto-status">OFF</span></h4>
+                            <h4>Auto Click <span
+                                    id="auto-status">OFF</span></h4>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- Game Navigation -->
             <section id="gameNav-container"
-                     class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
+                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
                 <a href="pokemon.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
                     Pokemon
@@ -159,21 +178,27 @@
         </main>
 
         <footer>
-            <div class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
+            <div
+                class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
                 <p>© 2026 Revofun. All rights reserved.</p>
             </div>
         </footer>
 
+        <!--Modal for change display name-->
         <div class="edit-modal hidden">
             <form onsubmit="submitName(event)">
                 <div class="flex justify-between">
-                    <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
-                    <button onclick="clickShowNameModal()"
-                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i>
+                    <h2 class="text-white text-lg font-bold">Edit Player
+                        Name</h2>
+                    <button onclick="clickShowNameModal()" title="Close Button"
+                        type="button"
+                        class="text-white text-md text-end cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 <label class="text-white" for="name">Player Name</label>
-                <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>
+                <input type="text" name="playerName" id="name"
+                    placeholder="Input Player Name" required>
                 <button class="btn-sub" type="submit">Save</button>
             </form>
         </div>

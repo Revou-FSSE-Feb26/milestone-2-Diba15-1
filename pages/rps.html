@@ -3,15 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <!-- make website responsive with meta viewport -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Rock Paper Scissors</title>
         <!-- Import Tailwind CSS -->
         <script
-                src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <link rel="stylesheet" href="../assets/css/index.css">
         <!--  Import Font Awesome  -->
         <script src="https://kit.fontawesome.com/c0f92099a8.js"
-                crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script>
 
         <style type="text/tailwindcss">
             @theme {
@@ -34,17 +34,13 @@
                 }
 
                 header {
-                    @apply flex justify-between items-center py-4 px-8 bg-gray-800/70 text-white sticky top-0
+                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0
                     bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
                     transition-colors duration-300;
                 }
 
                 main {
                     @apply flex flex-col p-4 gap-4;
-                }
-
-                footer {
-
                 }
             }
 
@@ -86,78 +82,104 @@
     </head>
     <body onload="initGames()">
         <header>
-            <a href="../index.html" class="flex items-center gap-2 text-sm md:text-lg"><i
+            <a href="../index.html"
+                class="flex items-center gap-2 text-sm md:text-lg"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
             <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
                 <i class="fa-solid fa-pencil"></i>
-                <h1 class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                <h1
+                    class="text-lg md:text-2xl font-title font-bold cursor-pointer"
                     id="playerName">Random Player</h1>
             </div>
         </header>
 
         <main>
             <!-- Background Decor -->
-            <div class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
-            <div class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] z-30 rounded-full"></div>
+            <div
+                class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+            <div
+                class="absolute z-0 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
 
+            <!-- RPS Game Container -->
             <section id="rps-container"
-                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
                 <!--Title Container-->
-                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
-                    <h3 class="text-2xl font-title font-bold text-center text-white">Rock Paper Scissor</h3>
-                    <button onclick="playRps()" class="btn cursor-pointer">Play Now!</button>
+                <div id="play-container"
+                    class="flex flex-col items-center justify-center gap-4">
+                    <h3
+                        class="text-2xl font-title font-bold text-center text-white">Rock
+                        Paper Scissor</h3>
+                    <p
+                        class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="playRps()" class="btn cursor-pointer">Play
+                        Now!</button>
                 </div>
                 <!--Loading-->
-                <div class="font-default font-semibold text-2xl text-white hidden" id="loading">
+                <div
+                    class="font-default font-semibold text-2xl text-white hidden"
+                    id="loading">
                     <div class="animate-bounce">✌️ 🤚 ✊</div>
                     <p>Loading...</p>
                 </div>
                 <!--Game Container-->
-                <div id="game-container" class="flex flex-col justify-center items-center gap-8 w-full hidden">
+                <div id="game-container"
+                    class="flex flex-col justify-center items-center gap-8 w-full hidden">
                     <!--Header Like Score and stage-->
-                    <div id="gameHeaderContainer" class="flex justify-between w-full">
-                        <div class="font-title text-xl text-white">Score: <span id="playerScore">0</span></div>
+                    <div id="gameHeaderContainer"
+                        class="flex justify-between w-full">
+                        <div class="font-title text-xl text-white">Score: <span
+                                id="playerScore">0</span></div>
                     </div>
                     <!--Game winner determine display-->
-                    <h3 id="determineWin" class="font-title font-bold text-2xl text-center text-white"></h3>
+                    <h3 id="determineWin"
+                        class="font-title font-bold text-2xl text-center text-white"></h3>
                     <!--Game Display-->
-                    <div id="gameDisplayContainer" class="flex flex-col md:flex-row justify-around gap-4 w-full">
+                    <div id="gameDisplayContainer"
+                        class="flex flex-col md:flex-row justify-around gap-4 w-full">
                         <!--Player Container-->
                         <div id="playerContainer"
-                             class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
                             font-bold font-title transition-all flex flex-col items-center gap-4">
                             <h3 class="text-xl md:text-2xl">Player</h3>
-                            <div id="playerChoiceDisplay" class="text-6xl">??</div>
+                            <div id="playerChoiceDisplay"
+                                class="text-6xl">??</div>
                         </div>
                         <!--Pemisah-->
                         <div
-                                class="max-h-2 h-0.5 md:h-auto md:max-h-full bg-sub max-w-full md:w-0.5 rounded-full"></div>
+                            class="max-h-2 h-0.5 md:h-auto md:max-h-full bg-sub max-w-full md:w-0.5 rounded-full"></div>
                         <!--Enemy Container-->
                         <div id="enemyContainer"
-                             class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
                             font-bold font-title transition-all flex flex-col items-center gap-4">
                             <h3 class="text-xl md:text-2xl">Computer</h3>
                             <div id="enemyChoiceDisplay"
-                                 class="text-6xl">??
+                                class="text-6xl">??
                             </div>
                         </div>
                     </div>
                     <!--Choice Container-->
                     <div
-                            class="w-full flex flex-col sm:flex-row justify-center sm:justify-evenly items-center gap-4 sm:gap-4">
-                        <div id="playerChoiceContainer" class="flex flex-wrap gap-4 justify-center items-center">
-                            <div onclick="rps(2)" class="btn-sub text-xl md:text-2xl cursor-pointer">🤚</div>
-                            <div onclick="rps(1)" class="btn-sub text-xl md:text-2xl cursor-pointer">✌️</div>
-                            <div onclick="rps(0)" class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
+                        class="w-full flex flex-col sm:flex-row justify-center sm:justify-evenly items-center gap-4 sm:gap-4">
+                        <div id="playerChoiceContainer"
+                            class="flex flex-wrap gap-4 justify-center items-center">
+                            <div onclick="rps(2)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">🤚</div>
+                            <div onclick="rps(1)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">✌️</div>
+                            <div onclick="rps(0)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
                         </div>
-                        <button onclick="finishRps()" class="btn">Finish Game</button>
+                        <button onclick="finishRps()" class="btn">Finish
+                            Game</button>
                     </div>
                 </div>
             </section>
 
-            <!--Nav Container-->
-            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
+            <!--Game Navigation-->
+            <section id="gameNav-container"
+                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
                 <a href="clicker.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
                     Click Hero
@@ -170,7 +192,8 @@
         </main>
 
         <footer>
-            <div class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
+            <div
+                class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
                 <p>© 2026 Revofun. All rights reserved.</p>
             </div>
         </footer>
@@ -179,13 +202,17 @@
         <div class="edit-modal hidden">
             <form onsubmit="submitName(event)">
                 <div class="flex justify-between">
-                    <h2 class="text-white text-lg font-bold">Edit Player Name</h2>
-                    <button onclick="clickShowNameModal()"
-                            class="text-white text-md text-end cursor-pointer"><i class="fa-solid fa-xmark"></i>
+                    <h2 class="text-white text-lg font-bold">Edit Player
+                        Name</h2>
+                    <button onclick="clickShowNameModal()" title="Close Button"
+                        type="button"
+                        class="text-white text-md text-end cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 <label class="text-white" for="name">Player Name</label>
-                <input type="text" name="playerName" id="name" placeholder="Input Player Name" required>
+                <input type="text" name="playerName" id="name"
+                    placeholder="Input Player Name" required>
                 <button class="btn-sub" type="submit">Save</button>
             </form>
         </div>
