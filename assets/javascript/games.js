@@ -108,7 +108,8 @@ class Games {
 
         setTimeout(() => {
             this.LOADING.classList.add('hidden')
-            this.CONTAINER_GAME.classList.remove('hidden');
+            this.CONTAINER_GAME.classList.toggle('hidden');
+            this.CONTAINER_GAME.classList.toggle('flex');
             this.resetScore()
         }, 3000)
     }
@@ -196,7 +197,8 @@ class Games {
         PLAYER_CHOICE_DISPLAY.innerHTML = '??';
 
         // Hide Game Container, Show Play Container
-        this.CONTAINER_GAME.classList.add('hidden');
+        this.CONTAINER_GAME.classList.toggle('hidden');
+        this.CONTAINER_GAME.classList.toggle('flex');
         this.CONTAINER_PLAY.classList.remove('hidden');
 
         // Reset Win Text
@@ -231,7 +233,8 @@ class Games {
 
         setTimeout(() => {
             this.LOADING.classList.add('hidden')
-            this.CONTAINER_GAME.classList.remove('hidden');
+            this.CONTAINER_GAME.classList.toggle('hidden');
+            this.CONTAINER_GAME.classList.toggle('flex');
             this.resetScore()
         }, 3000)
     }
@@ -369,7 +372,8 @@ class Games {
         if (data) {
             setTimeout(() => {
                 this.LOADING.classList.add('hidden');
-                this.CONTAINER_GAME.classList.remove('hidden');
+                this.CONTAINER_GAME.classList.toggle('hidden');
+                this.CONTAINER_GAME.classList.toggle('flex');
                 this.renderPokemonGame(data);
             }, 2000)
         } else {
@@ -538,7 +542,8 @@ class Games {
         if (POKEMON_IMG) POKEMON_IMG.src = '';
 
         // Hide Game Container, Show Play Container
-        this.CONTAINER_GAME.classList.add('hidden');
+        this.CONTAINER_GAME.classList.toggle('hidden');
+        this.CONTAINER_GAME.classList.toggle('flex');
         this.CONTAINER_PLAY.classList.remove('hidden');
     }
 
