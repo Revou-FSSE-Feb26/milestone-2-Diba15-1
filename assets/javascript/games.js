@@ -19,7 +19,8 @@ class Games {
         this.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
         // RPS Choices
-        this.CHOICES = [{value: 0, choice: '✊'}, // Rock
+        this.CHOICES = [
+            {value: 0, choice: '✊'}, // Rock
             {value: 1, choice: '✌️'}, // Scissor
             {value: 2, choice: '✋'}  // Paper
         ];
@@ -29,20 +30,38 @@ class Games {
             atk: JSON.parse(localStorage.getItem('atk')) || 1,
             auto: JSON.parse(localStorage.getItem('auto')) || false,
             upPrice: JSON.parse(localStorage.getItem('upPrice')) || 10,
-            milestones: [{threshold: 5000, text: "YOU ARE A HERO", isReached: false}, {
-                threshold: 2000,
-                text: "UNSTOPPABLE",
-                isReached: false
-            }, {threshold: 1000, text: "GODLIKE", isReached: false}, {
-                threshold: 500,
-                text: "AMAZING",
-                isReached: false
-            }, {threshold: 100, text: "NOT ENOUGH", isReached: false}]
+            milestones: [
+                {
+                    threshold: 5000,
+                    text: "YOU ARE A HERO",
+                    isReached: false
+                },
+                {
+                    threshold: 2000,
+                    text: "UNSTOPPABLE",
+                    isReached: false
+                },
+                {
+                    threshold: 1000,
+                    text: "GODLIKE",
+                    isReached: false
+                },
+                {
+                    threshold: 500,
+                    text: "AMAZING",
+                    isReached: false
+                },
+                {
+                    threshold: 100,
+                    text: "NOT ENOUGH",
+                    isReached: false
+                }
+            ]
         }
 
         // Pokemon Data
         this.pokemon = {
-            maxStage: 5, currentStage: 1, currentData: null, isLoading: false, score: 0, trials: 5,
+            maxStage: 5, currentStage: 1, currentData: null, isLoading: false, trials: 5,
         };
     }
 
@@ -218,7 +237,7 @@ class Games {
         const PRAISE_TEXT = document.getElementById('praiseText');
 
         const milestones = this.clickHero.milestones;
-        const currentMilestone = milestones.find(m => this.score >= m.threshold && !m.isReached);
+        const currentMilestone = milestones.find(m => this.getScore() >= m.threshold && !m.isReached);
 
         if (currentMilestone) {
             currentMilestone.isReached = true;
