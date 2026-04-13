@@ -210,6 +210,12 @@ class Games {
 
         this.resetScore()
 
+        const rpsLeaderboard = this.leaderboard
+            .filter(entry => entry.gameType === 'rps')
+            .map(entry => `${entry.playerName}: ${entry.score}`)
+            .join('\n');
+        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${rpsLeaderboard}`);
+
     }
 
     // Click Hero Game Section
