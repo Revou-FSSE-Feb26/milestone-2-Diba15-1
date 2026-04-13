@@ -65,7 +65,7 @@ class Games {
         };
     }
 
-    // Player Data Management
+    // 😊 Player Data Management
 
     // Set player name and store in localStorage, also update the display
     setPlayerName(playerName) {
@@ -105,7 +105,7 @@ class Games {
         localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
     }
 
-    // Rock Paper Scissors Game Section
+    // ✌️ Rock Paper Scissors Game Section
 
     // Rock Paper Scissors container manage function
     playRps() {
@@ -229,7 +229,7 @@ class Games {
 
     }
 
-    // Click Hero Game Section
+    // 👆 Click Hero Game Section
 
     // Click Hero container manage function
     playClickHero() {
@@ -343,7 +343,7 @@ class Games {
         }
     }
 
-    // Pokemon Game Section
+    // 🐉 Pokemon Game Section
 
     // Fetch random Pokemon type and data from PokeAPI
     async guessPokemonType() {
@@ -574,7 +574,7 @@ class Games {
         this.CONTAINER_PLAY.classList.remove('hidden');
     }
 
-    // Other Section
+    // 📋 Other Section
 
     resetGame() {
         this.resetScore();
