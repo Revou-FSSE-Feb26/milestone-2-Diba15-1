@@ -7,6 +7,7 @@ class Games {
         // Centralized DOM Elements
         this.CONTAINER_GAME = document.getElementById('game-container');
         this.CONTAINER_PLAY = document.getElementById('play-container');
+        this.CONTAINER_TUTORIAL = document.getElementById('tutorial-container');
         this.LOADING = document.getElementById('loading');
         this.SCORE_DISPLAY = document.getElementById('playerScore');
 
@@ -20,9 +21,9 @@ class Games {
 
         // RPS Choices
         this.CHOICES = [
-            {value: 0, choice: '✊'}, // Rock
-            {value: 1, choice: '✌️'}, // Scissor
-            {value: 2, choice: '✋'}  // Paper
+            { value: 0, choice: '✊' }, // Rock
+            { value: 1, choice: '✌️' }, // Scissor
+            { value: 2, choice: '✋' }  // Paper
         ];
 
         // Click Hero Data
@@ -110,6 +111,23 @@ class Games {
     // Rock Paper Scissors container manage function
     playRps() {
         this.CONTAINER_PLAY.classList.add('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('flex')
+
+        // this.LOADING.classList.remove('hidden')
+
+        // setTimeout(() => {
+        // this.LOADING.classList.add('hidden')
+        // this.CONTAINER_GAME.classList.toggle('hidden');
+        // this.CONTAINER_GAME.classList.toggle('flex');
+        // this.resetScore()
+        // }, 3000)
+    }
+
+    startRps() {
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('flex')
+
         this.LOADING.classList.remove('hidden')
 
         setTimeout(() => {
@@ -233,15 +251,32 @@ class Games {
 
     // Click Hero container manage function
     playClickHero() {
+        this.CONTAINER_PLAY.classList.add('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('flex')
+
+
+        // Show game container after 3 seconds and reset score
+        // setTimeout(() => {
+        //     this.LOADING.classList.add('hidden')
+        //     this.CONTAINER_GAME.classList.toggle('hidden');
+        //     this.CONTAINER_GAME.classList.toggle('flex');
+        //     this.resetScore()
+        // }, 3000)
+    }
+
+    startClickHero() {
         // Reset Click Hero data
         this.clickHero.atk = 1;
         this.clickHero.auto = false;
         this.clickHero.upPrice = 10
         this.clickHero.milestones.forEach(m => m.isReached = false);
+
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
+        this.CONTAINER_TUTORIAL.classList.toggle('flex')
         
-        this.CONTAINER_PLAY.classList.add('hidden')
         this.LOADING.classList.remove('hidden')
-        
+
         // Show game container after 3 seconds and reset score
         setTimeout(() => {
             this.LOADING.classList.add('hidden')
@@ -250,6 +285,7 @@ class Games {
             this.resetScore()
         }, 3000)
     }
+
 
     // Click Hero
     clickedHero() {
@@ -382,10 +418,18 @@ class Games {
     }
 
     // Pokemon game container manage function
-    async playPokemon() {
+    playPokemon() {
         // Hide play container, show loading
         this.CONTAINER_PLAY.classList.add('hidden');
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden');
+        this.CONTAINER_TUTORIAL.classList.toggle('flex');
+    }
+
+    // Start the Pokemon game
+    async startPokemon() {
         this.LOADING.classList.remove('hidden');
+        this.CONTAINER_TUTORIAL.classList.toggle('hidden');
+        this.CONTAINER_TUTORIAL.classList.toggle('flex');
 
         // Reset Pokemon game data
         this.pokemon.currentStage = 1;
@@ -436,8 +480,8 @@ class Games {
         const types = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
 
         // Clear previous button
-        CHOICE_CONTAINER.innerHTML = ''; 
-        
+        CHOICE_CONTAINER.innerHTML = '';
+
         types.forEach(type => {
             const btn = document.createElement('button');
             btn.innerText = type.toUpperCase();
@@ -615,6 +659,10 @@ function playRps() {
     games.playRps();
 }
 
+function startRps() {
+    games.startRps();
+}
+
 function rps(choice) {
     games.rps(choice);
 }
@@ -626,6 +674,10 @@ function finishRps() {
 // Click Hero Section
 function playClickHero() {
     games.playClickHero();
+}
+
+function startClickHero() {
+    games.startClickHero();
 }
 
 function clickHero() {
@@ -644,4 +696,8 @@ function addAuto() {
 
 function playPokemon() {
     games.playPokemon();
+}
+
+function startPokemon() {
+    games.startPokemon();
 }
