@@ -127,6 +127,25 @@
                     <p>Loading...</p>
                 </div>
 
+                <!-- Tutorial Container -->
+                <div id="tutorial-container"
+                    class="flex-col justify-center items-center gap-8 w-full hidden">
+                    <h2 class="font-title text-white text-2xl font-bold">Welcome
+                        to Click Hero!</h2>
+                    <p
+                        class="text-gray-300 text-lg/relaxed text-justify font-semibold">In
+                        this game, your objective is to defeat the monster by
+                        clicking the "ATTACK" button. Each click will
+                        increase your score, and you can use your points to
+                        upgrade your attack or enable auto-clicking. Upgrade
+                        your attack to deal more damage with each click, or turn
+                        on auto-clicking to automatically earn points over time.
+                        Can you defeat the monster and reach the highest score?
+                        Click now and start your adventure!</p>
+                    <button onclick="startClickHero()"
+                        class="btn cursor-pointer">Start Game</button>
+                </div>
+
                 <div id="game-container"
                     class="flex-col justify-center items-center gap-8 w-full hidden">
                     <!--Header Like Score and stage-->
@@ -143,7 +162,7 @@
                         <h2 id="praiseText"
                             class="font-title text-white text-2xl font-bold"></h2>
                         <button onclick="clickHero()" id="hero-btn"
-                            class="hero-button">PUSH HERO</button>
+                            class="hero-button">👹 ATTACK</button>
                     </div>
                     <!--Choice Container-->
                     <div id="playerChoiceContainer"
