@@ -110,6 +110,7 @@ class Games {
 
     // Rock Paper Scissors container manage function
     playRps() {
+        // hide title container, show tutorial container
         this.CONTAINER_PLAY.classList.add('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
@@ -251,6 +252,7 @@ class Games {
 
     // Click Hero container manage function
     playClickHero() {
+        // Hide play container, show tutorial container
         this.CONTAINER_PLAY.classList.add('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
@@ -419,7 +421,7 @@ class Games {
 
     // Pokemon game container manage function
     playPokemon() {
-        // Hide play container, show loading
+        // Hide play container, show tutorial container
         this.CONTAINER_PLAY.classList.add('hidden');
         this.CONTAINER_TUTORIAL.classList.toggle('hidden');
         this.CONTAINER_TUTORIAL.classList.toggle('flex');
