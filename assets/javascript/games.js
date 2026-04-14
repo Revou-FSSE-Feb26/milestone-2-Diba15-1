@@ -64,6 +64,56 @@ class Games {
         this.pokemon = {
             maxStage: 5, currentStage: 1, currentData: null, isLoading: false, trials: 5,
         };
+
+        this.vn = {
+            currentSceneId: 'start',
+            isTyping: false,
+            typingTween: null,
+            script: {
+                "start": {
+                    text: "Hari pertama di Akademi Revofun. Langit mendung dan aku sudah tersesat.",
+                    background: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1000",
+                    name: "Aku",
+                    next: "meet_girl"
+                },
+                "meet_girl": {
+                    text: "BRUKK! Tiba-tiba seseorang menabrakku dari belakang dengan cukup keras.",
+                    background: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1000",
+                    character: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&baseColor=f5c2b1&clothing=blazerAndShirt&hair=longButNotTooLong&mouth=surprise",
+                    name: "???",
+                    shake: true, // Layar akan bergetar
+                    next: "choice_1"
+                },
+                "choice_1": {
+                    text: "Aduh, maaf! Aku sangat terburu-buru!",
+                    character: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&baseColor=f5c2b1&clothing=blazerAndShirt&hair=longButNotTooLong&mouth=smile",
+                    name: "Gadis Misterius",
+                    options: [
+                        { text: "Tidak apa-apa, kamu mau kemana?", next: "friendly" },
+                        { text: "Hati-hati dong kalau jalan!", next: "angry" }
+                    ]
+                },
+                "friendly": {
+                    text: "Terima kasih! Aku sedang mencari ruang pendaftaran. Ngomong-ngomong, namaku Mia. Salam kenal!",
+                    character: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&baseColor=f5c2b1&clothing=blazerAndShirt&hair=longButNotTooLong&mouth=grin",
+                    name: "Mia",
+                    next: "end"
+                },
+                "angry": {
+                    text: "Uhh.. maafkan aku. Aku benar-benar panik karena terlambat.",
+                    character: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&baseColor=f5c2b1&clothing=blazerAndShirt&hair=longButNotTooLong&mouth=sad",
+                    name: "Mia",
+                    next: "end"
+                },
+                "end": {
+                    text: "Begitulah pertemuan pertama kami di akademi ini... (Demo Visual Novel Selesai)",
+                    background: "https://images.unsplash.com/photo-1497626485854-8c7647d6d1b2?auto=format&fit=crop&q=80&w=1000",
+                    character: "",
+                    name: "Sistem",
+                    next: "start"
+                }
+            }
+        };
     }
 
     // 😊 Player Data Management
@@ -276,7 +326,7 @@ class Games {
 
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
-        
+
         this.LOADING.classList.remove('hidden')
 
         // Show game container after 3 seconds and reset score
@@ -620,6 +670,191 @@ class Games {
         this.CONTAINER_PLAY.classList.remove('hidden');
     }
 
+    // ==========================================
+    // 📖 VISUAL NOVEL GAME SECTION
+    // ==========================================
+
+    playVn() {
+        this.CONTAINER_PLAY.classList.add('hidden');
+        this.CONTAINER_TUTORIAL.classList.remove('hidden');
+        this.CONTAINER_TUTORIAL.classList.add('flex');
+        gsap.from(this.CONTAINER_TUTORIAL.children, { opacity: 1, y: 20, stagger: 0.1, duration: 0.5 });
+    }
+
+    startVn() {
+        this.CONTAINER_TUTORIAL.classList.add('hidden');
+        this.CONTAINER_TUTORIAL.classList.remove('flex');
+        this.LOADING.classList.remove('hidden');
+        this.LOADING.classList.add('flex');
+
+        setTimeout(() => {
+            this.LOADING.classList.add('hidden');
+            this.LOADING.classList.remove('flex');
+            this.CONTAINER_GAME.classList.remove('hidden');
+            this.CONTAINER_GAME.classList.add('flex');
+
+            this.initVnUI();
+            this.renderVnScene('start');
+        }, 1500);
+    }
+
+    initVnUI() {
+        // Membuat struktur layout UI VN di dalam container game
+        this.CONTAINER_GAME.innerHTML = `
+                        <div id="vn-screen" class="relative w-full h-[450px] md:h-[500px] overflow-hidden rounded-[2rem] bg-black shadow-2xl border-2 border-white/10 select-none group">
+                            <!-- Background Layer -->
+                            <div id="vn-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-60"></div>
+                            
+                            <!-- Character Layer -->
+                            <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-10 pb-16">
+                                <img id="vn-char" src="" alt="" class="h-4/5 object-contain opacity-0 transform translate-y-10 transition-all">
+                            </div>
+                            
+                            <!-- UI Overlay -->
+                            <div class="absolute inset-0 z-20 flex flex-col justify-end p-4 md:p-8 pointer-events-none">
+                                
+                                <!-- Choices Box -->
+                                <div id="vn-choices" class="mb-6 flex flex-col gap-3 items-center pointer-events-auto"></div>
+                                
+                                <!-- Dialogue Box -->
+                                <div id="vn-dialogue" onclick="vnNext()" class="bg-dark-bg/80 backdrop-blur-md border-t-2 border-white/20 rounded-[1.5rem] p-6 pt-8 relative min-h-[130px] pointer-events-auto cursor-pointer hover:bg-dark-bg/90 transition-colors shadow-2xl">
+                                    <div id="vn-name" class="absolute -top-5 left-6 bg-main text-white px-6 py-1.5 rounded-xl font-bold font-title shadow-lg text-lg border border-white/20 tracking-wider">
+                                        Name
+                                    </div>
+                                    <div id="vn-text" class="text-white md:text-xl font-default leading-relaxed pr-8"></div>
+                                    <div id="vn-prompt" class="absolute bottom-4 right-5 text-sub animate-bounce opacity-0">
+                                        <i class="fa-solid fa-caret-down text-2xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+    }
+
+    renderVnScene(sceneId) {
+        const scene = this.vn.script[sceneId];
+        this.vn.currentSceneId = sceneId;
+
+        const bg = document.getElementById('vn-bg');
+        const charImg = document.getElementById('vn-char');
+        const nameTag = document.getElementById('vn-name');
+        const choicesDiv = document.getElementById('vn-choices');
+        const prompt = document.getElementById('vn-prompt');
+        const vnScreen = document.getElementById('vn-screen');
+
+        // Ganti Nama (Ganti dengan nama player jika diset "Aku")
+        nameTag.innerText = scene.name === "Aku" ? this.getPlayerName() : scene.name;
+
+        // Transisi Background
+        if (scene.background) {
+            bg.style.backgroundImage = `url('${scene.background}')`;
+        }
+
+        // Transisi Karakter dengan GSAP
+        if (scene.character) {
+            const isSameChar = charImg.src === scene.character;
+            charImg.src = scene.character;
+            if (!isSameChar) {
+                gsap.fromTo(charImg,
+                    { opacity: 0, scale: 0.9, y: 30 },
+                    { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: "back.out(1.5)" }
+                );
+                gsap.to(charImg, { y: "-=10", duration: 2, repeat: -1, yoyo: true, ease: "sine.inOut" }); // Idle Breathe
+            }
+        } else {
+            gsap.to(charImg, { opacity: 0, y: 20, duration: 0.4 });
+        }
+
+        // Efek Shake Layar
+        if (scene.shake) {
+            gsap.fromTo(vnScreen,
+                { x: -10 },
+                { x: 10, duration: 0.05, repeat: 10, yoyo: true, onComplete: () => gsap.set(vnScreen, { x: 0 }) }
+            );
+        }
+
+        // Reset UI
+        choicesDiv.innerHTML = '';
+        gsap.set(prompt, { opacity: 0 });
+
+        // Mulai ngetik
+        this.startVnTypewriter(scene.text);
+    }
+
+    startVnTypewriter(text) {
+        this.vn.isTyping = true;
+        const textDisplay = document.getElementById('vn-text');
+        textDisplay.innerHTML = "";
+
+        const textObj = { val: 0 };
+        this.vn.typingTween = gsap.to(textObj, {
+            val: text.length,
+            duration: text.length * 0.03, // Kecepatan ngetik
+            ease: "none",
+            onUpdate: () => {
+                textDisplay.innerHTML = text.substr(0, Math.ceil(textObj.val));
+            },
+            onComplete: () => {
+                this.vn.isTyping = false;
+                this.showVnNextActions();
+            }
+        });
+    }
+
+    showVnNextActions() {
+        const scene = this.vn.script[this.vn.currentSceneId];
+        const choicesDiv = document.getElementById('vn-choices');
+        const prompt = document.getElementById('vn-prompt');
+
+        if (scene.options) {
+            // Tampilkan Pilihan
+            scene.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn-sub w-full max-w-md bg-dark-bg/80 backdrop-blur-md opacity-0 transform translate-y-4 hover:bg-sub hover:text-dark-bg border-white/20";
+                btn.innerText = opt.text;
+                btn.onclick = (e) => {
+                    e.stopPropagation(); // Cegah klik tembus ke kotak dialog
+                    this.renderVnScene(opt.next);
+                };
+                choicesDiv.appendChild(btn);
+            });
+            // Animasi tombol muncul satu per satu
+            gsap.to("#vn-choices button", { opacity: 1, y: 0, stagger: 0.1, duration: 0.4, ease: "power2.out" });
+        } else {
+            // Tampilkan panah kedip-kedip
+            gsap.to(prompt, { opacity: 1, duration: 0.3 });
+        }
+    }
+
+    handleVnClick() {
+        const scene = this.vn.script[this.vn.currentSceneId];
+
+        // Kalau masih ngetik, langsung skip sampai beres
+        if (this.vn.isTyping) {
+            this.vn.typingTween.progress(1);
+            return;
+        }
+
+        // Lanjut kalau bukan layar pilihan
+        if (!scene.options && scene.next) {
+            this.renderVnScene(scene.next);
+        }
+    }
+
+    finishVn() {
+        // Reset VN game data
+        this.vn.currentSceneId = 'start';
+        this.vn.isTyping = false;
+        this.vn.typingTween = null;
+
+        // Hide Game Container, Show Play Container
+        this.CONTAINER_GAME.classList.toggle('hidden');
+        this.CONTAINER_GAME.classList.toggle('flex');
+        this.CONTAINER_PLAY.classList.remove('hidden');
+
+
+    }
+
     // 📋 Other Section
 
     resetGame() {
@@ -703,3 +938,8 @@ function playPokemon() {
 function startPokemon() {
     games.startPokemon();
 }
+
+// VN Global Wrappers
+function playVn() { games.playVn(); }
+function startVn() { games.startVn(); }
+function vnNext() { games.handleVnClick(); }

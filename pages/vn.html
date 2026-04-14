@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <!-- make website responsive with meta viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Visual Novel Game</title>
+
+        <!-- Import Tailwind CSS -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <!-- Import GSAP for Visual Novel Animations -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+        <!--  Import Font Awesome  -->
+        <script src="https://kit.fontawesome.com/c0f92099a8.js"
+            crossorigin="anonymous"></script>
+
+        <style type="text/tailwindcss">
+            @theme {
+                --color-main: #FF5733;
+                --color-sub: #FFC300;
+                --color-text: #2D2D2D;
+                --color-vanilla: #f5f4fc;
+                --color-dark-bg: #1e293b;
+                --font-default: 'Quicksand', sans-serif;
+                --font-title: 'Fredoka', sans-serif;
+            }
+
+            @layer base {
+                * {
+                    @apply font-default scroll-smooth;
+                }
+
+                body {
+                    @apply bg-dark-bg
+                }
+
+                header {
+                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0
+                    bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
+                    transition-colors duration-300;
+                }
+
+                main {
+                    @apply flex flex-col p-4 gap-4;
+                }
+            }
+
+            @layer components {
+
+                /*Button*/
+                .btn {
+                    @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title
+                    transition-all
+                    transform hover:scale-105 shadow-lg shadow-main/20;
+                }
+
+                .btn-sub {
+                    @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                    font-bold font-title transition-all;
+                }
+
+                /* Game Card Styling */
+
+                .game-card:hover .game-icon {
+                    @apply scale-125 rotate-12 text-main;
+                }
+
+                /*  Edit Modal  */
+                .edit-modal {
+                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
+                }
+
+                .edit-modal form {
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
+                    transition-all duration-500 w-xl mx-4;
+                }
+
+                .edit-modal form input {
+                    @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
+                }
+            }
+        </style>
+    </head>
+    <body onload="initGames()">
+        <header>
+            <a href="../index.html"
+                class="flex items-center gap-2 text-sm md:text-lg"><i
+                    class="fa-solid fa-arrow-left"></i>Back to
+                Home</a>
+            <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
+                <i class="fa-solid fa-pencil"></i>
+                <h1
+                    class="text-lg md:text-2xl font-title font-bold cursor-pointer"
+                    id="playerName">Random Player</h1>
+            </div>
+        </header>
+
+        <main>
+            <!-- Background Decor -->
+            <div
+                class="absolute z-0 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
+            <div
+                class="absolute z-0 top-20 left-20 w-64 h-64 bg-sub opacity-10 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <!-- VN Game Container -->
+            <section id="vn-container"
+                class="relative z-10 w-full max-w-4xl min-h-[450px] mx-auto mt-6 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4 shadow-2xl">
+
+                <!--Title Container-->
+                <div id="play-container"
+                    class="flex flex-col items-center justify-center gap-6 w-full text-center">
+                    <div class="text-6xl text-main mb-2"><i
+                            class="fa-solid fa-book-open"></i></div>
+                    <h3
+                        class="text-4xl font-title font-bold text-white tracking-wide">Misteri
+                        Akademi</h3>
+                    <p class="text-gray-300 text-lg font-semibold max-w-md">
+                        Sebuah cerita interaktif. Keputusanmu menentukan jalan
+                        ceritanya!
+                    </p>
+                    <button onclick="playVn()"
+                        class="btn cursor-pointer mt-4">Play Now!</button>
+                </div>
+
+                <!--Loading-->
+                <div
+                    class="font-default font-semibold text-2xl text-white hidden flex-col items-center gap-4"
+                    id="loading">
+                    <div class="animate-spin text-main text-4xl"><i
+                            class="fa-solid fa-circle-notch"></i></div>
+                    <p class="tracking-widest animate-pulse">Memuat
+                        Cerita...</p>
+                </div>
+
+                <!-- Tutorial Container -->
+                <div id="tutorial-container"
+                    class="flex-col items-center justify-center gap-6 w-full max-w-xl text-center text-white hidden">
+                    <div
+                        class="bg-main/20 p-4 rounded-full text-main text-3xl mb-2">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-3xl font-title font-bold">Cara Bermain</h3>
+                    <p
+                        class="text-gray-300 text-lg/relaxed text-center bg-black/20 p-6 rounded-2xl border border-white/5">
+                        Selamat datang di Visual Novel! Di game ini, kamu akan
+                        disajikan sebuah cerita interaktif.
+                        Klik pada kotak dialog untuk melanjutkan teks. Baca
+                        dengan saksama dan pilih opsi yang menurutmu paling
+                        tepat saat diminta.
+                    </p>
+                    <button onclick="startVn()"
+                        class="btn cursor-pointer w-full max-w-xs mt-2">Mulai
+                        Petualangan</button>
+                </div>
+
+                <!--Game Container (Arena VN)-->
+                <div id="game-container"
+                    class="flex-col justify-center items-center w-full hidden">
+                    <!-- UI VN akan di-inject ke sini oleh JavaScript -->
+                </div>
+            </section>
+
+            <!--Game Navigation-->
+            <section id="gameNav-container"
+                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
+                <a href="clicker.html" class="flex items-center gap-2 btn-sub">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Click Hero
+                </a>
+                <a href="pokemon.html" id="next" class="btn">
+                    Pokemon
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </section>
+        </main>
+
+        <footer>
+            <div
+                class="flex justify-center items-center py-4 px-8 bg-gray-800/70 text-white">
+                <p>© 2026 Revofun. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!--Modal for change display name-->
+        <div class="edit-modal hidden z-50">
+            <form onsubmit="submitName(event)">
+                <div class="flex justify-between">
+                    <h2 class="text-white text-lg font-bold">Edit Player
+                        Name</h2>
+                    <button onclick="clickShowNameModal()" title="Close Button"
+                        type="button"
+                        class="text-white text-md text-end cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <label class="text-white" for="name">Player Name</label>
+                <input type="text" name="playerName" id="name"
+                    placeholder="Input Player Name" required>
+                <button class="btn-sub" type="submit">Save</button>
+            </form>
+        </div>
+
+        <script src="../assets/javascript/games.js"></script>
+    </body>
+</html>
