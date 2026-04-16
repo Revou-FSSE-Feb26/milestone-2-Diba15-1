@@ -1,9 +1,21 @@
+/*
+* Games Class
+* This class will be the parent class for all games, it will contain the common methods and properties that all games will use, 
+* such as player data management, score management, and leaderboard management.
+*/
 class Games {
     // Declaration private variables
     #playerName;
     #score;
 
-    constructor(playerName) {
+    /**
+     * Constructor for Games class
+     * @param {string} [playerName='Random Player'] - Player name to be used in game
+     * 
+     * This constructor will initialize the game object with the given player name, and set default values for game score and stage.
+     * It will also initialize the leaderboard data structure as an empty array if it does not exist in local storage, otherwise it will retrieve the existing leaderboard data from local storage.
+     */
+    constructor(playerName = 'Random Player') {
         // Centralized DOM Elements
         this.CONTAINER_GAME = document.getElementById('game-container');
         this.CONTAINER_PLAY = document.getElementById('play-container');
@@ -18,52 +30,6 @@ class Games {
 
         // Leaderboard data structure, value is object that have gameType, playerName, and score
         this.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-
-        // RPS Choices
-        this.CHOICES = [
-            { value: 0, choice: '✊' }, // Rock
-            { value: 1, choice: '✌️' }, // Scissor
-            { value: 2, choice: '✋' }  // Paper
-        ];
-
-        // Click Hero Data
-        this.clickHero = {
-            atk: JSON.parse(localStorage.getItem('atk')) || 1,
-            auto: JSON.parse(localStorage.getItem('auto')) || false,
-            upPrice: JSON.parse(localStorage.getItem('upPrice')) || 10,
-            milestones: [
-                {
-                    threshold: 5000,
-                    text: "YOU ARE A HERO",
-                    isReached: false
-                },
-                {
-                    threshold: 2000,
-                    text: "UNSTOPPABLE",
-                    isReached: false
-                },
-                {
-                    threshold: 1000,
-                    text: "GODLIKE",
-                    isReached: false
-                },
-                {
-                    threshold: 500,
-                    text: "AMAZING",
-                    isReached: false
-                },
-                {
-                    threshold: 100,
-                    text: "NOT ENOUGH",
-                    isReached: false
-                }
-            ]
-        }
-
-        // Pokemon Data
-        this.pokemon = {
-            maxStage: 5, currentStage: 1, currentData: null, isLoading: false, trials: 5,
-        };
     }
 
     // 😊 Player Data Management
@@ -80,7 +46,11 @@ class Games {
         return this.#playerName;
     }
 
-    // Score Management, setScore will add score and update display, getScore will return current score, resetScore will reset score to 0 and update display
+    /**
+     * Update the current score by adding the given score to it, and store the new score in localStorage.
+     * Also update the display of the current score.
+     * @param {number} score - The score to be added to the current score.
+     */
     setScore(score) {
         this.#score += score;
         localStorage.setItem('score', this.#score);
@@ -106,26 +76,20 @@ class Games {
         localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
     }
 
-    // ✌️ Rock Paper Scissors Game Section
-
-    // Rock Paper Scissors container manage function
-    playRps() {
+    // Default Methods for Games, these methods will be overridden by each game class
+    play() {
         // hide title container, show tutorial container
         this.CONTAINER_PLAY.classList.add('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
-
-        // this.LOADING.classList.remove('hidden')
-
-        // setTimeout(() => {
-        // this.LOADING.classList.add('hidden')
-        // this.CONTAINER_GAME.classList.toggle('hidden');
-        // this.CONTAINER_GAME.classList.toggle('flex');
-        // this.resetScore()
-        // }, 3000)
     }
 
-    startRps() {
+
+    /**
+     * Starts the game by hiding the tutorial container, showing the loading animation,
+     * waiting for 3 seconds, and then showing the game container and resetting the score.
+     */
+    start() {
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
 
@@ -139,7 +103,41 @@ class Games {
         }, 3000)
     }
 
-    // Rock Paper Scissors logic
+    finish() {
+        return 0;
+    }
+
+    // 📋 Other Section
+
+    resetGame() {
+        this.resetScore();
+    }
+}
+
+/*
+* Rock, Paper, Scissors Class
+* This class will handle the logic for the Rock, Paper, Scissors game, 
+* including determining the winner and updating the score accordingly.
+*/
+class RPS extends Games {
+
+    constructor() {
+        super();
+
+        // RPS Choices
+        this.CHOICES = [
+            { value: 0, choice: '✊' }, // Rock
+            { value: 1, choice: '✌️' }, // Scissor
+            { value: 2, choice: '✋' }  // Paper
+        ];
+    }
+
+
+    /**
+     * Start a Rock, Paper, Scissors game
+     * @param {number} playerChoice - The choice of the player (0 = Rock, 1 = Scissor, 2 = Paper)
+     * @returns {void}
+     */
     async rps(playerChoice) {
         const ENEMY_CHOICE_DISPLAY = document.getElementById('enemyChoiceDisplay');
         const PLAYER_CHOICE_DISPLAY = document.getElementById('playerChoiceDisplay');
@@ -177,7 +175,17 @@ class Games {
         }, 200); // Change after 200ms
     }
 
-    // Determine RPS winner function
+    /**
+     * Determine the winner of the Rock, Paper, Scissors game
+     * @param {number} playerChoice - The choice of the player (0 = Rock, 1 = Scissor, 2 = Paper)
+     * @param {number} enemyChoice - The choice of the enemy (0 = Rock, 1 = Scissor, 2 = Paper)
+     * @returns {void}
+     * @description
+     * This function determines the winner of the Rock, Paper, Scissors game by comparing the player's choice with the enemy's choice.
+     * If the player wins, the player's container border turns green and the enemy's container border turns red.
+     * If the player loses, the player's container border turns red and the enemy's container border turns green.
+     * If it's a draw, the text "DRAW" is displayed.
+     */
     determineWinner(playerChoice, enemyChoice) {
         const PLAYER_CONTAINER = document.getElementById('playerContainer');
         const ENEMY_CONTAINER = document.getElementById('enemyContainer');
@@ -202,8 +210,18 @@ class Games {
         }
     }
 
-    // Finish RPS game
-    finishRps() {
+
+    /**
+     * Finish the Rock, Paper, Scissors game and reset the game state.
+     * This function resets the player and enemy choice display, hides the game container,
+     * shows the play container, resets the win text, saves the player data to the leaderboard,
+     * resets the score, and gives the user feedback about their score and leaderboard.
+     * @description
+     * This function is called when the user clicks the "Finish Game" button.
+     * It resets the game state, saves the player data to the leaderboard, and gives the user feedback about their score and leaderboard.
+     * @returns {void}
+     */
+    finish() {
         const PLAYER_CONTAINER = document.getElementById('playerContainer');
         const ENEMY_CONTAINER = document.getElementById('enemyContainer');
         const ENEMY_CHOICE_DISPLAY = document.getElementById('enemyChoiceDisplay');
@@ -245,29 +263,57 @@ class Games {
             .map(entry => `${entry.playerName}: ${entry.score}`)
             .join('\n');
         alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${rpsLeaderboard}`);
+    }
+}
 
+/*
+* Click Hero Class
+* This class will handle the logic for the Click Hero game, including calculating the attack power, 
+* upgrading the attack, and handling the auto click feature.
+*/
+class ClickHero extends Games {
+    constructor() {
+        super();
+
+        // Click Hero Data
+        this.clickHero = {
+            atk: JSON.parse(localStorage.getItem('atk')) || 1,
+            auto: JSON.parse(localStorage.getItem('auto')) || false,
+            upPrice: JSON.parse(localStorage.getItem('upPrice')) || 10,
+            milestones: [
+                {
+                    threshold: 5000,
+                    text: "YOU ARE A HERO",
+                    isReached: false
+                },
+                {
+                    threshold: 2000,
+                    text: "UNSTOPPABLE",
+                    isReached: false
+                },
+                {
+                    threshold: 1000,
+                    text: "GODLIKE",
+                    isReached: false
+                },
+                {
+                    threshold: 500,
+                    text: "AMAZING",
+                    isReached: false
+                },
+                {
+                    threshold: 100,
+                    text: "NOT ENOUGH",
+                    isReached: false
+                }
+            ]
+        }
     }
 
-    // 👆 Click Hero Game Section
-
-    // Click Hero container manage function
-    playClickHero() {
-        // Hide play container, show tutorial container
-        this.CONTAINER_PLAY.classList.add('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('flex')
-
-
-        // Show game container after 3 seconds and reset score
-        // setTimeout(() => {
-        //     this.LOADING.classList.add('hidden')
-        //     this.CONTAINER_GAME.classList.toggle('hidden');
-        //     this.CONTAINER_GAME.classList.toggle('flex');
-        //     this.resetScore()
-        // }, 3000)
-    }
-
-    startClickHero() {
+    /**
+     * Reset Click Hero data and show game container after 3 seconds, also reset score
+     */
+    start() {
         // Reset Click Hero data
         this.clickHero.atk = 1;
         this.clickHero.auto = false;
@@ -276,7 +322,7 @@ class Games {
 
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
-        
+
         this.LOADING.classList.remove('hidden')
 
         // Show game container after 3 seconds and reset score
@@ -288,9 +334,11 @@ class Games {
         }, 3000)
     }
 
-
-    // Click Hero
-    clickedHero() {
+    /**
+     * Click Hero logic
+     * Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
+     */
+    clickHero() {
         // Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
@@ -313,7 +361,12 @@ class Games {
         }
     }
 
-    // Upgrade ATK logic
+
+    /**
+     * Upgrade ATK by 1, reduce score by upgrade price, and double the upgrade price.
+     * Also save ATK and upgrade price to localStorage.
+     * If ATK reaches max ATK, set upgrade price display to "MAX"
+     */
     upgradeAtk() {
         // Check if player has enough score to upgrade, if yes then reduce score by upgrade price, 
         // increase atk by 1, and double the upgrade price, also save atk and upgrade price to localStorage
@@ -340,7 +393,12 @@ class Games {
         }
     }
 
-    // Add Auto Click logic
+
+    /**
+     * Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
+     * set auto click to true, save auto click status to localStorage, 
+     * and start auto click interval, also update auto click status display
+     */
     addAuto() {
         // Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
         // set auto click to true, save auto click status to localStorage, 
@@ -361,7 +419,11 @@ class Games {
         }
     }
 
-    // Activate auto click functionality
+
+    /**
+     * If auto click is active, start an interval that clicks the hero every 500ms, 
+     * and add a pressing animation to the button. The animation will be removed after 100ms.
+     */
     activeAuto() {
         const HERO_BTN = document.getElementById('hero-btn');
 
@@ -369,7 +431,7 @@ class Games {
         // also add a pressing animation to the button
         if (this.clickHero.auto) {
             setInterval(() => {
-                this.clickedHero();
+                this.clickHero();
 
                 HERO_BTN.classList.add('auto-pressing');
 
@@ -380,10 +442,30 @@ class Games {
             }, 500);
         }
     }
+}
 
-    // 🐉 Pokemon Game Section
+/*
+* Pokemon Class
+* This class will handle the logic for the Pokemon game, including fetching random Pokemon data from the PokeAPI,
+* rendering the Pokemon image and name, generating type buttons for the player to guess, and checking the player's answer.
+*/
+class Pokemon extends Games {
+    constructor() {
+        super();
 
-    // Fetch random Pokemon type and data from PokeAPI
+        // Pokemon Data
+        this.pokemon = {
+            maxStage: 5, currentStage: 1, currentData: null, isLoading: false, trials: 5,
+        };
+    }
+
+
+    /**
+     * Randomly selects a Pokemon type, fetches a Pokemon of that type, 
+     * and returns the details of the selected Pokemon.
+     * @returns {Object} Details of the selected Pokemon, including its type, name, and image.
+     * @throws {Error} If there is an error while fetching the data.
+     */
     async guessPokemonType() {
         try {
             // List of Pokemon types to randomly select from
@@ -419,16 +501,13 @@ class Games {
         }
     }
 
-    // Pokemon game container manage function
-    playPokemon() {
-        // Hide play container, show tutorial container
-        this.CONTAINER_PLAY.classList.add('hidden');
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden');
-        this.CONTAINER_TUTORIAL.classList.toggle('flex');
-    }
-
-    // Start the Pokemon game
-    async startPokemon() {
+    /**
+     * Starts the Pokemon game by hiding the tutorial container, showing the loading animation,
+     * resetting the game data, fetching a Pokemon of a random type, and rendering the game
+     * after loading. If there is an error while fetching the data, an alert will be shown and the
+     * game will be finished.
+     */
+    async start() {
         this.LOADING.classList.remove('hidden');
         this.CONTAINER_TUTORIAL.classList.toggle('hidden');
         this.CONTAINER_TUTORIAL.classList.toggle('flex');
@@ -455,7 +534,12 @@ class Games {
         }
     }
 
-    // Render Pokemon data and game interface
+
+    /**
+     * Renders the Pokemon game by rendering the Pokemon image, name, stage, and generating type buttons
+     * for the player to guess the type of the Pokemon. Also updates the trials and hint text.
+     * @param {Object} data - The fetched Pokemon data to be rendered.
+     */
     renderPokemonGame(data) {
         const POKEMON_IMG = document.getElementById('pokemonImage');
         const POKEMON_NAME = document.getElementById('pokemonName');
@@ -497,7 +581,13 @@ class Games {
         });
     }
 
-    // Check answer logic when player clicks type button
+
+    /**
+     * Checks if the user's guess matches the current pokemon's type.
+     * If correct, update the score and display a correct message.
+     * If incorrect, update the trials and display a hint or game over message.
+     * @param {string} userGuess - The user's guess.
+     */
     checkAnswer(userGuess) {
         // Safety check if currentData is not available
         if (!this.pokemon.currentData) return;
@@ -523,7 +613,7 @@ class Games {
                 } else {
                     // Game Clear Logic
                     alert("CONGRATULATIONS! You cleared all stages!");
-                    this.finishPokemonGame();
+                    this.finish();
                 }
             }, 1500);
 
@@ -593,13 +683,20 @@ class Games {
             } else {
                 // Game Over Logic
                 alert(`GAME OVER! The answer is ${this.pokemon.currentData.type}.`);
-                this.finishPokemonGame();
+                this.finish();
             }
         }
     }
 
-    // Reset Pokemon game data and return to play container
-    finishPokemonGame() {
+
+    /**
+     * Finish the Pokemon game by resetting the game data, updating the leaderboard, and hiding/showing the relevant containers.
+     * This function is called when the user finishes the game, either by winning or losing.
+     * @description
+     * This function resets the Pokemon game data, updates the leaderboard with the user's score, resets the score, and hides/shows the relevant containers.
+     * @returns {void}
+     */
+    finish() {
         const PLAYER_DATA = {
             gameType: 'pokemon', playerName: this.getPlayerName(), score: this.getScore()
         };
@@ -619,22 +716,29 @@ class Games {
         this.CONTAINER_GAME.classList.toggle('flex');
         this.CONTAINER_PLAY.classList.remove('hidden');
     }
-
-    // 📋 Other Section
-
-    resetGame() {
-        this.resetScore();
-    }
 }
 
 // Init Games section include function and elements
 const NAME_ELEMENT = document.getElementById('playerName');
 NAME_ELEMENT.textContent = localStorage.getItem('playerName') || 'Random Player';
-let games = new Games(localStorage.getItem('playerName') || 'Random Player');
 
+// Init Games
+const GAMES = new Games(localStorage.getItem('playerName') || 'Random Player');
+const rockPaperScissors = new RPS();
+const CLICK_HERO = new ClickHero();
+const POKEMON = new Pokemon();
+
+/**
+ * Initializes the games section by resetting the game data and
+ * hiding/showing the edit modal based on whether the user has a saved name.
+ * @description
+ * This function is called when the page is loaded, it resets the game data
+ * and hides/shows the edit modal based on whether the user has a saved name.
+ * If the user has a saved name, the edit modal is hidden, otherwise it is shown.
+ */
 function initGames() {
     const editModal = document.querySelector('.edit-modal');
-    games.resetGame();
+    GAMES.resetGame();
 
     if (localStorage.getItem('playerName')) {
         editModal.classList.add('hidden');
@@ -643,11 +747,13 @@ function initGames() {
     }
 }
 
+// Event Listeners for Games Section
 function clickShowNameModal() {
     const editModal = document.querySelector('.edit-modal');
     editModal.classList.toggle('hidden');
 }
 
+// Submit name function, set player name and hide modal
 function submitName(e) {
     const name = document.getElementById('name').value;
     games.setPlayerName(name);
@@ -656,50 +762,50 @@ function submitName(e) {
     e.preventDefault();
 }
 
-//RPS Section
+// RPS Section
 function playRps() {
-    games.playRps();
+    rockPaperScissors.play();
 }
 
 function startRps() {
-    games.startRps();
+    rockPaperScissors.start();
 }
 
 function rps(choice) {
-    games.rps(choice);
+    rockPaperScissors.rps(choice);
 }
 
 function finishRps() {
-    games.finishRps();
+    rockPaperScissors.finish();
 }
 
 // Click Hero Section
 function playClickHero() {
-    games.playClickHero();
+    CLICK_HERO.play();
 }
 
 function startClickHero() {
-    games.startClickHero();
+    CLICK_HERO.start();
 }
 
 function clickHero() {
-    games.clickedHero()
+    CLICK_HERO.clickHero();
 }
 
 function upgradeATK() {
-    games.upgradeAtk()
+    CLICK_HERO.upgradeAtk();
 }
 
 function addAuto() {
-    games.addAuto()
+    CLICK_HERO.addAuto()
 }
 
 // Pokemon Section
 
 function playPokemon() {
-    games.playPokemon();
+    POKEMON.play();
 }
 
 function startPokemon() {
-    games.startPokemon();
+    POKEMON.start();
 }
