@@ -753,10 +753,17 @@ function clickShowNameModal() {
     editModal.classList.toggle('hidden');
 }
 
-// Submit name function, set player name and hide modal
+/**
+ * Submits the user's name and saves it to local storage.
+ * @description
+ * This function is called when the user submits the edit name form.
+ * It gets the user's input from the form, sets the player's name using the Games class,
+ * hides the edit modal, and prevents the form from submitting.
+ * @param {Event} e - The event object that triggered this function.
+ */
 function submitName(e) {
     const name = document.getElementById('name').value;
-    games.setPlayerName(name);
+    GAMES.setPlayerName(name);
     clickShowNameModal();
 
     e.preventDefault();
