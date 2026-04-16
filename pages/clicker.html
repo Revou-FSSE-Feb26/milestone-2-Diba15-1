@@ -12,76 +12,6 @@
         <!--  Import Font Awesome  -->
         <script src="https://kit.fontawesome.com/c0f92099a8.js"
             crossorigin="anonymous"></script>
-
-        <style type="text/tailwindcss">
-            @theme {
-                --color-main: #FF5733;
-                --color-sub: #FFC300;
-                --color-text: #2D2D2D;
-                --color-vanilla: #f5f4fc;
-                --color-dark-bg: #1e293b;
-                --font-default: 'Quicksand', sans-serif;
-                --font-title: 'Fredoka', sans-serif;
-            }
-
-            @layer base {
-                * {
-                    @apply font-default scroll-smooth;
-                }
-
-                body {
-                    @apply bg-dark-bg
-                }
-
-                header {
-                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0
-                    bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
-                    transition-colors duration-300;
-                }
-
-                main {
-                    @apply flex flex-col p-4 gap-4;
-                }
-            }
-
-            @layer components {
-                /*Button*/
-                .btn {
-                    @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title
-                    transition-all
-                    transform hover:scale-105 shadow-lg shadow-main/20;
-                }
-
-                .btn-sub {
-                    @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
-                    font-bold font-title transition-all;
-                }
-
-                /*  Edit Modal  */
-                .edit-modal {
-                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
-                }
-
-                .edit-modal form {
-                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
-                    transition-all duration-500 w-xl mx-4;
-                }
-
-                .edit-modal form input {
-                    @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
-                }
-
-                .hero-button {
-                    @apply rounded-full font-title text-2xl text-white transition-all duration-75 inset-shadow-sm
-                    inset-shadow-black/50 font-bold bg-main py-16 px-4 border-b-4 border-black/20 active:border-b-0;
-                }
-
-                .hero-button.auto-pressing, .hero-button:active {
-                    @apply translate-y-1 shadow-md scale-95 bg-sub;
-                    box-shadow: 0 0 20px rgba(255, 195, 0, 0.6);
-                }
-            }
-        </style>
     </head>
     <body onload="initGames()">
         <header>
@@ -186,7 +116,7 @@
 
             <!-- Game Navigation -->
             <section id="gameNav-container"
-                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
+                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between mt-4">
                 <a href="pokemon.html" class="flex items-center gap-2 btn-sub">
                     <i class="fa-solid fa-arrow-left"></i>
                     Pokemon

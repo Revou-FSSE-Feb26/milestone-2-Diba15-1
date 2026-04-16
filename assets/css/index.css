@@ -1,71 +1,212 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,300..700&family=Quicksand:wght@300..700&display=swap');
+@import "tailwindcss";
 
-::-webkit-scrollbar {
-    display: none;
+@theme {
+    --color-main: #FF5733;
+    --color-sub: #FFC300;
+    --color-text: #2D2D2D;
+    --color-vanilla: #f5f4fc;
+    --color-dark-bg: #1e293b;
+    --font-default: 'Quicksand', sans-serif;
+    --font-title: 'Fredoka', sans-serif;
 }
 
-.heroAnimation {
-    animation: heroAnimation 1s ease-in-out;
-}
-
-.delaySpan {
-    animation: heroAnimation 5s ease-in-out;
-}
-
-.fade {
-    animation: fadeTransition 0.5s ease-in-out;
-}
-
-.fadeOut {
-    animation: fadeOut 0.5s ease-in-out;
-}
-
-.animate-praise {
-    animation: praise-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.animate-pop {
-    animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes pop-in {
-    0% { transform: scale(0.5); opacity: 0; }
-    80% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes praise-pop {
-    0% { transform: scale(0); opacity: 0; }
-    80% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(1); }
-}
-
-@keyframes heroAnimation {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeTransition {
-    from {
-        opacity: 0;
+@layer utilities {
+    ::-webkit-scrollbar {
+        display: none;
     }
 
-    to {
-        opacity: 1;
+    .heroAnimation {
+        animation: heroAnimation 1s ease-in-out;
+    }
+
+    .delaySpan {
+        animation: heroAnimation 5s ease-in-out;
+    }
+
+    .fade {
+        animation: fadeTransition 0.5s ease-in-out;
+    }
+
+    .fadeOut {
+        animation: fadeOut 0.5s ease-in-out;
+    }
+
+    .animate-praise {
+        animation: praise-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .animate-pop {
+        animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes pop-in {
+        0% {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+
+        80% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes praise-pop {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        80% {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes heroAnimation {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeTransition {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
     }
 }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
+@layer base {
+    * {
+        @apply font-default scroll-smooth;
     }
-    to {
-        opacity: 0;
+
+    body {
+        @apply bg-dark-bg
+    }
+
+    header {
+        @apply flex justify-between items-center py-4 px-8 bg-gray-800/70 text-white sticky top-0 dark:bg-dark-bg/90 backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main transition-colors duration-300;
+    }
+
+    main {
+        @apply flex flex-col p-4;
+    }
+
+    footer#mainFooter {
+        @apply w-full border-t border-gray-700 py-12 px-12 sm:px-0 flex flex-col sm:flex-row gap-8 md:gap-0 flex-wrap justify-center items-start sm:justify-around text-white;
+    }
+}
+
+@layer components {
+    .highlight-text {
+        @apply text-sub transition-colors duration-300;
+    }
+
+    .heroDescription {
+        @apply font-title text-xl md:text-2xl text-gray-300 font-medium max-w-2xl leading-relaxed z-10;
+        animation-delay: 0.2s;
+        animation-fill-mode: backwards;
+    }
+
+    /*Navbar*/
+    .active {
+        @apply font-bold text-main;
+    }
+
+    .active::after {
+        content: "";
+        @apply absolute bottom-0 left-0 w-full h-0.5;
+    }
+
+    /*Button*/
+    .heroBtnList {
+        @apply flex flex-col sm:flex-row gap-4 mt-4 z-10;
+        animation-delay: 0.4s;
+        animation-fill-mode: backwards;
+    }
+
+    .btn {
+        @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title transition-all transform hover:scale-105 shadow-lg shadow-main/20;
+    }
+
+    .btn-sub {
+        @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl font-bold font-title transition-all;
+    }
+
+    /* Game Card Styling */
+    .game-card {
+        @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4 transition-all duration-500 hover:-translate-y-3 hover:border-main hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-main/10;
+    }
+
+    .image-container {
+        @apply relative aspect-[16/10] rounded-[1.5rem] bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden flex items-center justify-center;
+    }
+
+    .game-card:hover .game-icon {
+        @apply scale-125 rotate-12 text-main;
+    }
+
+    .game-icon {
+        @apply text-6xl text-white/20 transition-all duration-500;
+    }
+
+    /*  Edit Modal  */
+    .edit-modal {
+        @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
+    }
+
+    .edit-modal form {
+        @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4 transition-all duration-500 w-xl mx-4;
+    }
+
+    .edit-modal form input {
+        @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
+    }
+
+    /* Hero Games Button */
+    .hero-button {
+        @apply rounded-full font-title text-2xl text-white transition-all duration-75 inset-shadow-sm inset-shadow-black/50 font-bold bg-main py-16 px-4 border-b-4 border-black/20 active:border-b-0;
+    }
+
+    .hero-button.auto-pressing,
+    .hero-button:active {
+        @apply translate-y-1 shadow-md scale-95 bg-sub;
+        box-shadow: 0 0 20px rgba(255, 195, 0, 0.6);
+    }
+
+    /* Button Pokemon */
+
+    .btn-types {
+        @apply bg-main hover:bg-yellow-400 text-white font-title text-xs py-3 rounded-xl border-b-4 border-black/20 active:border-b-0 active:translate-y-1 transition-all;
     }
 }

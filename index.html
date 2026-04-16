@@ -11,107 +11,10 @@
         <meta name="keywords"
             content="Revofun, gaming company, web application, game, games, game development, gaming" />
         <title>Revofun - A web application for gaming company</title>
-        <!-- Import Tailwind CSS -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <link rel="stylesheet" href="assets/css/index.css">
         <!--  Import Font Awesome  -->
         <script src="https://kit.fontawesome.com/c0f92099a8.js"
             crossorigin="anonymous"></script>
-
-        <style type="text/tailwindcss">
-            @theme {
-                --color-main: #FF5733;
-                --color-sub: #FFC300;
-                --color-text: #2D2D2D;
-                --color-vanilla: #f5f4fc;
-                --color-dark-bg: #1e293b;
-                --font-default: 'Quicksand', sans-serif;
-                --font-title: 'Fredoka', sans-serif;
-            }
-
-            @layer base {
-                * {
-                    @apply font-default scroll-smooth;
-                }
-
-                body {
-                    @apply bg-dark-bg
-                }
-
-                header {
-                    @apply flex justify-between items-center py-4 px-8 bg-gray-800/70 text-white sticky top-0
-                    dark:bg-dark-bg/90 backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
-                    transition-colors duration-300;
-                }
-
-                main {
-                    @apply flex flex-col p-4;
-                }
-
-                footer {
-                    @apply w-full border-t border-gray-700 py-12 px-12 sm:px-0 flex flex-col sm:flex-row gap-8 md:gap-0 flex-wrap justify-center items-start sm:justify-around text-white;
-                }
-            }
-
-            @layer components {
-                .highlight-text {
-                    @apply text-sub transition-colors duration-300;
-                }
-
-                .heroDescription {
-                    @apply font-title text-xl md:text-2xl text-gray-300 font-medium max-w-2xl leading-relaxed z-10;
-                    animation-delay: 0.2s; 
-                    animation-fill-mode: backwards;
-                }
-
-                /*Navbar*/
-                .active {
-                    @apply font-bold text-main;
-                }
-
-                .active::after {
-                    content: "";
-                    @apply absolute bottom-0 left-0 w-full h-0.5;
-                }
-
-                /*Button*/
-                .heroBtnList {
-                    @apply flex flex-col sm:flex-row gap-4 mt-4 z-10;
-                    animation-delay: 0.4s; 
-                    animation-fill-mode: backwards;
-                }
-
-                .btn {
-                    @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title
-                    transition-all
-                    transform hover:scale-105 shadow-lg shadow-main/20;
-                }
-
-                .btn-sub {
-                    @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
-                    font-bold font-title transition-all;
-                }
-
-                /* Game Card Styling */
-                .game-card {
-                    @apply p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-between gap-4
-                    transition-all duration-500 hover:-translate-y-3 hover:border-main hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-main/10;
-                }
-
-                .image-container {
-                    @apply relative aspect-[16/10] rounded-[1.5rem] bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden flex items-center justify-center;
-                }
-
-                .game-card:hover .game-icon {
-                    @apply scale-125 rotate-12 text-main;
-                }
-
-                .game-icon {
-                    @apply text-6xl text-white/20 transition-all duration-500;
-                }
-            }
-        </style>
     </head>
     <body>
         <!--Header Navbar-->
@@ -391,7 +294,7 @@
         </main>
 
         <!--Footer-->
-        <footer>
+        <footer id="mainFooter">
             <section id="footer-game" class="flex flex-col gap-4">
                 <h1 class="font-title font-bold text-2xl">Games</h1>
                 <ul class="flex flex-col gap-2">
