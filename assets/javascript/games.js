@@ -338,7 +338,7 @@ class ClickHero extends Games {
      * Click Hero logic
      * Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
      */
-    clickHero() {
+    clicked() {
         // Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
@@ -431,7 +431,7 @@ class ClickHero extends Games {
         // also add a pressing animation to the button
         if (this.clickHero.auto) {
             setInterval(() => {
-                this.clickHero();
+                this.clicked();
 
                 HERO_BTN.classList.add('auto-pressing');
 
@@ -793,7 +793,7 @@ function startClickHero() {
 }
 
 function clickHero() {
-    CLICK_HERO.clickHero();
+    CLICK_HERO.clicked();
 }
 
 function upgradeATK() {
