@@ -159,7 +159,7 @@ class RPS extends Games {
         WIN_TEXT.textContent = '';
 
         let shuffleCount = 0;
-        const shuffleInterval = setInterval(() => {
+        const SHUFFLE_INTERVAL = setInterval(() => {
             const COMPUTER_CHOICE = this.CHOICES[Math.floor(Math.random() * this.CHOICES.length)];
             // Show icon random
             ENEMY_CHOICE_DISPLAY.innerHTML = COMPUTER_CHOICE.choice;
@@ -167,7 +167,7 @@ class RPS extends Games {
 
             // Stop after shufflecount > 15
             if (shuffleCount > 15) {
-                clearInterval(shuffleInterval);
+                clearInterval(SHUFFLE_INTERVAL);
                 PLAYER_CONTAINER.classList.remove('border-white/20')
                 ENEMY_CONTAINER.classList.remove('border-white/20')
                 this.determineWinner(playerChoice, COMPUTER_CHOICE.value);
@@ -258,11 +258,11 @@ class RPS extends Games {
         this.resetScore()
 
         // Give user feedback about their score and leaderboard
-        const rpsLeaderboard = this.leaderboard
+        const RPS_LEADERBOARD = this.leaderboard
             .filter(entry => entry.gameType === 'rps')
             .map(entry => `${entry.playerName}: ${entry.score}`)
             .join('\n');
-        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${rpsLeaderboard}`);
+        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${RPS_LEADERBOARD}`);
     }
 }
 
@@ -344,13 +344,13 @@ class ClickHero extends Games {
         this.setScore(ATK);
         const PRAISE_TEXT = document.getElementById('praiseText');
 
-        const milestones = this.clickHero.milestones;
-        const currentMilestone = milestones.find(m => this.getScore() >= m.threshold && !m.isReached);
+        const MILESTONES = this.clickHero.milestones;
+        const CURRENT_MILESTONES = MILESTONES.find(m => this.getScore() >= m.threshold && !m.isReached);
 
-        if (currentMilestone) {
-            currentMilestone.isReached = true;
+        if (CURRENT_MILESTONES) {
+            CURRENT_MILESTONES.isReached = true;
 
-            PRAISE_TEXT.textContent = currentMilestone.text;
+            PRAISE_TEXT.textContent = CURRENT_MILESTONES.text;
 
             PRAISE_TEXT.classList.add('animate-praise', 'text-sub');
 
@@ -469,29 +469,29 @@ class Pokemon extends Games {
     async guessPokemonType() {
         try {
             // List of Pokemon types to randomly select from
-            const pokemonTypes = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
+            const POKEMON_TYPES = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
             // Base API URL for PokeAPI
-            const baseApi = 'https://pokeapi.co/api/v2/';
+            const BASE_API = 'https://pokeapi.co/api/v2/';
 
             // Randomly select a type
-            const randomType = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
+            const RANDOM_TYPE = POKEMON_TYPES[Math.floor(Math.random() * POKEMON_TYPES.length)];
 
             // Fetch Pokemon of that type
-            const typeResponse = await fetch(`${baseApi}type/${randomType}`);
-            const typeData = await typeResponse.json();
+            const TYPE_RESPONSE = await fetch(`${BASE_API}type/${RANDOM_TYPE}`);
+            const TYPE_DATA = await TYPE_RESPONSE.json();
 
             // Randomly select a Pokemon from that type
-            const randomEntry = typeData.pokemon[Math.floor(Math.random() * typeData.pokemon.length)];
+            const RANDOM_ENTRY = TYPE_DATA.pokemon[Math.floor(Math.random() * TYPE_DATA.pokemon.length)];
 
             // Fetch details of the selected Pokemon
-            const pokemonResponse = await fetch(randomEntry.pokemon.url);
-            const pokemonDetail = await pokemonResponse.json();
+            const POKEMON_RESPONSE = await fetch(RANDOM_ENTRY.pokemon.url);
+            const POKEMON_DETAIL = await POKEMON_RESPONSE.json();
 
             // Store current Pokemon data for game logic
             this.pokemon.currentData = {
-                type: randomType,
-                name: pokemonDetail.name,
-                image: pokemonDetail.sprites.other['official-artwork'].front_default || pokemonDetail.sprites.front_default
+                type: RANDOM_TYPE,
+                name: POKEMON_DETAIL.name,
+                image: POKEMON_DETAIL.sprites.other['official-artwork'].front_default || POKEMON_DETAIL.sprites.front_default
             };
 
             return this.pokemon.currentData;
@@ -518,15 +518,15 @@ class Pokemon extends Games {
         this.resetScore();
 
         // Fetch Pokemon data and render game after loading
-        const data = await this.guessPokemonType();
+        const DATA = await this.guessPokemonType();
 
         // If data is successfully fetched, show game container, else show alert and return to play container
-        if (data) {
+        if (DATA) {
             setTimeout(() => {
                 this.LOADING.classList.add('hidden');
                 this.CONTAINER_GAME.classList.toggle('hidden');
                 this.CONTAINER_GAME.classList.toggle('flex');
-                this.renderPokemonGame(data);
+                this.renderPokemonGame(DATA);
             }, 2000)
         } else {
             alert("Connection problem!");
@@ -563,21 +563,21 @@ class Pokemon extends Games {
         if (HINT_TEXT) HINT_TEXT.textContent = "";
 
         // Generate types button
-        const types = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
+        const TYPES = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
 
         // Clear previous button
         CHOICE_CONTAINER.innerHTML = '';
 
-        types.forEach(type => {
-            const btn = document.createElement('button');
-            btn.innerText = type.toUpperCase();
+        TYPES.forEach(type => {
+            const BTN = document.createElement('button');
+            BTN.innerText = type.toUpperCase();
 
             // Styling button
-            btn.className = `btn-types`;
+            BTN.className = `btn-types`;
 
             // Event listener for each button
-            btn.onclick = () => this.checkAnswer(type);
-            CHOICE_CONTAINER.appendChild(btn);
+            BTN.onclick = () => this.checkAnswer(type);
+            CHOICE_CONTAINER.appendChild(BTN);
         });
     }
 
