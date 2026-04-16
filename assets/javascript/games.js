@@ -275,9 +275,15 @@ class ClickHero extends Games {
     constructor() {
         super();
 
+        // Centralized DOM Elements
+        this.FINISH_BTN = document.getElementById('finishBtn');
+
+        this.autoInterval = null;
+
         // Click Hero Data
         this.clickHero = {
             atk: JSON.parse(localStorage.getItem('atk')) || 1,
+            currentAtkUp: 1,
             auto: JSON.parse(localStorage.getItem('auto')) || false,
             upPrice: JSON.parse(localStorage.getItem('upPrice')) || 10,
             reachFinish: false,
@@ -315,17 +321,15 @@ class ClickHero extends Games {
      * Reset Click Hero data and show game container after 3 seconds, also reset score
      */
     start() {
-        const FINISH_BTN = document.getElementById('finishBtn');
-
-        // Reset Click Hero data
-        this.resetGame()
 
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
-        FINISH_BTN.classList.add('hidden')
-        FINISH_BTN.classList.remove('flex')
-
+        this.FINISH_BTN.classList.add('hidden')
+        this.FINISH_BTN.classList.remove('flex')
         this.LOADING.classList.remove('hidden')
+
+        // Reset Click Hero data
+        this.resetGame();
 
         // Show game container after 3 seconds and reset score
         setTimeout(() => {
@@ -345,7 +349,6 @@ class ClickHero extends Games {
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
         const PRAISE_TEXT = document.getElementById('praiseText');
-        const FINISH_BTN = document.getElementById('finishBtn');
 
         const MILESTONES = this.clickHero.milestones;
         const CURRENT_MILESTONES = MILESTONES.find(m => this.getScore() >= m.threshold && !m.isReached);
@@ -363,13 +366,13 @@ class ClickHero extends Games {
             }, 2000);
         }
 
-        if (ATK > 10) {
-            this.clickHero.reachFinish = true;
+        if (this.getScore() >= MILESTONES[0].threshold) {
+                this.clickHero.reachFinish = true;
         }
 
         if (this.clickHero.reachFinish) {
-            FINISH_BTN.classList.remove('hidden');
-            FINISH_BTN.classList.add('flex');
+            this.FINISH_BTN.classList.remove('hidden');
+            this.FINISH_BTN.classList.add('flex');
         }
     }
 
@@ -386,18 +389,20 @@ class ClickHero extends Games {
         const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
         const MAX_ATK = 10;
 
-        if (this.clickHero.atk < MAX_ATK && this.getScore() >= this.clickHero.upPrice) {
+        if (this.clickHero.currentAtkUp < MAX_ATK && this.getScore() >= this.clickHero.upPrice) {
             this.setScore(-this.clickHero.upPrice);
 
-            this.clickHero.atk += 1;
+            // Attack Data 2^10
+            this.clickHero.atk *= 2;
             this.clickHero.upPrice *= 2;
+            this.clickHero.currentAtkUp += 1;
 
             localStorage.setItem('atk', JSON.stringify(this.clickHero.atk));
             localStorage.setItem('upPrice', JSON.stringify(this.clickHero.upPrice));
 
-            ATK_UP.innerHTML = `${this.clickHero.atk}/${MAX_ATK}`;
+            ATK_UP.innerHTML = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
 
-            if (this.clickHero.atk >= MAX_ATK) {
+            if (this.clickHero.currentAtkUp >= MAX_ATK) {
                 ATK_PRICE_DISPLAY.innerHTML = "MAX";
             } else {
                 ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
@@ -416,7 +421,7 @@ class ClickHero extends Games {
         // set auto click to true, save auto click status to localStorage, 
         // and start auto click interval, also update auto click status display
         const AUTO_STATUS = document.getElementById('auto-status');
-        const UP_PRICE = 200; // Price for auto click
+        const UP_PRICE = 1000; // Price for auto click
 
         if (!this.clickHero.auto && this.getScore() >= UP_PRICE) {
             this.setScore(-UP_PRICE);
@@ -442,7 +447,7 @@ class ClickHero extends Games {
         // If auto click is active, start an interval that clicks the hero every 500ms, 
         // also add a pressing animation to the button
         if (this.clickHero.auto) {
-            setInterval(() => {
+            this.autoInterval = setInterval(() => {
                 this.clicked();
 
                 HERO_BTN.classList.add('auto-pressing');
@@ -455,12 +460,12 @@ class ClickHero extends Games {
         }
     }
 
-        /**
-         * Finish the Click Hero game by resetting the game data, updating the leaderboard, and hiding/showing the relevant containers.
-         * This function is called when the user finishes the game, either by winning or losing.
-         * @description
-         * This function resets the Click Hero game data, updates the leaderboard with the user's score, resets the score, and hides/shows the relevant containers.
-         */
+    /**
+     * Finish the Click Hero game by resetting the game data, updating the leaderboard, and hiding/showing the relevant containers.
+     * This function is called when the user finishes the game, either by winning or losing.
+     * @description
+     * This function resets the Click Hero game data, updates the leaderboard with the user's score, resets the score, and hides/shows the relevant containers.
+     */
     finish() {
         const PLAYER_DATA = {
             gameType: 'click_hero', playerName: this.getPlayerName(), score: this.getScore()
@@ -474,11 +479,14 @@ class ClickHero extends Games {
         this.CONTAINER_PLAY.classList.remove('hidden');
 
         // Give user feedback about their score and leaderboard
-        const RPS_LEADERBOARD = this.leaderboard
+        const CLICK_LEADERBOARD = this.leaderboard
             .filter(entry => entry.gameType === 'click_hero')
             .map(entry => `${entry.playerName}: ${entry.score}`)
             .join('\n');
-        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${RPS_LEADERBOARD}`);
+        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${CLICK_LEADERBOARD}`);
+
+        // Reset Game Data
+        this.resetGame();
     }
 
     /**
@@ -496,9 +504,12 @@ class ClickHero extends Games {
         this.resetScore();
         this.clickHero.atk = 1;
         this.clickHero.upPrice = 10;
+        this.clickHero.currentAtkUp = 1;
         this.clickHero.auto = false;
         this.clickHero.reachFinish = false;
         this.clickHero.milestones.forEach(m => m.isReached = false);
+
+        clearInterval(this.autoInterval);
 
         ATK_UP.innerHTML = `${this.clickHero.atk}/10`;
         ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
