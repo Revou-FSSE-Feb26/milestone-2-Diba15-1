@@ -718,39 +718,36 @@ class Pokemon extends Games {
     }
 }
 
-// Init Games section include function and elements
-const NAME_ELEMENT = document.getElementById('playerName');
-NAME_ELEMENT.textContent = localStorage.getItem('playerName') || 'Random Player';
-
 // Init Games
-const GAMES = new Games(localStorage.getItem('playerName') || 'Random Player');
-const rockPaperScissors = new RPS();
+const LOCAL_NAME = localStorage.getItem('playerName');
+const GAMES = new Games(LOCAL_NAME);
+const ROCK_PAPER_SCISSORS = new RPS();
 const CLICK_HERO = new ClickHero();
 const POKEMON = new Pokemon();
 
+
 /**
- * Initializes the games section by resetting the game data and
- * hiding/showing the edit modal based on whether the user has a saved name.
- * @description
- * This function is called when the page is loaded, it resets the game data
- * and hides/shows the edit modal based on whether the user has a saved name.
- * If the user has a saved name, the edit modal is hidden, otherwise it is shown.
+ * Initializes the game by setting the player's name and hiding/showing the edit modal.
+ * If the player's name is saved in local storage, the edit modal is hidden.
+ * Otherwise, the edit modal is shown.
  */
 function initGames() {
-    const editModal = document.querySelector('.edit-modal');
+    const EDIT_MODAL = document.querySelector('.edit-modal');
+    const NAME_ELEMENT = document.getElementById('playerName');
+    NAME_ELEMENT.textContent = LOCAL_NAME || 'Random Player';
     GAMES.resetGame();
 
-    if (localStorage.getItem('playerName')) {
-        editModal.classList.add('hidden');
+    if (LOCAL_NAME) {
+        EDIT_MODAL.classList.add('hidden');
     } else {
-        editModal.classList.remove('hidden');
+        EDIT_MODAL.classList.remove('hidden');
     }
 }
 
 // Event Listeners for Games Section
 function clickShowNameModal() {
-    const editModal = document.querySelector('.edit-modal');
-    editModal.classList.toggle('hidden');
+    const EDIT_MODAL = document.querySelector('.edit-modal');
+    EDIT_MODAL.classList.toggle('hidden');
 }
 
 /**
@@ -762,8 +759,8 @@ function clickShowNameModal() {
  * @param {Event} e - The event object that triggered this function.
  */
 function submitName(e) {
-    const name = document.getElementById('name').value;
-    GAMES.setPlayerName(name);
+    const NAME = document.getElementById('name').value;
+    GAMES.setPlayerName(NAME);
     clickShowNameModal();
 
     e.preventDefault();
@@ -771,19 +768,19 @@ function submitName(e) {
 
 // RPS Section
 function playRps() {
-    rockPaperScissors.play();
+    ROCK_PAPER_SCISSORS.play();
 }
 
 function startRps() {
-    rockPaperScissors.start();
+    ROCK_PAPER_SCISSORS.start();
 }
 
 function rps(choice) {
-    rockPaperScissors.rps(choice);
+    ROCK_PAPER_SCISSORS.rps(choice);
 }
 
 function finishRps() {
-    rockPaperScissors.finish();
+    ROCK_PAPER_SCISSORS.finish();
 }
 
 // Click Hero Section
