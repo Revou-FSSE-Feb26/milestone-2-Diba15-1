@@ -280,6 +280,7 @@ class ClickHero extends Games {
             atk: JSON.parse(localStorage.getItem('atk')) || 1,
             auto: JSON.parse(localStorage.getItem('auto')) || false,
             upPrice: JSON.parse(localStorage.getItem('upPrice')) || 10,
+            reachFinish: false,
             milestones: [
                 {
                     threshold: 5000,
@@ -314,14 +315,15 @@ class ClickHero extends Games {
      * Reset Click Hero data and show game container after 3 seconds, also reset score
      */
     start() {
+        const FINISH_BTN = document.getElementById('finishBtn');
+
         // Reset Click Hero data
-        this.clickHero.atk = 1;
-        this.clickHero.auto = false;
-        this.clickHero.upPrice = 10
-        this.clickHero.milestones.forEach(m => m.isReached = false);
+        this.resetGame()
 
         this.CONTAINER_TUTORIAL.classList.toggle('hidden')
         this.CONTAINER_TUTORIAL.classList.toggle('flex')
+        FINISH_BTN.classList.add('hidden')
+        FINISH_BTN.classList.remove('flex')
 
         this.LOADING.classList.remove('hidden')
 
@@ -343,6 +345,7 @@ class ClickHero extends Games {
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
         const PRAISE_TEXT = document.getElementById('praiseText');
+        const FINISH_BTN = document.getElementById('finishBtn');
 
         const MILESTONES = this.clickHero.milestones;
         const CURRENT_MILESTONES = MILESTONES.find(m => this.getScore() >= m.threshold && !m.isReached);
@@ -358,6 +361,15 @@ class ClickHero extends Games {
                 PRAISE_TEXT.textContent = "";
                 PRAISE_TEXT.classList.remove('animate-praise', 'text-sub');
             }, 2000);
+        }
+
+        if (ATK > 10) {
+            this.clickHero.reachFinish = true;
+        }
+
+        if (this.clickHero.reachFinish) {
+            FINISH_BTN.classList.remove('hidden');
+            FINISH_BTN.classList.add('flex');
         }
     }
 
@@ -441,6 +453,62 @@ class ClickHero extends Games {
 
             }, 500);
         }
+    }
+
+        /**
+         * Finish the Click Hero game by resetting the game data, updating the leaderboard, and hiding/showing the relevant containers.
+         * This function is called when the user finishes the game, either by winning or losing.
+         * @description
+         * This function resets the Click Hero game data, updates the leaderboard with the user's score, resets the score, and hides/shows the relevant containers.
+         */
+    finish() {
+        const PLAYER_DATA = {
+            gameType: 'click_hero', playerName: this.getPlayerName(), score: this.getScore()
+        }
+
+        this.setLeaderboard(PLAYER_DATA);
+
+        // Hide Game Container, Show Play Container
+        this.CONTAINER_GAME.classList.toggle('hidden');
+        this.CONTAINER_GAME.classList.toggle('flex');
+        this.CONTAINER_PLAY.classList.remove('hidden');
+
+        // Give user feedback about their score and leaderboard
+        const RPS_LEADERBOARD = this.leaderboard
+            .filter(entry => entry.gameType === 'click_hero')
+            .map(entry => `${entry.playerName}: ${entry.score}`)
+            .join('\n');
+        alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${RPS_LEADERBOARD}`);
+    }
+
+    /**
+     * Reset the Click Hero game data, such as score, ATK, up price, auto click, and milestones.
+     * This function is called when the user start the game, and it resets all the game data to its default values.
+     * @description
+     * This function resets the Click Hero game data, and it is called when the user start the game.
+     */
+    resetGame() {
+        const ATK_UP = document.getElementById('atk-max');
+        const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
+        const AUTO_STATUS = document.getElementById('auto-status');
+
+        // Reset ALL
+        this.resetScore();
+        this.clickHero.atk = 1;
+        this.clickHero.upPrice = 10;
+        this.clickHero.auto = false;
+        this.clickHero.reachFinish = false;
+        this.clickHero.milestones.forEach(m => m.isReached = false);
+
+        ATK_UP.innerHTML = `${this.clickHero.atk}/10`;
+        ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
+        AUTO_STATUS.innerHTML = 'OFF';
+        AUTO_STATUS.classList.remove('text-green-500', 'font-bold');
+
+        localStorage.removeItem('score');
+        localStorage.removeItem('atk');
+        localStorage.removeItem('upPrice');
+        localStorage.removeItem('auto');
     }
 }
 
@@ -801,7 +869,11 @@ function upgradeATK() {
 }
 
 function addAuto() {
-    CLICK_HERO.addAuto()
+    CLICK_HERO.addAuto();
+}
+
+function finishClick() {
+    CLICK_HERO.finish();
 }
 
 // Pokemon Section
