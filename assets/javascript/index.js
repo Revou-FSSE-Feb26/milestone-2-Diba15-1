@@ -1,27 +1,27 @@
 // Navbar Logic
 function activeNav(element) {
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (!mobileMenu.classList.contains('hidden')) {
+    const MOBILE_MENU = document.getElementById('mobile-menu');
+    if (!MOBILE_MENU.classList.contains('hidden')) {
         toggleMobileMenu();
     }
 
-    const allLinks = document.querySelectorAll('#navbar a, #mobile-menu a');
-    allLinks.forEach(link => link.classList.remove('active'));
+    const ALL_LINKS = document.querySelectorAll('#navbar a, #mobile-menu a');
+    ALL_LINKS.forEach(link => link.classList.remove('active'));
 
     element.classList.add('active');
 }
 
 function toggleMobileMenu() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenu.classList.toggle('hidden');
+    const MOBILE_MENU = document.getElementById('mobile-menu');
+    MOBILE_MENU.classList.toggle('hidden');
 
-    if (!mobileMenu.classList.contains('hidden')) {
-        mobileMenu.classList.add('fade');
-        mobileMenu.classList.remove('fadeOut');
+    if (!MOBILE_MENU.classList.contains('hidden')) {
+        MOBILE_MENU.classList.add('fade');
+        MOBILE_MENU.classList.remove('fadeOut');
         document.body.style.overflow = 'hidden';
     } else {
-        mobileMenu.classList.remove('fade');
-        mobileMenu.classList.add('fadeOut');
+        MOBILE_MENU.classList.remove('fade');
+        MOBILE_MENU.classList.add('fadeOut');
         document.body.style.overflow = 'auto';
     }
 }
@@ -29,13 +29,13 @@ function toggleMobileMenu() {
 // Ketika scroll active class berubah
 window.addEventListener('scroll', () => {
     let current = "";
-    const sections = document.querySelectorAll('section');
-    const scrollPos = window.scrollY || window.pageYOffset;
+    const SECTIONS = document.querySelectorAll('section');
+    const SCROLL_POS = window.scrollY || window.pageYOffset;
 
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
+    SECTIONS.forEach(section => {
+        const SECTION_TOP = section.offsetTop;
 
-        if (scrollPos >= (sectionTop - 150)) {
+        if (SCROLL_POS >= (SECTION_TOP - 150)) {
             current = section.getAttribute('id');
         }
     });
