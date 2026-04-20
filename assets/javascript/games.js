@@ -812,8 +812,7 @@ const POKEMON = new Pokemon();
  */
 function initGames() {
     const EDIT_MODAL = document.querySelector('.edit-modal');
-    const NAME_ELEMENT = document.getElementById('playerName');
-    NAME_ELEMENT.textContent = LOCAL_NAME || 'Random Player';
+    GAMES.setPlayerName(LOCAL_NAME || "Random Player");
     GAMES.resetGame();
 
     if (LOCAL_NAME) {
