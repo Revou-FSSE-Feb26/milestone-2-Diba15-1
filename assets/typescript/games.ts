@@ -1,4 +1,4 @@
-// Create Interface for
+// Create Interface for Data Structure
 
 interface PlayerData {
     name: string;
@@ -277,14 +277,6 @@ class RPS extends Games {
      * @returns {void}
      */
     override finish(): void {
-        // Reset Border Determine
-        this.PLAYER_CONTAINER.classList.remove("border-green-600");
-        this.PLAYER_CONTAINER.classList.remove("border-red-600");
-        this.ENEMY_CONTAINER.classList.remove("border-green-600");
-        this.ENEMY_CONTAINER.classList.remove("border-red-600");
-        this.PLAYER_CONTAINER.classList.add("border-white/20");
-        this.ENEMY_CONTAINER.classList.add("border-white/20");
-
         // Reset Player and Enemy Display
         this.ENEMY_CHOICE_DISPLAY.innerHTML = "??";
         this.PLAYER_CHOICE_DISPLAY.innerHTML = "??";
@@ -902,7 +894,7 @@ class Pokemon extends Games {
 
 // Init Games
 const LOCAL_NAME: string = localStorage.getItem("playerName") as string;
-const PLAYER_DATA_DEFAULT = {name: LOCAL_NAME, score: 0};
+const PLAYER_DATA_DEFAULT: PlayerData = {name: LOCAL_NAME, score: 0};
 const GAMES: Games = new Games(PLAYER_DATA_DEFAULT);
 const ROCK_PAPER_SCISSORS: RPS = new RPS();
 const CLICK_HERO: ClickHero = new ClickHero();
