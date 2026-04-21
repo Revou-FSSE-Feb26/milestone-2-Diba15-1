@@ -9,7 +9,9 @@ function activeNav(element: HTMLElement): void {
 	const ALL_LINKS: NodeListOf<HTMLElement> = document.querySelectorAll(
 		"#navbar a, #mobile-menu a",
 	);
-	ALL_LINKS.forEach((link) => link.classList.remove("active"));
+	ALL_LINKS.forEach((link) => {
+		link.classList.remove("active");
+	});
 
 	element.classList.add("active");
 }
