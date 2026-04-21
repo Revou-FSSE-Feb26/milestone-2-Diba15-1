@@ -1,2 +1,68 @@
 node_modules/
 .vite/
+
+# build output
+dist/
+
+# Log file
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Module package file
+package-lock.json
+
+# IDE
+.idea/
+*.iml
+
+# Others
+*.bak
+*.swp
+.DS_Store
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Emacs
+*~
+
+# Windows temp files
+Thumbs.db
+ehthumbs.db
+
+# OSX files
+.DS_Store?
+._*
+
+# Git
+.git/
+
+# npm
+/npm-debug.log
+/yarn-error.log
+
+# Browser extension files
+*.crx
+*.xpi
+*.user.js
+
+# Visual Studio Code files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/keybindings.json
+
+# misc
+/coverage/
