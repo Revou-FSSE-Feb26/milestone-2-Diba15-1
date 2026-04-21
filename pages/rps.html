@@ -30,7 +30,7 @@
                 }
 
                 body {
-                    @apply bg-dark-bg
+                    @apply bg-dark-bg;
                 }
 
                 header {
@@ -113,7 +113,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button onclick="playRps()" class="btn cursor-pointer">Play
+                    <button type="button" onclick="playRps()" class="btn cursor-pointer">Play
                         Now!</button>
                 </div>
                 <!--Loading-->
@@ -132,7 +132,7 @@
                         choose your move. The computer will randomly select its
                         move, and the winner will be determined based on the
                         classic rules of Rock, Paper, Scissors.</p>
-                    <button onclick="startRps()" class="btn cursor-pointer">Start Game</button>
+                    <button type="button" onclick="startRps()" class="btn cursor-pointer">Start Game</button>
                 </div>
 
                 <!--Game Container-->
@@ -183,7 +183,7 @@
                             <div onclick="rps(0)"
                                 class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
                         </div>
-                        <button onclick="finishRps()" class="btn">Finish
+                        <button type="button" onclick="finishRps()" class="btn">Finish
                             Game</button>
                     </div>
                 </div>
@@ -228,6 +228,6 @@
                 <button class="btn-sub" type="submit">Save</button>
             </form>
         </div>
-        <script src="../assets/javascript/games.js"></script>
+        <script src="../dist/assets/typescript/games.js"></script>
     </body>
 </html>

@@ -30,7 +30,7 @@
                 }
 
                 body {
-                    @apply bg-dark-bg
+                    @apply bg-dark-bg;
                 }
 
                 header {
@@ -79,7 +79,7 @@
             }
         </style>
     </head>
-    <body onload="initGames()">
+    <body>
         <header>
             <a href="../index.html"
                 class="flex items-center gap-2 text-sm md:text-lg"><i
@@ -112,7 +112,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button onclick="playPokemon()"
+                    <button type="button" onclick="playPokemon()"
                         class="btn cursor-pointer">Play Now!</button>
                 </div>
 
@@ -134,7 +134,7 @@
                     <p class="text-gray-300 text-lg/relaxed text-justify">Guess
                         the type of the Pokemon shown. You have 5 lives and 5
                         stages to get as many correct as possible!</p>
-                    <button onclick="startPokemon()"
+                    <button type="button" onclick="startPokemon()"
                         class="btn cursor-pointer">Start Game</button>
                 </div>
 
@@ -214,6 +214,6 @@
                 <button class="btn-sub" type="submit">Save</button>
             </form>
         </div>
-        <script src="../assets/javascript/games.js"></script>
+        <script src="../dist/assets/typescript/games.js"></script>
     </body>
 </html>

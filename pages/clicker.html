@@ -30,7 +30,7 @@
                 }
 
                 body {
-                    @apply bg-dark-bg
+                    @apply bg-dark-bg;
                 }
 
                 header {
@@ -116,7 +116,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button onclick="playClickHero()"
+                    <button type="button" onclick="playClickHero()"
                         class="btn cursor-pointer">Play Now!</button>
                 </div>
                 <!-- Loading -->
@@ -142,7 +142,7 @@
                         on auto-clicking to automatically earn points over time.
                         Can you defeat the monster and reach the highest score?
                         Click now and start your adventure!</p>
-                    <button onclick="startClickHero()"
+                    <button type="button" onclick="startClickHero()"
                         class="btn cursor-pointer">Start Game</button>
                 </div>
 
@@ -161,7 +161,7 @@
                         class="flex flex-col justify-around items-center gap-4">
                         <h2 id="praiseText"
                             class="font-title text-white text-2xl font-bold"></h2>
-                        <button onclick="clickHero()" id="hero-btn"
+                        <button type="button" onclick="clickHero()" id="hero-btn"
                             class="hero-button">👹 ATTACK</button>
                     </div>
                     <!--Choice Container-->
