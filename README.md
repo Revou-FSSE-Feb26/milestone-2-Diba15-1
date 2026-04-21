@@ -49,7 +49,7 @@ milestone-2-Diba15-1/
 │  ├─css # CSS Folder
 │  ├─images # Images Folder Include Screenshots Folder
 │  │  └─screenshots
-│  └─javascript # Javascript Folder
+│  └─typescript # Typescript Folder
 ├─dist # Build Folder
 ├─node_modules # Node Modules Folder
 ├─pages # Pages Folder
