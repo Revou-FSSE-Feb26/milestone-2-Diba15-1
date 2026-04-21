@@ -50,6 +50,7 @@ class Games {
 	CONTAINER_TUTORIAL: HTMLElement;
 	LOADING: HTMLElement;
 	SCORE_DISPLAY: HTMLElement;
+	NAME_DISPLAY: HTMLElement;
 
 	// Leaderboard data structure, value is object that have gameType, playerName, and score
 	leaderboard: Array<LeaderboardData>;
@@ -74,6 +75,7 @@ class Games {
 		) as HTMLElement;
 		this.LOADING = document.getElementById("loading") as HTMLElement;
 		this.SCORE_DISPLAY = document.getElementById("playerScore") as HTMLElement;
+		this.NAME_DISPLAY = document.getElementById("playerName") as HTMLElement;
 
 		// Player Data
 		this.playerName = localStorage.getItem("playerName") || playerData.name;
@@ -89,7 +91,7 @@ class Games {
 	setPlayerName(playerName: string) {
 		this.playerName = playerName;
 		localStorage.setItem("playerName", playerName);
-		document.getElementById("playerName")!.textContent = playerName;
+		this.NAME_DISPLAY.textContent = playerName;
 	}
 
 	// Get player name
@@ -234,8 +236,9 @@ class RPS extends Games {
 
 		let shuffleCount = 0;
 		const SHUFFLE_INTERVAL = setInterval(() => {
-			const COMPUTER_CHOICE =
-				this.CHOICES[Math.floor(Math.random() * this.CHOICES.length)]!;
+			const COMPUTER_CHOICE = this.CHOICES[
+				Math.floor(Math.random() * this.CHOICES.length)
+			] as { value: number; choice: string };
 			// Show icon random
 			this.ENEMY_CHOICE_DISPLAY.innerHTML = COMPUTER_CHOICE.choice;
 			shuffleCount++;
@@ -572,7 +575,9 @@ class ClickHero extends Games {
 		this.clickHero.currentAtkUp = 1;
 		this.clickHero.auto = false;
 		this.clickHero.reachFinish = false;
-		this.clickHero.milestones.forEach((m) => (m.isReached = false));
+		this.clickHero.milestones.forEach((m) => {
+			m.isReached = false;
+		});
 
 		clearInterval(this.autoInterval as number);
 
@@ -805,7 +810,7 @@ class Pokemon extends Games {
 			// Give hint if trials > 0
 			if (this.pokemon.trials > 0) {
 				const type = this.pokemon.currentData.type;
-				let hint;
+				let hint: string;
 
 				// Hint
 				switch (type) {
@@ -984,7 +989,7 @@ function startRps(): void {
 }
 
 function rps(choice: string): void {
-	ROCK_PAPER_SCISSORS.rps(parseInt(choice));
+	ROCK_PAPER_SCISSORS.rps(parseInt(choice, 10));
 }
 
 function finishRps(): void {
