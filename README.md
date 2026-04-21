@@ -25,11 +25,11 @@ and our simple game that can be play from our website.
 
 ## 🛠️ Tech Stack
 
-[![My Skills](https://skillicons.dev/icons?i=js,html,css,tailwind)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=ts,html,css,tailwind)](https://skillicons.dev)
 
 - HTML: Used for structuring the content of the resume.
 - Tailwind CSS: Used for styling the resume and making it visually appealing.
-- JavaScript: Used for adding interactivity, such as click navbar.
+- TypeScript: Used for adding interactivity and type safety.
 - PokeAPI: Used for fetching pokemon data.
 
 ## 📸 Screenshots
@@ -47,10 +47,14 @@ and our simple game that can be play from our website.
 milestone-2-Diba15-1/
 ├─assets # Assets Folder
 │  ├─css # CSS Folder
-│  ├─images # Images Folder Include Screenshots folder
+│  ├─images # Images Folder Include Screenshots Folder
 │  │  └─screenshots
 │  └─javascript # Javascript Folder
+├─dist # Build Folder
+├─node_modules # Node Modules Folder
 ├─pages # Pages Folder
 ├─index.html # Homepage/Landing Page Folder
+├─biome.json # Biome config for linting and formatter
+├─package.json # Package file for node js 
 └─README.md # Readme Documentation
 ```
