@@ -34,6 +34,12 @@ interface PokemonData {
 	trials: number;
 }
 
+enum Choices {
+	ROCK = 0,
+	PAPER = 1,
+	SCISSOR = 2,
+}
+
 /**
  * Games Class
  * This class will be the parent class for all games, it will contain the common methods and properties that all games will use,
@@ -45,12 +51,12 @@ class Games {
 	private score: number;
 
 	// DOM Elements
-	CONTAINER_GAME: HTMLElement;
-	CONTAINER_PLAY: HTMLElement;
-	CONTAINER_TUTORIAL: HTMLElement;
-	LOADING: HTMLElement;
-	SCORE_DISPLAY: HTMLElement;
-	NAME_DISPLAY: HTMLElement;
+	protected readonly containerGame: HTMLElement;
+	protected readonly containerPlay: HTMLElement;
+	protected readonly containerTutorial: HTMLElement;
+	protected readonly loading: HTMLElement;
+	protected readonly scoreDisplay: HTMLElement;
+	protected readonly nameDisplay: HTMLElement;
 
 	// Leaderboard data structure, value is object that have gameType, playerName, and score
 	leaderboard: Array<LeaderboardData>;
@@ -64,18 +70,18 @@ class Games {
 	 */
 	constructor(playerData: PlayerData = { name: "Random Player", score: 0 }) {
 		// Centralized DOM Elements
-		this.CONTAINER_GAME = document.getElementById(
+		this.containerGame = document.getElementById(
 			"game-container",
 		) as HTMLElement;
-		this.CONTAINER_PLAY = document.getElementById(
+		this.containerPlay = document.getElementById(
 			"play-container",
 		) as HTMLElement;
-		this.CONTAINER_TUTORIAL = document.getElementById(
+		this.containerTutorial = document.getElementById(
 			"tutorial-container",
 		) as HTMLElement;
-		this.LOADING = document.getElementById("loading") as HTMLElement;
-		this.SCORE_DISPLAY = document.getElementById("playerScore") as HTMLElement;
-		this.NAME_DISPLAY = document.getElementById("playerName") as HTMLElement;
+		this.loading = document.getElementById("loading") as HTMLElement;
+		this.scoreDisplay = document.getElementById("playerScore") as HTMLElement;
+		this.nameDisplay = document.getElementById("playerName") as HTMLElement;
 
 		// Player Data
 		this.playerName = localStorage.getItem("playerName") || playerData.name;
@@ -91,7 +97,7 @@ class Games {
 	setPlayerName(playerName: string) {
 		this.playerName = playerName;
 		localStorage.setItem("playerName", playerName);
-		this.NAME_DISPLAY.textContent = playerName;
+		this.nameDisplay.textContent = playerName;
 	}
 
 	// Get player name
@@ -108,7 +114,7 @@ class Games {
 		this.score += score;
 		localStorage.setItem("score", String(this.score));
 
-		this.SCORE_DISPLAY.innerHTML = String(this.score);
+		this.scoreDisplay.innerHTML = String(this.score);
 	}
 
 	// Get current score
@@ -120,7 +126,7 @@ class Games {
 	resetScore() {
 		this.score = 0;
 		localStorage.removeItem("score");
-		this.SCORE_DISPLAY.innerHTML = String(this.score);
+		this.scoreDisplay.innerHTML = String(this.score);
 	}
 
 	// Set leaderboard data, push new player data to leaderboard array and store in localStorage
@@ -141,9 +147,9 @@ class Games {
 	// Default Methods for Games, these methods will be overridden by each game class
 	play() {
 		// hide title container, show tutorial container
-		this.CONTAINER_PLAY.classList.add("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("flex");
+		this.containerPlay.classList.add("hidden");
+		this.containerTutorial.classList.toggle("hidden");
+		this.containerTutorial.classList.toggle("flex");
 	}
 
 	/**
@@ -151,15 +157,15 @@ class Games {
 	 * waiting for 3 seconds, and then showing the game container and resetting the score.
 	 */
 	start() {
-		this.CONTAINER_TUTORIAL.classList.toggle("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("flex");
+		this.containerTutorial.classList.toggle("hidden");
+		this.containerTutorial.classList.toggle("flex");
 
-		this.LOADING.classList.remove("hidden");
+		this.loading.classList.remove("hidden");
 
 		setTimeout(() => {
-			this.LOADING.classList.add("hidden");
-			this.CONTAINER_GAME.classList.toggle("hidden");
-			this.CONTAINER_GAME.classList.toggle("flex");
+			this.loading.classList.add("hidden");
+			this.containerGame.classList.toggle("hidden");
+			this.containerGame.classList.toggle("flex");
 			this.resetScore();
 		}, 3000);
 	}
@@ -181,13 +187,17 @@ class Games {
  * including determining the winner and updating the score accordingly.
  */
 class RPS extends Games {
-	private readonly CHOICES: Array<{ value: number; choice: string }>;
+	private readonly ICONS = {
+		[Choices.ROCK]: "✊",
+		[Choices.PAPER]: "🤚",
+		[Choices.SCISSOR]: "✌️"
+	};
 
-	ENEMY_CHOICE_DISPLAY: HTMLElement;
-	PLAYER_CHOICE_DISPLAY: HTMLElement;
-	PLAYER_CONTAINER: HTMLElement;
-	ENEMY_CONTAINER: HTMLElement;
-	WIN_TEXT: HTMLElement;
+	private readonly ENEMY_CHOICE_DISPLAY: HTMLElement;
+	private readonly PLAYER_CHOICE_DISPLAY: HTMLElement;
+	private readonly PLAYER_CONTAINER: HTMLElement;
+	private readonly ENEMY_CONTAINER: HTMLElement;
+	private readonly WIN_TEXT: HTMLElement;
 
 	constructor() {
 		super();
@@ -205,13 +215,6 @@ class RPS extends Games {
 			"enemyContainer",
 		) as HTMLElement;
 		this.WIN_TEXT = document.getElementById("determineWin") as HTMLElement;
-
-		// RPS Choices
-		this.CHOICES = [
-			{ value: 0, choice: "✊" }, // Rock
-			{ value: 1, choice: "✌️" }, // Scissor
-			{ value: 2, choice: "✋" }, // Paper
-		];
 	}
 
 	/**
@@ -219,10 +222,9 @@ class RPS extends Games {
 	 * @param {number} playerChoice - The choice of the player (0 = Rock, 1 = Scissor, 2 = Paper)
 	 * @returns {Promise<void>}
 	 */
-	async rps(playerChoice: number): Promise<void> {
+	async rps(playerChoice: Choices): Promise<void> {
 		// Show Player Choice
-		this.PLAYER_CHOICE_DISPLAY.innerHTML =
-			this.CHOICES[playerChoice]?.choice || "";
+		this.PLAYER_CHOICE_DISPLAY.innerHTML = this.ICONS[playerChoice];
 		// Reset Border Determine
 		this.PLAYER_CONTAINER.classList.remove("border-green-600");
 		this.PLAYER_CONTAINER.classList.remove("border-red-600");
@@ -236,11 +238,9 @@ class RPS extends Games {
 
 		let shuffleCount = 0;
 		const SHUFFLE_INTERVAL = setInterval(() => {
-			const COMPUTER_CHOICE = this.CHOICES[
-				Math.floor(Math.random() * this.CHOICES.length)
-			] as { value: number; choice: string };
+			const COMPUTER_CHOICE = Math.floor(Math.random() * 3) as Choices;
 			// Show icon random
-			this.ENEMY_CHOICE_DISPLAY.innerHTML = COMPUTER_CHOICE.choice;
+			this.ENEMY_CHOICE_DISPLAY.innerHTML = this.ICONS[COMPUTER_CHOICE];
 			shuffleCount++;
 
 			// Stop after shufflecount > 15
@@ -248,7 +248,7 @@ class RPS extends Games {
 				clearInterval(SHUFFLE_INTERVAL);
 				this.PLAYER_CONTAINER.classList.remove("border-white/20");
 				this.ENEMY_CONTAINER.classList.remove("border-white/20");
-				this.determineWinner(playerChoice, COMPUTER_CHOICE.value);
+				this.determineWinner(playerChoice, COMPUTER_CHOICE);
 			}
 		}, 200); // Change after 200ms
 	}
@@ -264,13 +264,13 @@ class RPS extends Games {
 	 * If the player loses, the player's container border turns red and the enemy's container border turns green.
 	 * If it's a draw, the text "DRAW" is displayed.
 	 */
-	determineWinner(playerChoice: number, enemyChoice: number): void {
+	determineWinner(playerChoice: Choices, enemyChoice: Choices): void {
 		if (playerChoice === enemyChoice) {
 			this.WIN_TEXT.textContent = "DRAW";
 		} else if (
-			(playerChoice === 0 && enemyChoice === 1) || // Rock (0) vs Scissor (1)
-			(playerChoice === 1 && enemyChoice === 2) || // Scissor (1) vs Paper (2)
-			(playerChoice === 2 && enemyChoice === 0) // Paper (2) vs Rock (0)
+			(playerChoice === Choices.ROCK && enemyChoice === Choices.SCISSOR) || // Rock (0) vs Scissor (1)
+			(playerChoice === Choices.SCISSOR && enemyChoice === Choices.PAPER) || // Scissor (1) vs Paper (2)
+			(playerChoice === Choices.PAPER && enemyChoice === Choices.ROCK) // Paper (2) vs Rock (0)
 		) {
 			// CASE: PLAYER WIN
 			this.PLAYER_CONTAINER.classList.add("border-green-600");
@@ -301,9 +301,9 @@ class RPS extends Games {
 		this.PLAYER_CHOICE_DISPLAY.innerHTML = "??";
 
 		// Hide Game Container, Show Play Container
-		this.CONTAINER_GAME.classList.toggle("hidden");
-		this.CONTAINER_GAME.classList.toggle("flex");
-		this.CONTAINER_PLAY.classList.remove("hidden");
+		this.containerGame.classList.toggle("hidden");
+		this.containerGame.classList.toggle("flex");
+		this.containerPlay.classList.remove("hidden");
 
 		// Reset Win Text
 		this.WIN_TEXT.textContent = "";
@@ -334,12 +334,12 @@ class RPS extends Games {
  * upgrading the attack, and handling the auto click feature.
  */
 class ClickHero extends Games {
-	FINISH_BTN: HTMLElement;
-	ATK_UP: HTMLElement;
-	ATK_PRICE_DISPLAY: HTMLElement;
-	AUTO_STATUS: HTMLElement;
-	HERO_BTN: HTMLElement;
-	autoInterval: number | null;
+	private readonly FINISH_BTN: HTMLElement;
+	private readonly ATK_UP: HTMLElement;
+	private readonly ATK_PRICE_DISPLAY: HTMLElement;
+	private readonly AUTO_STATUS: HTMLElement;
+	private readonly HERO_BTN: HTMLElement;
+	private autoInterval: number | null;
 	private clickHero: ClickData;
 
 	constructor() {
@@ -397,20 +397,20 @@ class ClickHero extends Games {
 	 * Reset Click Hero data and show game container after 3 seconds, also reset score
 	 */
 	override start(): void {
-		this.CONTAINER_TUTORIAL.classList.toggle("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("flex");
+		this.containerTutorial.classList.toggle("hidden");
+		this.containerTutorial.classList.toggle("flex");
 		this.FINISH_BTN.classList.add("hidden");
 		this.FINISH_BTN.classList.remove("flex");
-		this.LOADING.classList.remove("hidden");
+		this.loading.classList.remove("hidden");
 
 		// Reset Click Hero data
 		this.resetGame();
 
 		// Show game container after 3 seconds and reset score
 		setTimeout(() => {
-			this.LOADING.classList.add("hidden");
-			this.CONTAINER_GAME.classList.toggle("hidden");
-			this.CONTAINER_GAME.classList.toggle("flex");
+			this.loading.classList.add("hidden");
+			this.containerGame.classList.toggle("hidden");
+			this.containerGame.classList.toggle("flex");
 			this.resetScore();
 		}, 3000);
 	}
@@ -547,9 +547,9 @@ class ClickHero extends Games {
 		this.setLeaderboard(PLAYER_DATA);
 
 		// Hide Game Container, Show Play Container
-		this.CONTAINER_GAME.classList.toggle("hidden");
-		this.CONTAINER_GAME.classList.toggle("flex");
-		this.CONTAINER_PLAY.classList.remove("hidden");
+		this.containerGame.classList.toggle("hidden");
+		this.containerGame.classList.toggle("flex");
+		this.containerPlay.classList.remove("hidden");
 
 		// Give user feedback about their score and leaderboard
 		const CLICK_LEADERBOARD: string = this.getLeaderboard("click_hero");
@@ -599,12 +599,12 @@ class ClickHero extends Games {
  * rendering the Pokemon image and name, generating type buttons for the player to guess, and checking the player's answer.
  */
 class Pokemon extends Games {
-	POKEMON_IMG: HTMLImageElement;
-	POKEMON_NAME: HTMLElement;
-	STAGE_TEXT: HTMLElement;
-	CHOICE_CONTAINER: HTMLElement;
-	TRIAL_TEXT: HTMLElement;
-	HINT_TEXT: HTMLElement;
+	private readonly POKEMON_IMG: HTMLImageElement;
+	private readonly POKEMON_NAME: HTMLElement;
+	private readonly STAGE_TEXT: HTMLElement;
+	private readonly CHOICE_CONTAINER: HTMLElement;
+	private readonly TRIAL_TEXT: HTMLElement;
+	private readonly HINT_TEXT: HTMLElement;
 
 	private pokemon: PokemonData;
 	private readonly POKEMON_TYPES: string[];
@@ -665,7 +665,7 @@ class Pokemon extends Games {
 			// Randomly select a type
 			const RANDOM_TYPE =
 				this.POKEMON_TYPES[
-					Math.floor(Math.random() * this.POKEMON_TYPES.length)
+				Math.floor(Math.random() * this.POKEMON_TYPES.length)
 				];
 
 			// Fetch Pokemon of that type
@@ -707,9 +707,9 @@ class Pokemon extends Games {
 	 * game will be finished.
 	 */
 	override async start(): Promise<void> {
-		this.LOADING.classList.remove("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("hidden");
-		this.CONTAINER_TUTORIAL.classList.toggle("flex");
+		this.loading.classList.remove("hidden");
+		this.containerTutorial.classList.toggle("hidden");
+		this.containerTutorial.classList.toggle("flex");
 
 		// Reset Pokemon game data
 		this.pokemon.currentStage = 1;
@@ -722,9 +722,9 @@ class Pokemon extends Games {
 		// If data is successfully fetched, show game container, else show alert and return to play container
 		if (DATA) {
 			setTimeout(() => {
-				this.LOADING.classList.add("hidden");
-				this.CONTAINER_GAME.classList.toggle("hidden");
-				this.CONTAINER_GAME.classList.toggle("flex");
+				this.loading.classList.add("hidden");
+				this.containerGame.classList.toggle("hidden");
+				this.containerGame.classList.toggle("flex");
 				this.renderPokemonGame(DATA);
 			}, 2000);
 		} else {
@@ -910,9 +910,9 @@ class Pokemon extends Games {
 		if (this.POKEMON_IMG) this.POKEMON_IMG.src = "";
 
 		// Hide Game Container, Show Play Container
-		this.CONTAINER_GAME.classList.toggle("hidden");
-		this.CONTAINER_GAME.classList.toggle("flex");
-		this.CONTAINER_PLAY.classList.remove("hidden");
+		this.containerGame.classList.toggle("hidden");
+		this.containerGame.classList.toggle("flex");
+		this.containerPlay.classList.remove("hidden");
 
 		const POKEMON_LEADERBOARD: string = this.getLeaderboard("pokemon");
 
