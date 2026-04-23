@@ -66,7 +66,7 @@ class Games {
 	protected readonly nameDisplay: HTMLElement;
 
 	// Leaderboard data structure, value is object that have gameType, playerName, and score
-	leaderboard: Array<LeaderboardData>;
+	private leaderboard: Array<LeaderboardData>;
 
 	/**
 	 * Constructor for Games class
