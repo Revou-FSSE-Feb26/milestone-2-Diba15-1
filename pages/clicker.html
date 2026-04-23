@@ -116,7 +116,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button type="button" onclick="playClickHero()"
+                    <button type="button" onclick="playClickHero('play')"
                         class="btn cursor-pointer">Play Now!</button>
                 </div>
                 <!-- Loading -->
@@ -142,7 +142,7 @@
                         on auto-clicking to automatically earn points over time.
                         Can you defeat the monster and reach the highest score?
                         Click now and start your adventure!</p>
-                    <button type="button" onclick="startClickHero()"
+                    <button type="button" onclick="playClickHero('start')"
                         class="btn cursor-pointer">Start Game</button>
                 </div>
 
@@ -183,7 +183,7 @@
                     </div>
 
                     <!-- Finish Button -->
-                    <div onclick="finishClick()" id="finishBtn"
+                    <div onclick="playClickHero('finish')" id="finishBtn"
                         class="btn w-full text-xl md:text-2xl cursor-pointer flex-col gap-2 items-center text-center hidden">
                         <h2 id="finish">Finish Game</h2>
                     </div>

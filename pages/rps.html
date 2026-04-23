@@ -113,7 +113,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button type="button" onclick="playRps()" class="btn cursor-pointer">Play
+                    <button type="button" onclick="playRps('play')" class="btn cursor-pointer">Play
                         Now!</button>
                 </div>
                 <!--Loading-->
@@ -132,7 +132,7 @@
                         choose your move. The computer will randomly select its
                         move, and the winner will be determined based on the
                         classic rules of Rock, Paper, Scissors.</p>
-                    <button type="button" onclick="startRps()" class="btn cursor-pointer">Start Game</button>
+                    <button type="button" onclick="playRps('start')" class="btn cursor-pointer">Start Game</button>
                 </div>
 
                 <!--Game Container-->
@@ -183,7 +183,7 @@
                             <div onclick="rps(0)"
                                 class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
                         </div>
-                        <button type="button" onclick="finishRps()" class="btn">Finish
+                        <button type="button" onclick="playRps('finish')" class="btn">Finish
                             Game</button>
                     </div>
                 </div>

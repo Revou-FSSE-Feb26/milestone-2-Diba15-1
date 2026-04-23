@@ -40,6 +40,13 @@ enum Choices {
 	SCISSOR = 2,
 }
 
+enum GameStates {
+	IDLE = "idle",
+	START = "start",
+	PLAY = "play",
+	FINISH = "finish",
+}
+
 /**
  * Games Class
  * This class will be the parent class for all games, it will contain the common methods and properties that all games will use,
@@ -980,29 +987,41 @@ function submitName(e: Event) {
 }
 
 // RPS Section
-function playRps(): void {
-	ROCK_PAPER_SCISSORS.play();
-}
-
-function startRps(): void {
-	ROCK_PAPER_SCISSORS.start();
+function playRps(state: GameStates): void {
+	switch (state) {
+		case GameStates.PLAY:
+			ROCK_PAPER_SCISSORS.play();
+			break;
+		case GameStates.START:
+			ROCK_PAPER_SCISSORS.start();
+			break;
+		case GameStates.FINISH:
+			ROCK_PAPER_SCISSORS.finish();
+			break;
+		default:
+			break
+	}
 }
 
 function rps(choice: string): void {
 	ROCK_PAPER_SCISSORS.rps(parseInt(choice, 10));
 }
 
-function finishRps(): void {
-	ROCK_PAPER_SCISSORS.finish();
-}
-
 // Click Hero Section
-function playClickHero(): void {
-	CLICK_HERO.play();
-}
-
-function startClickHero(): void {
-	CLICK_HERO.start();
+function playClickHero(state: GameStates): void {
+	switch (state) {
+		case GameStates.PLAY:
+			CLICK_HERO.play();
+			break;
+		case GameStates.START:
+			CLICK_HERO.start();
+			break;
+		case GameStates.FINISH:
+			CLICK_HERO.finish();
+			break;
+		default:
+			break;
+	}
 }
 
 function clickHero(): void {
@@ -1017,16 +1036,17 @@ function addAuto(): void {
 	CLICK_HERO.addAuto();
 }
 
-function finishClick(): void {
-	CLICK_HERO.finish();
-}
-
 // Pokemon Section
 
-function playPokemon(): void {
-	POKEMON.play();
-}
-
-function startPokemon(): void {
-	POKEMON.start();
+function playPokemon(state: GameStates): void {
+	switch (state) {
+		case GameStates.PLAY:
+			POKEMON.play();
+			break;
+		case GameStates.START:
+			POKEMON.start();
+			break;
+		default:
+			break;
+	}
 }
