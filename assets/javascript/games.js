@@ -17,11 +17,11 @@ class Games {
      */
     constructor(playerName = 'Random Player') {
         // Centralized DOM Elements
-        this.CONTAINER_GAME = document.getElementById('game-container');
-        this.CONTAINER_PLAY = document.getElementById('play-container');
-        this.CONTAINER_TUTORIAL = document.getElementById('tutorial-container');
-        this.LOADING = document.getElementById('loading');
-        this.SCORE_DISPLAY = document.getElementById('playerScore');
+        this.containerGame = document.getElementById('game-container');
+        this.containerPlay = document.getElementById('play-container');
+        this.containerTutorial = document.getElementById('tutorial-container');
+        this.loading = document.getElementById('loading');
+        this.scoreDisplay = document.getElementById('playerScore');
 
         // Player Data
         this.#playerName = localStorage.getItem('playerName') || playerName;
@@ -55,7 +55,7 @@ class Games {
         this.#score += score;
         localStorage.setItem('score', this.#score);
 
-        this.SCORE_DISPLAY.innerHTML = this.#score;
+        this.scoreDisplay.innerHTML = this.#score;
     }
 
     // Get current score
@@ -67,7 +67,7 @@ class Games {
     resetScore() {
         this.#score = 0;
         localStorage.removeItem('score');
-        this.SCORE_DISPLAY.innerHTML = this.#score;
+        this.scoreDisplay.innerHTML = this.#score;
     }
 
     // Set leaderboard data, push new player data to leaderboard array and store in localStorage
@@ -76,12 +76,21 @@ class Games {
         localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
     }
 
+    getLeaderboard(type) {
+        const LEADERBOARD = this.leaderboard
+            .filter(entry => entry.gameType === type)
+            .map(entry => `${entry.playerName}: ${entry.score}`)
+            .join('\n');
+
+        return LEADERBOARD;
+    }
+
     // Default Methods for Games, these methods will be overridden by each game class
     play() {
         // hide title container, show tutorial container
-        this.CONTAINER_PLAY.classList.add('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('flex')
+        this.containerPlay.classList.add('hidden')
+        this.containerTutorial.classList.toggle('hidden')
+        this.containerTutorial.classList.toggle('flex')
     }
 
 
@@ -90,15 +99,15 @@ class Games {
      * waiting for 3 seconds, and then showing the game container and resetting the score.
      */
     start() {
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('flex')
+        this.containerTutorial.classList.toggle('hidden')
+        this.containerTutorial.classList.toggle('flex')
 
-        this.LOADING.classList.remove('hidden')
+        this.loading.classList.remove('hidden')
 
         setTimeout(() => {
-            this.LOADING.classList.add('hidden')
-            this.CONTAINER_GAME.classList.toggle('hidden');
-            this.CONTAINER_GAME.classList.toggle('flex');
+            this.loading.classList.add('hidden')
+            this.containerGame.classList.toggle('hidden');
+            this.containerGame.classList.toggle('flex');
             this.resetScore()
         }, 3000)
     }
@@ -124,6 +133,12 @@ class RPS extends Games {
     constructor() {
         super();
 
+        this.enemyChoiceDisplay = document.getElementById('enemyChoiceDisplay');
+        this.playerChoiceDisplay = document.getElementById('playerChoiceDisplay');
+        this.determineWin = document.getElementById('determineWin');
+        this.playerContainer = document.getElementById('playerContainer');
+        this.enemyContainer = document.getElementById('enemyContainer');
+
         // RPS Choices
         this.CHOICES = [
             { value: 0, choice: '✊' }, // Rock
@@ -139,37 +154,31 @@ class RPS extends Games {
      * @returns {void}
      */
     async rps(playerChoice) {
-        const ENEMY_CHOICE_DISPLAY = document.getElementById('enemyChoiceDisplay');
-        const PLAYER_CHOICE_DISPLAY = document.getElementById('playerChoiceDisplay');
-        const PLAYER_CONTAINER = document.getElementById('playerContainer');
-        const ENEMY_CONTAINER = document.getElementById('enemyContainer');
-        const WIN_TEXT = document.getElementById('determineWin');
-
         // Show Player Choice
-        PLAYER_CHOICE_DISPLAY.innerHTML = this.CHOICES[playerChoice].choice;
+        this.playerChoiceDisplay.innerHTML = this.CHOICES[playerChoice].choice;
         // Reset Border Determine
-        PLAYER_CONTAINER.classList.remove('border-green-600')
-        PLAYER_CONTAINER.classList.remove('border-red-600')
-        ENEMY_CONTAINER.classList.remove('border-green-600')
-        ENEMY_CONTAINER.classList.remove('border-red-600')
-        PLAYER_CONTAINER.classList.add('border-white/20')
-        ENEMY_CONTAINER.classList.add('border-white/20')
+        this.playerContainer.classList.remove('border-green-600')
+        this.playerContainer.classList.remove('border-red-600')
+        this.enemyContainer.classList.remove('border-green-600')
+        this.enemyContainer.classList.remove('border-red-600')
+        this.playerContainer.classList.add('border-white/20')
+        this.enemyContainer.classList.add('border-white/20')
 
         // Reset Win Text
-        WIN_TEXT.textContent = '';
+        this.determineWin.textContent = '';
 
         let shuffleCount = 0;
         const SHUFFLE_INTERVAL = setInterval(() => {
             const COMPUTER_CHOICE = this.CHOICES[Math.floor(Math.random() * this.CHOICES.length)];
             // Show icon random
-            ENEMY_CHOICE_DISPLAY.innerHTML = COMPUTER_CHOICE.choice;
+            this.enemyChoiceDisplay.innerHTML = COMPUTER_CHOICE.choice;
             shuffleCount++;
 
             // Stop after shufflecount > 15
             if (shuffleCount > 15) {
                 clearInterval(SHUFFLE_INTERVAL);
-                PLAYER_CONTAINER.classList.remove('border-white/20')
-                ENEMY_CONTAINER.classList.remove('border-white/20')
+                this.playerContainer.classList.remove('border-white/20')
+                this.enemyContainer.classList.remove('border-white/20')
                 this.determineWinner(playerChoice, COMPUTER_CHOICE.value);
             }
         }, 200); // Change after 200ms
@@ -187,26 +196,22 @@ class RPS extends Games {
      * If it's a draw, the text "DRAW" is displayed.
      */
     determineWinner(playerChoice, enemyChoice) {
-        const PLAYER_CONTAINER = document.getElementById('playerContainer');
-        const ENEMY_CONTAINER = document.getElementById('enemyContainer');
-        const WIN_TEXT = document.getElementById('determineWin');
-
         if (playerChoice === enemyChoice) {
-            WIN_TEXT.textContent = "DRAW";
+            this.determineWin.textContent = "DRAW";
         } else if ((playerChoice === 0 && enemyChoice === 1) || // Rock (0) vs Scissor (1)
             (playerChoice === 1 && enemyChoice === 2) || // Scissor (1) vs Paper (2)
             (playerChoice === 2 && enemyChoice === 0)    // Paper (2) vs Rock (0)
         ) {
             // CASE: PLAYER WIN
-            PLAYER_CONTAINER.classList.add("border-green-600");
-            ENEMY_CONTAINER.classList.add("border-red-600");
+            this.playerContainer.classList.add("border-green-600");
+            this.enemyContainer.classList.add("border-red-600");
             this.setScore(100);
-            WIN_TEXT.textContent = "YOU WIN🎉";
+            this.determineWin.textContent = "YOU WIN🎉";
         } else {
             // CASE: PLAYER LOSE
-            PLAYER_CONTAINER.classList.add("border-red-600");
-            ENEMY_CONTAINER.classList.add("border-green-600");
-            WIN_TEXT.textContent = "YOU LOSE😢";
+            this.playerContainer.classList.add("border-red-600");
+            this.enemyContainer.classList.add("border-green-600");
+            this.determineWin.textContent = "YOU LOSE😢";
         }
     }
 
@@ -222,31 +227,25 @@ class RPS extends Games {
      * @returns {void}
      */
     finish() {
-        const PLAYER_CONTAINER = document.getElementById('playerContainer');
-        const ENEMY_CONTAINER = document.getElementById('enemyContainer');
-        const ENEMY_CHOICE_DISPLAY = document.getElementById('enemyChoiceDisplay');
-        const PLAYER_CHOICE_DISPLAY = document.getElementById('playerChoiceDisplay');
-        const WIN_TEXT = document.getElementById('determineWin');
-
         // Reset Border Determine
-        PLAYER_CONTAINER.classList.remove('border-green-600');
-        PLAYER_CONTAINER.classList.remove('border-red-600');
-        ENEMY_CONTAINER.classList.remove('border-green-600');
-        ENEMY_CONTAINER.classList.remove('border-red-600');
-        PLAYER_CONTAINER.classList.add('border-white/20');
-        ENEMY_CONTAINER.classList.add('border-white/20');
+        this.playerContainer.classList.remove('border-green-600');
+        this.playerContainer.classList.remove('border-red-600');
+        this.enemyContainer.classList.remove('border-green-600');
+        this.enemyContainer.classList.remove('border-red-600');
+        this.playerContainer.classList.add('border-white/20');
+        this.enemyContainer.classList.add('border-white/20');
 
         // Reset Player and Enemy Display
-        ENEMY_CHOICE_DISPLAY.innerHTML = '??';
-        PLAYER_CHOICE_DISPLAY.innerHTML = '??';
+        this.enemyChoiceDisplay.innerHTML = '??';
+        this.playerChoiceDisplay.innerHTML = '??';
 
         // Hide Game Container, Show Play Container
-        this.CONTAINER_GAME.classList.toggle('hidden');
-        this.CONTAINER_GAME.classList.toggle('flex');
-        this.CONTAINER_PLAY.classList.remove('hidden');
+        this.containerGame.classList.toggle('hidden');
+        this.containerGame.classList.toggle('flex');
+        this.containerPlay.classList.remove('hidden');
 
         // Reset Win Text
-        WIN_TEXT.textContent = '';
+        this.determineWin.textContent = '';
 
         // Save player data to leaderboard and reset score
         const PLAYER_DATA = {
@@ -258,10 +257,7 @@ class RPS extends Games {
         this.resetScore()
 
         // Give user feedback about their score and leaderboard
-        const RPS_LEADERBOARD = this.leaderboard
-            .filter(entry => entry.gameType === 'rps')
-            .map(entry => `${entry.playerName}: ${entry.score}`)
-            .join('\n');
+        const RPS_LEADERBOARD = this.getLeaderboard('rps');
         alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${RPS_LEADERBOARD}`);
     }
 }
@@ -276,7 +272,12 @@ class ClickHero extends Games {
         super();
 
         // Centralized DOM Elements
-        this.FINISH_BTN = document.getElementById('finishBtn');
+        this.finishBtn = document.getElementById('finishBtn');
+        this.praiseText = document.getElementById('praiseText');
+        this.atkUp = document.getElementById('atk-max');
+        this.atkPriceDisplay = document.getElementById('atk-price');
+        this.autoStatus = document.getElementById('auto-status');
+        this.heroBtn = document.getElementById('hero-btn');
 
         this.autoInterval = null;
 
@@ -322,20 +323,20 @@ class ClickHero extends Games {
      */
     start() {
 
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden')
-        this.CONTAINER_TUTORIAL.classList.toggle('flex')
-        this.FINISH_BTN.classList.add('hidden')
-        this.FINISH_BTN.classList.remove('flex')
-        this.LOADING.classList.remove('hidden')
+        this.containerTutorial.classList.toggle('hidden')
+        this.containerTutorial.classList.toggle('flex')
+        this.finishBtn.classList.add('hidden')
+        this.finishBtn.classList.remove('flex')
+        this.loading.classList.remove('hidden')
 
         // Reset Click Hero data
         this.resetGame();
 
         // Show game container after 3 seconds and reset score
         setTimeout(() => {
-            this.LOADING.classList.add('hidden')
-            this.CONTAINER_GAME.classList.toggle('hidden');
-            this.CONTAINER_GAME.classList.toggle('flex');
+            this.loading.classList.add('hidden')
+            this.containerGame.classList.toggle('hidden');
+            this.containerGame.classList.toggle('flex');
             this.resetScore()
         }, 3000)
     }
@@ -348,7 +349,6 @@ class ClickHero extends Games {
         // Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
         const ATK = this.clickHero.atk;
         this.setScore(ATK);
-        const PRAISE_TEXT = document.getElementById('praiseText');
 
         const MILESTONES = this.clickHero.milestones;
         const CURRENT_MILESTONES = MILESTONES.find(m => this.getScore() >= m.threshold && !m.isReached);
@@ -356,23 +356,23 @@ class ClickHero extends Games {
         if (CURRENT_MILESTONES) {
             CURRENT_MILESTONES.isReached = true;
 
-            PRAISE_TEXT.textContent = CURRENT_MILESTONES.text;
+            this.praiseText.textContent = CURRENT_MILESTONES.text;
 
-            PRAISE_TEXT.classList.add('animate-praise', 'text-sub');
+            this.praiseText.classList.add('animate-praise', 'text-sub');
 
             setTimeout(() => {
-                PRAISE_TEXT.textContent = "";
-                PRAISE_TEXT.classList.remove('animate-praise', 'text-sub');
+                this.praiseText.textContent = "";
+                this.praiseText.classList.remove('animate-praise', 'text-sub');
             }, 2000);
         }
 
         if (this.getScore() >= MILESTONES[0].threshold) {
-                this.clickHero.reachFinish = true;
+            this.clickHero.reachFinish = true;
         }
 
         if (this.clickHero.reachFinish) {
-            this.FINISH_BTN.classList.remove('hidden');
-            this.FINISH_BTN.classList.add('flex');
+            this.finishBtn.classList.remove('hidden');
+            this.finishBtn.classList.add('flex');
         }
     }
 
@@ -385,8 +385,6 @@ class ClickHero extends Games {
     upgradeAtk() {
         // Check if player has enough score to upgrade, if yes then reduce score by upgrade price, 
         // increase atk by 1, and double the upgrade price, also save atk and upgrade price to localStorage
-        const ATK_UP = document.getElementById('atk-max');
-        const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
         const MAX_ATK = 10;
 
         if (this.clickHero.currentAtkUp < MAX_ATK && this.getScore() >= this.clickHero.upPrice) {
@@ -400,12 +398,12 @@ class ClickHero extends Games {
             localStorage.setItem('atk', JSON.stringify(this.clickHero.atk));
             localStorage.setItem('upPrice', JSON.stringify(this.clickHero.upPrice));
 
-            ATK_UP.innerHTML = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
+            this.atkUp.innerHTML = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
 
             if (this.clickHero.currentAtkUp >= MAX_ATK) {
-                ATK_PRICE_DISPLAY.innerHTML = "MAX";
+                this.atkPriceDisplay.innerHTML = "MAX";
             } else {
-                ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
+                this.atkPriceDisplay.innerHTML = this.clickHero.upPrice;
             }
         }
     }
@@ -420,7 +418,6 @@ class ClickHero extends Games {
         // Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
         // set auto click to true, save auto click status to localStorage, 
         // and start auto click interval, also update auto click status display
-        const AUTO_STATUS = document.getElementById('auto-status');
         const UP_PRICE = 1000; // Price for auto click
 
         if (!this.clickHero.auto && this.getScore() >= UP_PRICE) {
@@ -429,8 +426,8 @@ class ClickHero extends Games {
             this.clickHero.auto = true;
             localStorage.setItem('auto', JSON.stringify(true));
 
-            AUTO_STATUS.innerHTML = 'ON';
-            AUTO_STATUS.classList.add('text-green-500', 'font-bold');
+            this.autoStatus.innerHTML = 'ON';
+            this.autoStatus.classList.add('text-green-500', 'font-bold');
 
             this.activeAuto();
         }
@@ -442,18 +439,16 @@ class ClickHero extends Games {
      * and add a pressing animation to the button. The animation will be removed after 100ms.
      */
     activeAuto() {
-        const HERO_BTN = document.getElementById('hero-btn');
-
         // If auto click is active, start an interval that clicks the hero every 500ms, 
         // also add a pressing animation to the button
         if (this.clickHero.auto) {
             this.autoInterval = setInterval(() => {
                 this.clicked();
 
-                HERO_BTN.classList.add('auto-pressing');
+                this.heroBtn.classList.add('auto-pressing');
 
                 setTimeout(() => {
-                    HERO_BTN.classList.remove('auto-pressing');
+                    this.heroBtn.classList.remove('auto-pressing');
                 }, 100);
 
             }, 500);
@@ -474,15 +469,12 @@ class ClickHero extends Games {
         this.setLeaderboard(PLAYER_DATA);
 
         // Hide Game Container, Show Play Container
-        this.CONTAINER_GAME.classList.toggle('hidden');
-        this.CONTAINER_GAME.classList.toggle('flex');
-        this.CONTAINER_PLAY.classList.remove('hidden');
+        this.containerGame.classList.toggle('hidden');
+        this.containerGame.classList.toggle('flex');
+        this.containerPlay.classList.remove('hidden');
 
         // Give user feedback about their score and leaderboard
-        const CLICK_LEADERBOARD = this.leaderboard
-            .filter(entry => entry.gameType === 'click_hero')
-            .map(entry => `${entry.playerName}: ${entry.score}`)
-            .join('\n');
+        const CLICK_LEADERBOARD = this.getLeaderboard('click_hero');
         alert(`Your Score: ${PLAYER_DATA.score}\n\nLeaderboard:\n${CLICK_LEADERBOARD}`);
 
         // Reset Game Data
@@ -496,10 +488,6 @@ class ClickHero extends Games {
      * This function resets the Click Hero game data, and it is called when the user start the game.
      */
     resetGame() {
-        const ATK_UP = document.getElementById('atk-max');
-        const ATK_PRICE_DISPLAY = document.getElementById('atk-price');
-        const AUTO_STATUS = document.getElementById('auto-status');
-
         // Reset ALL
         this.resetScore();
         this.clickHero.atk = 1;
@@ -511,10 +499,10 @@ class ClickHero extends Games {
 
         clearInterval(this.autoInterval);
 
-        ATK_UP.innerHTML = `${this.clickHero.atk}/10`;
-        ATK_PRICE_DISPLAY.innerHTML = this.clickHero.upPrice;
-        AUTO_STATUS.innerHTML = 'OFF';
-        AUTO_STATUS.classList.remove('text-green-500', 'font-bold');
+        this.atkUp.innerHTML = `${this.clickHero.atk}/10`;
+        this.atkPriceDisplay.innerHTML = this.clickHero.upPrice;
+        this.autoStatus.innerHTML = 'OFF';
+        this.autoStatus.classList.remove('text-green-500', 'font-bold');
 
         localStorage.removeItem('score');
         localStorage.removeItem('atk');
@@ -532,10 +520,19 @@ class Pokemon extends Games {
     constructor() {
         super();
 
+        // Centralized DOM Elements
+        this.pokemonImg = document.getElementById('pokemonImage');
+        this.pokemonName = document.getElementById('pokemonName');
+        this.stageText = document.getElementById('stageDisplay');
+        this.choiceContainer = document.getElementById('playerChoiceContainer');
+        this.trialText = document.getElementById('trialDisplay');
+        this.hintText = document.getElementById('hintText');
+
         // Pokemon Data
         this.pokemon = {
             maxStage: 5, currentStage: 1, currentData: null, isLoading: false, trials: 5,
         };
+        this.pokemonTypes = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
     }
 
 
@@ -547,13 +544,11 @@ class Pokemon extends Games {
      */
     async guessPokemonType() {
         try {
-            // List of Pokemon types to randomly select from
-            const POKEMON_TYPES = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
             // Base API URL for PokeAPI
             const BASE_API = 'https://pokeapi.co/api/v2/';
 
             // Randomly select a type
-            const RANDOM_TYPE = POKEMON_TYPES[Math.floor(Math.random() * POKEMON_TYPES.length)];
+            const RANDOM_TYPE = this.pokemonTypes[Math.floor(Math.random() * this.pokemonTypes.length)];
 
             // Fetch Pokemon of that type
             const TYPE_RESPONSE = await fetch(`${BASE_API}type/${RANDOM_TYPE}`);
@@ -587,9 +582,9 @@ class Pokemon extends Games {
      * game will be finished.
      */
     async start() {
-        this.LOADING.classList.remove('hidden');
-        this.CONTAINER_TUTORIAL.classList.toggle('hidden');
-        this.CONTAINER_TUTORIAL.classList.toggle('flex');
+        this.loading.classList.remove('hidden');
+        this.containerTutorial.classList.toggle('hidden');
+        this.containerTutorial.classList.toggle('flex');
 
         // Reset Pokemon game data
         this.pokemon.currentStage = 1;
@@ -602,9 +597,9 @@ class Pokemon extends Games {
         // If data is successfully fetched, show game container, else show alert and return to play container
         if (DATA) {
             setTimeout(() => {
-                this.LOADING.classList.add('hidden');
-                this.CONTAINER_GAME.classList.toggle('hidden');
-                this.CONTAINER_GAME.classList.toggle('flex');
+                this.loading.classList.add('hidden');
+                this.containerGame.classList.toggle('hidden');
+                this.containerGame.classList.toggle('flex');
                 this.renderPokemonGame(DATA);
             }, 2000)
         } else {
@@ -620,34 +615,24 @@ class Pokemon extends Games {
      * @param {Object} data - The fetched Pokemon data to be rendered.
      */
     renderPokemonGame(data) {
-        const POKEMON_IMG = document.getElementById('pokemonImage');
-        const POKEMON_NAME = document.getElementById('pokemonName');
-        const STAGE_TEXT = document.getElementById('stageDisplay');
-        const CHOICE_CONTAINER = document.getElementById('playerChoiceContainer');
-        const TRIAL_TEXT = document.getElementById('trialDisplay');
-        const HINT_TEXT = document.getElementById('hintText');
-
         // Pokemon render
-        POKEMON_IMG.src = data.image;
-        POKEMON_IMG.classList.add('animate-pop');
-        POKEMON_NAME.textContent = data.name;
+        this.pokemonImg.src = data.image;
+        this.pokemonImg.classList.add('animate-pop');
+        this.pokemonName.textContent = data.name;
 
         // Update stage
-        STAGE_TEXT.textContent = `Stage: ${this.pokemon.currentStage} / ${this.pokemon.maxStage}`;
+        this.stageText.textContent = `Stage: ${this.pokemon.currentStage} / ${this.pokemon.maxStage}`;
 
         // Show trials
-        if (TRIAL_TEXT) TRIAL_TEXT.textContent = `Lives: ${this.pokemon.trials}`;
+        if (this.trialText) this.trialText.textContent = `Lives: ${this.pokemon.trials}`;
 
         // Empty the hint
-        if (HINT_TEXT) HINT_TEXT.textContent = "";
-
-        // Generate types button
-        const TYPES = ['fire', 'water', 'grass', 'electric', 'ice', 'poison', 'ground', 'flying', 'bug', 'rock', 'ghost', 'steel', 'dragon', 'dark', 'fairy'];
+        if (this.hintText) this.hintText.textContent = "";
 
         // Clear previous button
-        CHOICE_CONTAINER.innerHTML = '';
+        this.choiceContainer.innerHTML = '';
 
-        TYPES.forEach(type => {
+        this.pokemonTypes.forEach(type => {
             const BTN = document.createElement('button');
             BTN.innerText = type.toUpperCase();
 
@@ -656,7 +641,7 @@ class Pokemon extends Games {
 
             // Event listener for each button
             BTN.onclick = () => this.checkAnswer(type);
-            CHOICE_CONTAINER.appendChild(BTN);
+            this.choiceContainer.appendChild(BTN);
         });
     }
 
@@ -671,15 +656,11 @@ class Pokemon extends Games {
         // Safety check if currentData is not available
         if (!this.pokemon.currentData) return;
 
-        const POKEMON_NAME = document.getElementById('pokemonName');
-        const HINT_TEXT = document.getElementById('hintText');
-        const TRIAL_TEXT = document.getElementById('trialDisplay');
-
         // Answer Check
         if (userGuess === this.pokemon.currentData.type) {
             // Correct Answer Logic
-            POKEMON_NAME.textContent = this.pokemon.currentData.name.toUpperCase();
-            HINT_TEXT.textContent = "CORRECT! GET READY FOR THE NEXT POKEMON!";
+            this.pokemonName.textContent = this.pokemon.currentData.name.toUpperCase();
+            this.hintText.textContent = "CORRECT! GET READY FOR THE NEXT POKEMON!";
             this.setScore(20);
 
             // Delay before next stage
@@ -699,7 +680,7 @@ class Pokemon extends Games {
         } else {
             // Wrong Answer Logic
             this.pokemon.trials--;
-            TRIAL_TEXT.textContent = `Lives: ${this.pokemon.trials}`;
+            this.trialText.textContent = `Lives: ${this.pokemon.trials}`;
 
             // Give hint if trials > 0
             if (this.pokemon.trials > 0) {
@@ -758,7 +739,7 @@ class Pokemon extends Games {
                         break;
                 }
 
-                HINT_TEXT.textContent = hint;
+                this.hintText.textContent = hint;
             } else {
                 // Game Over Logic
                 alert(`GAME OVER! The answer is ${this.pokemon.currentData.type}.`);
@@ -787,13 +768,14 @@ class Pokemon extends Games {
         this.resetScore();
 
         // Reset Pokemon image and name
-        const POKEMON_IMG = document.getElementById('pokemonImage');
-        if (POKEMON_IMG) POKEMON_IMG.src = '';
+        if (this.pokemonImage) {
+            this.pokemonImage.src = '';
+        }
 
         // Hide Game Container, Show Play Container
-        this.CONTAINER_GAME.classList.toggle('hidden');
-        this.CONTAINER_GAME.classList.toggle('flex');
-        this.CONTAINER_PLAY.classList.remove('hidden');
+        this.containerGame.classList.toggle('hidden');
+        this.containerGame.classList.toggle('flex');
+        this.containerPlay.classList.remove('hidden');
     }
 }
 
