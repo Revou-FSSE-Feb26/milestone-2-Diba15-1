@@ -43,7 +43,9 @@ class Games {
 
     // Get player name
     getPlayerName() {
-        return this.#playerName;
+        const playerName = localStorage.getItem('playerName') || this.#playerName;
+
+        return playerName;
     }
 
     /**
@@ -76,13 +78,89 @@ class Games {
         localStorage.setItem('leaderboard', JSON.stringify(this.leaderboard));
     }
 
+    /**
+     * Retrieves and returns the leaderboard for a specific game type, sorted in descending order by score.
+     * The leaderboard is formatted as a string with each entry on a new line, displaying the player's name and score.
+     * @param {string} type - The type of game for which to retrieve the leaderboard.
+     * @returns {string} A formatted string representing the leaderboard for the specified game type, sorted by score in descending order.
+     */
     getLeaderboard(type) {
         const LEADERBOARD = this.leaderboard
             .filter(entry => entry.gameType === type)
+            .sort((a, b) => b.score - a.score)
             .map(entry => `${entry.playerName}: ${entry.score}`)
             .join('\n');
 
         return LEADERBOARD;
+    }
+
+
+    /** 
+     * Retrieves and returns the leaderboard entries for a specific game type, sorted in descending order by score.
+     * @param {string} type - The type of game for which to retrieve the leaderboard entries.
+     * @returns {Array} An array of leaderboard entries for the specified game type, sorted by score in descending order.
+    */
+    getLeaderboardEntries(type) {
+        const LEADERBOARD_ENTRIES = JSON.parse(localStorage.getItem('leaderboard')) || [];
+
+        const filter = LEADERBOARD_ENTRIES
+            .filter(entry => entry.gameType === type)
+            .sort((a, b) => b.score - a.score);
+
+        return filter;
+    }
+
+    /**
+     * Renders the leaderboard for a specific game type by fetching the leaderboard entries, determining the player's best score and rank, 
+     * and displaying the top 3 entries in the leaderboard. If the player has not played the game yet, 
+     * a message is displayed to encourage them to play. If there are no entries in the leaderboard, 
+     * a message is displayed to encourage players to play and get on the leaderboard.
+     * @param {string} gameType - The type of game for which to render the leaderboard.
+     */
+    renderLeaderboard(gameType) {
+        const LIST_CONTAINER = document.getElementById('lb-list');
+        const BEST_RANK = document.getElementById('latestRankInfo');
+        LIST_CONTAINER.innerHTML = '';
+
+        // Fetch leaderboard data
+        const LB_DATA = GAMES.getLeaderboardEntries(gameType);
+
+        // Find player's best score and rank in the leaderboard
+        const PLAYER_SCORE = LB_DATA.find(entry => entry.playerName === this.getPlayerName());
+        const BEST_SCORE = Math.max(PLAYER_SCORE ? PLAYER_SCORE.score : 0, 0);
+
+        // Display player's best rank and score, if player hasn't played yet, display a message to encourage them to play
+        if (!PLAYER_SCORE) {
+            BEST_RANK.textContent = "You haven't played this game yet! Play now and get on the leaderboard!";
+        } else {
+            BEST_RANK.textContent = `You are currently ranked #${LB_DATA.indexOf(PLAYER_SCORE) + 1} with ${PLAYER_SCORE.score} pts. Your best score is ${BEST_SCORE} pts.`;
+        }
+
+        // If there is no data in the leaderboard, display a message to encourage players to play and get on the leaderboard
+        if (LB_DATA.length === 0) {
+            const NO_DATA = document.createElement('p');
+            NO_DATA.textContent = "No data yet!";
+            NO_DATA.className = 'text-md text-white font-bold';
+            LIST_CONTAINER.appendChild(NO_DATA);
+        }
+
+        // Generate TOP 3 leaderboard list append into LIST_CONTAINER
+        LB_DATA.slice(0, 3).forEach((entry, index) => {
+            const numberLb = index + 1;
+            const RANK = numberLb < 10 ? `0${numberLb}` : numberLb;
+
+            const DIVISION = document.createElement('div');
+            DIVISION.className = 'flex justify-between items-center gap-4 border-b border-white/20 py-2';
+            DIVISION.innerHTML = `
+                <span class="font-bold ${numberLb === 1 ? 'text-sub' : 'text-gray-400'}">${RANK}.</span>
+                <div class="flex flex-col w-full">
+                    <span class="text-md text-white font-bold">${entry.playerName}</span>
+                    <span class="text-sm font-semibold text-gray-400">${entry.score} pts</span>
+                </div>
+                ${numberLb === 1 ? '<span>👑</span>' : ''}
+            `;
+            LIST_CONTAINER.appendChild(DIVISION);
+        });
     }
 
     // Default Methods for Games, these methods will be overridden by each game class
@@ -804,10 +882,43 @@ function initGames() {
     }
 }
 
+window.onLoad = initGames();
+
 // Event Listeners for Games Section
 function clickShowNameModal() {
     const EDIT_MODAL = document.querySelector('.edit-modal');
     EDIT_MODAL.classList.toggle('hidden');
+}
+
+
+/**
+ * Opens the leaderboard modal and populates it with entries for the specified game type.
+ * Retrieves leaderboard data from the games instance, generates a ranked list of players,
+ * and displays it in the modal. Special styling is applied for the top rank.
+ * If no data is available, displays a "No data yet!" message.
+ * @param {string} gameType - The type of game for which to display the leaderboard (e.g., 'clicker', 'pokemon').
+ */
+function openLeaderboard(gameType) {
+    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal');
+    LEADERBOARD_MODAL.classList.toggle('hidden');
+    LEADERBOARD_MODAL.classList.toggle('flex');
+
+    GAMES.renderLeaderboard(gameType);
+}
+
+/**
+ * Closes the leaderboard modal and clears the leaderboard list.
+ * This function is called when the user clicks the close button on the leaderboard modal.
+ * It toggles the visibility of the modal and clears the contents of the leaderboard list container.
+ */
+function closeLeaderboard() {
+    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal');
+    LEADERBOARD_MODAL.classList.toggle('hidden');
+    LEADERBOARD_MODAL.classList.toggle('flex');
+
+    const LIST_CONTAINER = document.getElementById('lb-list');
+    // Clear previous leaderboard list
+    LIST_CONTAINER.innerHTML = '';
 }
 
 /**

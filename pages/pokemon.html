@@ -79,17 +79,26 @@
             }
         </style>
     </head>
-    <body onload="initGames()">
+    <body>
         <header>
             <a href="../index.html"
-                class="flex items-center gap-2 text-sm md:text-lg"><i
+                class="flex items-center gap-2 text-md md:text-xl"><i
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
-            <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
-                <i class="fa-solid fa-pencil"></i>
-                <h1
-                    class="text-lg md:text-2xl font-title font-bold cursor-pointer"
-                    id="playerName">Random Player</h1>
+            <div class="flex items-center gap-4 text-md md:text-xl">
+                <div id="leaderBoard_btn" onclick="openLeaderboard('pokemon')"
+                    class="flex gap-2 items-center cursor-pointer bg-yellow-500 hover:bg-yellow-500/20 px-4 py-2 rounded-xl transition-colors duration-300">
+                    <i class="fa-solid fa-trophy text-yellow-300"></i>
+                    <h1
+                        class="font-title font-bold hidden md:block text-yellow-900">Leaderboards</h1>
+                </div>
+                <div onclick="clickShowNameModal()"
+                    class="flex gap-2 items-center">
+                    <i class="fa-solid fa-pencil"></i>
+                    <h1
+                        class="font-title font-bold cursor-pointer"
+                        id="playerName">Random Player</h1>
+                </div>
             </div>
         </header>
 
@@ -213,6 +222,45 @@
                     placeholder="Input Player Name" required>
                 <button class="btn-sub" type="submit">Save</button>
             </form>
+        </div>
+
+        <!-- Modal for Leaderboard -->
+        <div id="leaderBoard_modal"
+            class="hidden fixed inset-0 z-50 bg-black/80 items-center justify-center p-4"
+            onclick="if(event.target===this) closeLeaderboard()">
+
+            <div
+                class="bg-[#1a2030] rounded-2xl w-[320px] overflow-hidden border border-white/10 animate-[slideUp_0.28s_cubic-bezier(0.34,1.56,0.64,1)]">
+
+                <!-- Header -->
+                <div class="bg-yellow-500 px-[18px] pt-4 pb-3">
+                    <div class="flex items-center justify-between mb-0.5">
+                        <div
+                            class="flex items-center gap-2 font-bold text-yellow-900 text-[17px]">
+                            <i class="fa-solid fa-trophy text-yellow-300"></i>
+                            Leaderboards
+                        </div>
+                        <button onclick="closeLeaderboard()"
+                            title="Close Button"
+                            class="w-6 h-6 rounded-full bg-black/20 text-yellow-900 font-bold text-sm flex items-center justify-center hover:bg-black/30 transition-colors">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <p
+                        class="text-[11px] text-yellow-900/70 font-semibold">Pokemon Type Guess · Top Players</p>
+                </div>
+
+                <!-- Rank List -->
+                <div id="lb-list"
+                    class="max-h-48 overflow-y-auto divide-y divide-white/[0.04] p-4 list-none"></div>
+
+                <!-- Footer -->
+                <div class="px-4 py-3 border-t border-white/[0.06] text-center">
+                    <p class="text-[11px] text-gray-500 font-semibold" id="latestRankInfo">
+                        
+                    </p>
+                </div>
+            </div>
         </div>
         <script src="../assets/javascript/games.js"></script>
     </body>
