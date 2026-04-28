@@ -7,7 +7,7 @@ and our simple game that can be play from our website.
 
 ## 📃 Github Pages
 
-### Preview Web: [Click here!](https://revou-fsse-feb26.github.io/milestone-2-Diba15-1/)
+### Preview Web: [Click here!](https://www.revofun.my.id/)
 
 ---
 
