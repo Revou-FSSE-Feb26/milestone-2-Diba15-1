@@ -71,3 +71,11 @@ function redirectGame(gameType) {
             break;
     }
 }
+
+function contactResponse() {
+    alert("Thank you for trying to reach us!")
+}
+
+function socialResponse(socialType) {
+    alert(`Thank you for trying to reach us via ${socialType}!`)
+}

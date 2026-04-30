@@ -381,11 +381,11 @@
 
                 <!-- Action Button Centered -->
                 <div class="pt-6">
-                    <a href="#contact" class="btn-sub group">
+                    <button title="contactBtn" onclick="contactResponse()" class="btn-sub group">
                         Get in Touch
                         <i
                             class="fa-solid fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
-                    </a>
+                    </button>
                 </div>
             </section>
         </main>
@@ -411,11 +411,11 @@
             </section>
 
             <section id="social" class="flex flex-col gap-4">
-                <div id="social-icon" class="flex gap-4">
-                    <i class="fa-brands fa-facebook"></i>
-                    <i class="fa-brands fa-twitter"></i>
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-linkedin-in"></i>
+                <div id="social-icon" class="flex gap-4 *:cursor-pointer">
+                    <i onclick="socialResponse('Facebook')" class="fa-brands fa-facebook"></i>
+                    <i onclick="socialResponse('X')" class="fa-brands fa-x-twitter"></i>
+                    <i onclick="socialResponse('Instagram')" class="fa-brands fa-instagram"></i>
+                    <i onclick="socialResponse('LinkedIn')" class="fa-brands fa-linkedin-in"></i>
                 </div>
                 <p class="text-gray-400">&copy; 2026 Revofun. All rights
                     reserved.</p>
