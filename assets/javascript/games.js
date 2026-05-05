@@ -676,7 +676,7 @@ class Pokemon extends Games {
             }, 2000)
         } else {
             alert("Connection problem!");
-            this.finishPokemonGame();
+            this.finish();
         }
     }
 
@@ -840,8 +840,8 @@ class Pokemon extends Games {
         this.resetScore();
 
         // Reset Pokemon image and name
-        if (this.pokemonImage) {
-            this.pokemonImage.src = '';
+        if (this.pokemonImg) {
+            this.pokemonImg.src = '';
         }
 
         // Hide Game Container, Show Play Container
