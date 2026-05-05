@@ -121,7 +121,7 @@
                     <p
                         class="text-gray-300 text-center text-lg font-semibold">🖥️
                         Recommended play in desktop for best experience!</p>
-                    <button onclick="playPokemon()"
+                    <button onclick="playPokemon('play')"
                         class="btn cursor-pointer">Play Now!</button>
                 </div>
 
@@ -143,7 +143,7 @@
                     <p class="text-gray-300 text-lg/relaxed text-justify">Guess
                         the type of the Pokemon shown. You have 5 lives and 5
                         stages to get as many correct as possible!</p>
-                    <button onclick="startPokemon()"
+                    <button onclick="playPokemon('start')"
                         class="btn cursor-pointer">Start Game</button>
                 </div>
 
@@ -262,6 +262,6 @@
                 </div>
             </div>
         </div>
-        <script src="../assets/javascript/games.js"></script>
+        <script src="../dist/assets/typescript/games.js"></script>
     </body>
 </html>

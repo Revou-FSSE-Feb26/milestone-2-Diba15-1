@@ -66,7 +66,7 @@ class Games {
 	protected readonly nameDisplay: HTMLElement;
 
 	// Leaderboard data structure, value is object that have gameType, playerName, and score
-	private leaderboard: Array<LeaderboardData>;
+	private readonly leaderboard: Array<LeaderboardData>;
 
 	/**
 	 * Constructor for Games class
@@ -121,7 +121,7 @@ class Games {
 		this.score += score;
 		localStorage.setItem("score", String(this.score));
 
-		this.scoreDisplay.innerHTML = String(this.score);
+		this.scoreDisplay.textContent = String(this.score);
 	}
 
 	// Get current score
@@ -133,7 +133,7 @@ class Games {
 	resetScore() {
 		this.score = 0;
 		localStorage.removeItem("score");
-		this.scoreDisplay.innerHTML = String(this.score);
+		this.scoreDisplay.textContent = String(this.score);
 	}
 
 	// Set leaderboard data, push new player data to leaderboard array and store in localStorage
@@ -142,14 +142,86 @@ class Games {
 		localStorage.setItem("leaderboard", JSON.stringify(this.leaderboard));
 	}
 
-	// Get leaderboard data for a specific game type, filter the leaderboard array by game type
-	// and return a formatted string of player names and scores
-	getLeaderboard(type: string) {
+    /**
+     * Retrieves and returns the leaderboard for a specific game type, sorted in descending order by score.
+     * The leaderboard is formatted as a string with each entry on a new line, displaying the player's name and score.
+     * @param {string} type - The type of game for which to retrieve the leaderboard.
+     * @returns {string} A formatted string representing the leaderboard for the specified game type, sorted by score in descending order.
+     */
+	getLeaderboard(type: string): string {
 		return this.leaderboard
 			.filter((entry) => entry.gameType === type)
+            .sort((a, b) => b.score - a.score)
 			.map((entry) => `${entry.playerName}: ${entry.score}`)
 			.join("\n");
 	}
+
+    /**
+     * Retrieves and returns the leaderboard entries for a specific game type, sorted in descending order by score.
+     * @param {string} type - The type of game for which to retrieve the leaderboard entries.
+     * @returns {Array} An array of leaderboard entries for the specified game type, sorted by score in descending order.
+     */
+    getLeaderboardEntries(type: string): Array<any> {
+        const RAW_LB: string | null = localStorage.getItem('leaderboard');
+        const LEADERBOARD_ENTRIES: LeaderboardData[] = JSON.parse(RAW_LB || '[]');
+
+        return LEADERBOARD_ENTRIES
+            .filter(entry => entry.gameType === type)
+            .sort((a, b) => b.score - a.score);
+    }
+
+    /**
+     * Renders the leaderboard for a specific game type by fetching the leaderboard entries, determining the player's best score and rank,
+     * and displaying the top 3 entries in the leaderboard. If the player has not played the game yet,
+     * a message is displayed to encourage them to play. If there are no entries in the leaderboard,
+     * a message is displayed to encourage players to play and get on the leaderboard.
+     * @param {string} gameType - The type of game for which to render the leaderboard.
+     */
+    renderLeaderboard(gameType: string) {
+        const LIST_CONTAINER = document.getElementById('lb-list') as HTMLElement;
+        const BEST_RANK = document.getElementById('latestRankInfo') as HTMLElement;
+        LIST_CONTAINER.innerHTML = '';
+
+        // Fetch leaderboard data
+        const LB_DATA = GAMES.getLeaderboardEntries(gameType);
+
+        // Find player's best score and rank in the leaderboard
+        const PLAYER_SCORE = LB_DATA.find(entry => entry.playerName === this.getPlayerName());
+        const BEST_SCORE: number = Math.max(PLAYER_SCORE ? PLAYER_SCORE.score : 0, 0);
+
+        // Display player's best rank and score, if player hasn't played yet, display a message to encourage them to play
+        if (!PLAYER_SCORE) {
+            BEST_RANK.textContent = "You haven't played this game yet! Play now and get on the leaderboard!";
+        } else {
+            BEST_RANK.textContent = `You are currently ranked #${LB_DATA.indexOf(PLAYER_SCORE) + 1} with ${PLAYER_SCORE.score} pts. Your best score is ${BEST_SCORE} pts.`;
+        }
+
+        // If there is no data in the leaderboard, display a message to encourage players to play and get on the leaderboard
+        if (LB_DATA.length === 0) {
+            const NO_DATA = document.createElement('p');
+            NO_DATA.textContent = "No data yet!";
+            NO_DATA.className = 'text-md text-white font-bold';
+            LIST_CONTAINER.appendChild(NO_DATA);
+        }
+
+        // Generate TOP 3 leaderboard list append into LIST_CONTAINER
+        LB_DATA.slice(0, 3).forEach((entry, index) => {
+            const numberLb: number = index + 1;
+            const RANK: string | number = numberLb < 10 ? `0${numberLb}` : numberLb;
+
+            const DIVISION: HTMLDivElement = document.createElement('div');
+            DIVISION.className = 'flex justify-between items-center gap-4 border-b border-white/20 py-2';
+            DIVISION.innerHTML = `
+                <span class="font-bold ${numberLb === 1 ? 'text-sub' : 'text-gray-400'}">${RANK}.</span>
+                <div class="flex flex-col w-full">
+                    <span class="text-md text-white font-bold">${entry.playerName}</span>
+                    <span class="text-sm font-semibold text-gray-400">${entry.score} pts</span>
+                </div>
+                ${numberLb === 1 ? '<span>👑</span>' : ''}
+            `;
+            LIST_CONTAINER.appendChild(DIVISION);
+        });
+    }
 
 	// Default Methods for Games, these methods will be overridden by each game class
 	play() {
@@ -231,7 +303,7 @@ class RPS extends Games {
 	 */
 	async rps(playerChoice: Choices): Promise<void> {
 		// Show Player Choice
-		this.PLAYER_CHOICE_DISPLAY.innerHTML = this.ICONS[playerChoice];
+		this.PLAYER_CHOICE_DISPLAY.textContent = this.ICONS[playerChoice];
 		// Reset Border Determine
 		this.PLAYER_CONTAINER.classList.remove("border-green-600");
 		this.PLAYER_CONTAINER.classList.remove("border-red-600");
@@ -247,7 +319,7 @@ class RPS extends Games {
 		const SHUFFLE_INTERVAL = setInterval(() => {
 			const COMPUTER_CHOICE = Math.floor(Math.random() * 3) as Choices;
 			// Show icon random
-			this.ENEMY_CHOICE_DISPLAY.innerHTML = this.ICONS[COMPUTER_CHOICE];
+			this.ENEMY_CHOICE_DISPLAY.textContent = this.ICONS[COMPUTER_CHOICE];
 			shuffleCount++;
 
 			// Stop after shufflecount > 15
@@ -304,8 +376,8 @@ class RPS extends Games {
 	 */
 	override finish(): void {
 		// Reset Player and Enemy Display
-		this.ENEMY_CHOICE_DISPLAY.innerHTML = "??";
-		this.PLAYER_CHOICE_DISPLAY.innerHTML = "??";
+		this.ENEMY_CHOICE_DISPLAY.textContent = "??";
+		this.PLAYER_CHOICE_DISPLAY.textContent = "??";
 
 		// Hide Game Container, Show Play Container
 		this.containerGame.classList.toggle("hidden");
@@ -346,6 +418,7 @@ class ClickHero extends Games {
 	private readonly ATK_PRICE_DISPLAY: HTMLElement;
 	private readonly AUTO_STATUS: HTMLElement;
 	private readonly HERO_BTN: HTMLElement;
+    private readonly PRAISE_TEXT: HTMLElement;
 	private autoInterval: number | null;
 	private clickHero: ClickData;
 
@@ -360,6 +433,7 @@ class ClickHero extends Games {
 		) as HTMLElement;
 		this.AUTO_STATUS = document.getElementById("auto-status") as HTMLElement;
 		this.HERO_BTN = document.getElementById("hero-btn") as HTMLElement;
+        this.PRAISE_TEXT = document.getElementById("praiseText") as HTMLElement;
 
 		this.autoInterval = null;
 
@@ -430,7 +504,6 @@ class ClickHero extends Games {
 		// Calculate ATK and add to score, also check milestone and show praise text if milestone is reached
 		const ATK: number = this.clickHero.atk;
 		this.setScore(ATK);
-		const PRAISE_TEXT = document.getElementById("praiseText") as HTMLElement;
 
 		const MILESTONES = this.clickHero.milestones;
 		const CURRENT_MILESTONES = MILESTONES.find(
@@ -440,13 +513,13 @@ class ClickHero extends Games {
 		if (CURRENT_MILESTONES) {
 			CURRENT_MILESTONES.isReached = true;
 
-			PRAISE_TEXT.textContent = CURRENT_MILESTONES.text;
+			this.PRAISE_TEXT.textContent = CURRENT_MILESTONES.text;
 
-			PRAISE_TEXT.classList.add("animate-praise", "text-sub");
+			this.PRAISE_TEXT.classList.add("animate-praise", "text-sub");
 
 			setTimeout(() => {
-				PRAISE_TEXT.textContent = "";
-				PRAISE_TEXT.classList.remove("animate-praise", "text-sub");
+				this.PRAISE_TEXT.textContent = "";
+				this.PRAISE_TEXT.classList.remove("animate-praise", "text-sub");
 			}, 2000);
 		}
 
@@ -484,12 +557,12 @@ class ClickHero extends Games {
 			localStorage.setItem("atk", JSON.stringify(this.clickHero.atk));
 			localStorage.setItem("upPrice", JSON.stringify(this.clickHero.upPrice));
 
-			this.ATK_UP.innerHTML = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
+			this.ATK_UP.textContent = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
 
 			if (this.clickHero.currentAtkUp >= MAX_ATK) {
-				this.ATK_PRICE_DISPLAY.innerHTML = "MAX";
+				this.ATK_PRICE_DISPLAY.textContent = "MAX";
 			} else {
-				this.ATK_PRICE_DISPLAY.innerHTML = String(this.clickHero.upPrice);
+				this.ATK_PRICE_DISPLAY.textContent = String(this.clickHero.upPrice);
 			}
 		}
 	}
@@ -511,7 +584,7 @@ class ClickHero extends Games {
 			this.clickHero.auto = true;
 			localStorage.setItem("auto", JSON.stringify(true));
 
-			this.AUTO_STATUS.innerHTML = "ON";
+			this.AUTO_STATUS.textContent = "ON";
 			this.AUTO_STATUS.classList.add("text-green-500", "font-bold");
 
 			this.activeAuto();
@@ -963,6 +1036,36 @@ function clickShowNameModal(): void {
 	if (EDIT_MODAL) {
 		EDIT_MODAL.classList.toggle("hidden");
 	}
+}
+
+/**
+ * Opens the leaderboard modal and populates it with entries for the specified game type.
+ * Retrieves leaderboard data from the games instance, generates a ranked list of players,
+ * and displays it in the modal. Special styling is applied for the top rank.
+ * If no data is available, displays a "No data yet!" message.
+ * @param {string} gameType - The type of game for which to display the leaderboard (e.g., 'clicker', 'pokemon').
+ */
+function openLeaderboard(gameType: string) {
+    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal') as HTMLElement;
+    LEADERBOARD_MODAL.classList.toggle('hidden');
+    LEADERBOARD_MODAL.classList.toggle('flex');
+
+    GAMES.renderLeaderboard(gameType);
+}
+
+/**
+ * Closes the leaderboard modal and clears the leaderboard list.
+ * This function is called when the user clicks the close button on the leaderboard modal.
+ * It toggles the visibility of the modal and clears the contents of the leaderboard list container.
+ */
+function closeLeaderboard() {
+    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal') as HTMLElement;
+    LEADERBOARD_MODAL.classList.toggle('hidden');
+    LEADERBOARD_MODAL.classList.toggle('flex');
+
+    const LIST_CONTAINER = document.getElementById('lb-list') as HTMLElement;
+    // Clear previous leaderboard list
+    LIST_CONTAINER.innerHTML = '';
 }
 
 /**
