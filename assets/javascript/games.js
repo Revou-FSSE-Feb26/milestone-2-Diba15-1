@@ -43,9 +43,7 @@ class Games {
 
     // Get player name
     getPlayerName() {
-        const playerName = localStorage.getItem('playerName') || this.#playerName;
-
-        return playerName;
+        return localStorage.getItem('playerName') || this.#playerName;
     }
 
     /**
@@ -57,7 +55,7 @@ class Games {
         this.#score += score;
         localStorage.setItem('score', this.#score);
 
-        this.scoreDisplay.innerHTML = this.#score;
+        this.scoreDisplay.textContent = this.#score;
     }
 
     // Get current score
@@ -85,13 +83,11 @@ class Games {
      * @returns {string} A formatted string representing the leaderboard for the specified game type, sorted by score in descending order.
      */
     getLeaderboard(type) {
-        const LEADERBOARD = this.leaderboard
+        return this.leaderboard
             .filter(entry => entry.gameType === type)
             .sort((a, b) => b.score - a.score)
             .map(entry => `${entry.playerName}: ${entry.score}`)
             .join('\n');
-
-        return LEADERBOARD;
     }
 
 
@@ -103,11 +99,9 @@ class Games {
     getLeaderboardEntries(type) {
         const LEADERBOARD_ENTRIES = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
-        const filter = LEADERBOARD_ENTRIES
+        return LEADERBOARD_ENTRIES
             .filter(entry => entry.gameType === type)
             .sort((a, b) => b.score - a.score);
-
-        return filter;
     }
 
     /**
@@ -476,7 +470,7 @@ class ClickHero extends Games {
             localStorage.setItem('atk', JSON.stringify(this.clickHero.atk));
             localStorage.setItem('upPrice', JSON.stringify(this.clickHero.upPrice));
 
-            this.atkUp.innerHTML = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
+            this.atkUp.textContent = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
 
             if (this.clickHero.currentAtkUp >= MAX_ATK) {
                 this.atkPriceDisplay.innerHTML = "MAX";
@@ -504,7 +498,7 @@ class ClickHero extends Games {
             this.clickHero.auto = true;
             localStorage.setItem('auto', JSON.stringify(true));
 
-            this.autoStatus.innerHTML = 'ON';
+            this.autoStatus.textContent = 'ON';
             this.autoStatus.classList.add('text-green-500', 'font-bold');
 
             this.activeAuto();
