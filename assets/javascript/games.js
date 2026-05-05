@@ -67,7 +67,7 @@ class Games {
     resetScore() {
         this.#score = 0;
         localStorage.removeItem('score');
-        this.scoreDisplay.innerHTML = this.#score;
+        this.scoreDisplay.textContent = this.#score;
     }
 
     // Set leaderboard data, push new player data to leaderboard array and store in localStorage
@@ -114,7 +114,7 @@ class Games {
     renderLeaderboard(gameType) {
         const LIST_CONTAINER = document.getElementById('lb-list');
         const BEST_RANK = document.getElementById('latestRankInfo');
-        LIST_CONTAINER.innerHTML = '';
+        LIST_CONTAINER.textContent = '';
 
         // Fetch leaderboard data
         const LB_DATA = GAMES.getLeaderboardEntries(gameType);
@@ -227,7 +227,7 @@ class RPS extends Games {
      */
     async rps(playerChoice) {
         // Show Player Choice
-        this.playerChoiceDisplay.innerHTML = this.CHOICES[playerChoice].choice;
+        this.playerChoiceDisplay.textContent = this.CHOICES[playerChoice].choice;
         // Reset Border Determine
         this.playerContainer.classList.remove('border-green-600')
         this.playerContainer.classList.remove('border-red-600')
@@ -243,7 +243,7 @@ class RPS extends Games {
         const SHUFFLE_INTERVAL = setInterval(() => {
             const COMPUTER_CHOICE = this.CHOICES[Math.floor(Math.random() * this.CHOICES.length)];
             // Show icon random
-            this.enemyChoiceDisplay.innerHTML = COMPUTER_CHOICE.choice;
+            this.enemyChoiceDisplay.textContent = COMPUTER_CHOICE.choice;
             shuffleCount++;
 
             // Stop after shufflecount > 15
@@ -308,8 +308,8 @@ class RPS extends Games {
         this.enemyContainer.classList.add('border-white/20');
 
         // Reset Player and Enemy Display
-        this.enemyChoiceDisplay.innerHTML = '??';
-        this.playerChoiceDisplay.innerHTML = '??';
+        this.enemyChoiceDisplay.textContent = '??';
+        this.playerChoiceDisplay.textContent = '??';
 
         // Hide Game Container, Show Play Container
         this.containerGame.classList.toggle('hidden');
@@ -473,9 +473,9 @@ class ClickHero extends Games {
             this.atkUp.textContent = `${this.clickHero.currentAtkUp}/${MAX_ATK}`;
 
             if (this.clickHero.currentAtkUp >= MAX_ATK) {
-                this.atkPriceDisplay.innerHTML = "MAX";
+                this.atkPriceDisplay.textContent = "MAX";
             } else {
-                this.atkPriceDisplay.innerHTML = this.clickHero.upPrice;
+                this.atkPriceDisplay.textContent = this.clickHero.upPrice;
             }
         }
     }
@@ -571,9 +571,9 @@ class ClickHero extends Games {
 
         clearInterval(this.autoInterval);
 
-        this.atkUp.innerHTML = `${this.clickHero.atk}/10`;
-        this.atkPriceDisplay.innerHTML = this.clickHero.upPrice;
-        this.autoStatus.innerHTML = 'OFF';
+        this.atkUp.textContent = `${this.clickHero.atk}/10`;
+        this.atkPriceDisplay.textContent = this.clickHero.upPrice;
+        this.autoStatus.textContent = 'OFF';
         this.autoStatus.classList.remove('text-green-500', 'font-bold');
 
         localStorage.removeItem('score');
@@ -702,7 +702,7 @@ class Pokemon extends Games {
         if (this.hintText) this.hintText.textContent = "";
 
         // Clear previous button
-        this.choiceContainer.innerHTML = '';
+        this.choiceContainer.textContent = '';
 
         this.pokemonTypes.forEach(type => {
             const BTN = document.createElement('button');
@@ -876,7 +876,7 @@ function initGames() {
     }
 }
 
-window.onLoad = initGames();
+window.addEventListener('load', initGames)
 
 // Event Listeners for Games Section
 function clickShowNameModal() {
@@ -912,7 +912,7 @@ function closeLeaderboard() {
 
     const LIST_CONTAINER = document.getElementById('lb-list');
     // Clear previous leaderboard list
-    LIST_CONTAINER.innerHTML = '';
+    LIST_CONTAINER.textContent = '';
 }
 
 /**
