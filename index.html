@@ -143,7 +143,7 @@
                 <div class="w-[50%] h-0.5 bg-white"></div>
             </div>
             <div id="mobile-menu"
-                class="hidden fixed top-0 left-0 w-full h-screen bg-white/80 dark:bg-dark-bg/90 backdrop-blur-md z-10 p-4 transition-all">
+                class="hidden fixed top-0 left-0 w-full h-screen bg-dark-bg/90 backdrop-blur-md z-10 p-4 transition-all">
                 <button aria-label="Close Button" type="button"
                     onclick="toggleMobileMenu()"
                     class="absolute top-4 right-4 cursor-pointer">
@@ -381,11 +381,11 @@
 
                 <!-- Action Button Centered -->
                 <div class="pt-6">
-                    <a href="#contact" class="btn-sub group">
+                    <button title="contactBtn" onclick="contactResponse()" class="btn-sub group">
                         Get in Touch
                         <i
                             class="fa-solid fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
-                    </a>
+                    </button>
                 </div>
             </section>
         </main>
@@ -411,11 +411,11 @@
             </section>
 
             <section id="social" class="flex flex-col gap-4">
-                <div id="social-icon" class="flex gap-4">
-                    <i class="fa-brands fa-facebook"></i>
-                    <i class="fa-brands fa-twitter"></i>
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-linkedin-in"></i>
+                <div id="social-icon" class="flex gap-4 *:cursor-pointer">
+                    <i onclick="socialResponse('Facebook')" class="fa-brands fa-facebook"></i>
+                    <i onclick="socialResponse('X')" class="fa-brands fa-x-twitter"></i>
+                    <i onclick="socialResponse('Instagram')" class="fa-brands fa-instagram"></i>
+                    <i onclick="socialResponse('LinkedIn')" class="fa-brands fa-linkedin-in"></i>
                 </div>
                 <p class="text-gray-400">&copy; 2026 Revofun. All rights
                     reserved.</p>
