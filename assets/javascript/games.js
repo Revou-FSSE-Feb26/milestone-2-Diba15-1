@@ -851,13 +851,414 @@ class Pokemon extends Games {
     }
 }
 
+/*
+* Tetris Class
+* Implementasi logika game Tetris yang mewarisi class Games.
+*/
+class Tetris extends Games {
+    constructor() {
+        super();
+        this.canvas = document.getElementById('tetris-canvas');
+        if (this.canvas) {
+            this.ctx = this.canvas.getContext('2d');
+            this.ctx.scale(20, 20); // Scale up for 12x24 grid (240x480)
+        }
+
+        this.linesDisplay = document.getElementById('linesDisplay');
+        this.gameOverOverlay = document.getElementById('game-over-overlay');
+
+        this.nextCanvas = document.getElementById('next-canvas');
+        if (this.nextCanvas) {
+            this.nextCtx = this.nextCanvas.getContext('2d');
+            this.nextCtx.scale(20, 20); // Scale up for 4x4 grid (80x80)
+        }
+        this.nextPiece = null;
+
+        this.colors = [
+            null,
+            '#FF0D72', '#0DC2FF', '#0DFF72', '#F538FF', '#FF8E0D', '#FFE138', '#3877FF'
+        ];
+
+        this.player = {
+            pos: {x: 0, y: 0},
+            matrix: null,
+            score: 0,
+            lines: 0
+        };
+
+        // Diperbarui dari createMatrix(12, 20) menjadi createMatrix(12, 24)
+        // agar proporsi arena menyentuh bawah canvas berukuran 240x480
+        this.arena = this.createMatrix(12, 24);
+        this.dropCounter = 0;
+        this.dropInterval = 1000;
+        this.lastTime = 0;
+        this.isPaused = false;
+        this.gameId = null;
+    }
+
+    createMatrix(w, h) {
+        const matrix = [];
+        while (h--) {
+            matrix.push(new Array(w).fill(0));
+        }
+        return matrix;
+    }
+
+    createPiece(type) {
+        if (type === 'T') {
+            return [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0],
+            ];
+        } else if (type === 'O') {
+            return [
+                [2, 2],
+                [2, 2],
+            ];
+        } else if (type === 'L') {
+            return [
+                [0, 3, 0],
+                [0, 3, 0],
+                [0, 3, 3],
+            ];
+        } else if (type === 'J') {
+            return [
+                [0, 4, 0],
+                [0, 4, 0],
+                [4, 4, 0],
+            ];
+        } else if (type === 'I') {
+            return [
+                [0, 5, 0, 0],
+                [0, 5, 0, 0],
+                [0, 5, 0, 0],
+                [0, 5, 0, 0],
+            ];
+        } else if (type === 'S') {
+            return [
+                [0, 6, 6],
+                [6, 6, 0],
+                [0, 0, 0],
+            ];
+        } else if (type === 'Z') {
+            return [
+                [7, 7, 0],
+                [0, 7, 7],
+                [0, 0, 0],
+            ];
+        }
+    }
+
+    // Hitung posisi bayangan (titik terendah block bisa turun)
+    getGhostPos() {
+        const ghost = {
+            matrix: this.player.matrix,
+            pos: { x: this.player.pos.x, y: this.player.pos.y }
+        };
+        // Turunkan bayangan sampai menabrak sesuatu
+        while (!this.collide(this.arena, ghost)) {
+            ghost.pos.y++;
+        }
+        // Naikkan satu langkah karena loop berhenti setelah menabrak
+        ghost.pos.y--;
+        return ghost.pos;
+    }
+
+    draw() {
+        this.ctx.fillStyle = '#000'; // Latar belakang hitam dengan sedikit transparansi
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.drawMatrix(this.arena, {x: 0, y: 0}, this.ctx);
+
+        // Gambar bayangan putih transparan
+        if (this.player.matrix) {
+            const ghostPos = this.getGhostPos();
+            this.drawGhost(this.player.matrix, ghostPos, this.ctx);
+        }
+
+        // Gambar pemain sesungguhnya
+        this.drawMatrix(this.player.matrix, this.player.pos, this.ctx);
+    }
+
+    drawNext() {
+        if (!this.nextCtx) return;
+        this.nextCtx.fillStyle = '#000';
+        this.nextCtx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
+
+        if (this.nextPiece) {
+            const offset = {
+                x: 2 - Math.floor(this.nextPiece[0].length / 2),
+                y: 2 - Math.floor(this.nextPiece.length / 2)
+            };
+            this.drawMatrix(this.nextPiece, offset, this.nextCtx);
+        }
+    }
+
+    drawMatrix(matrix, offset, context = this.ctx) {
+        matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    context.fillStyle = this.colors[value];
+                    context.fillRect(x + offset.x, y + offset.y, 1, 1);
+                    // Add subtle border to blocks
+                    context.strokeStyle = 'rgba(0,0,0,0.3)';
+                    context.lineWidth = 0.05;
+                    context.strokeRect(x + offset.x, y + offset.y, 1, 1);
+                }
+            });
+        });
+    }
+
+    // Logika gambar khusus untuk ghost piece
+    drawGhost(matrix, offset, context = this.ctx) {
+        matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    // Warna putih transparan
+                    context.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                    context.fillRect(x + offset.x, y + offset.y, 1, 1);
+                    // Border sedikit lebih terang untuk memperjelas bentuknya
+                    context.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                    context.lineWidth = 0.05;
+                    context.strokeRect(x + offset.x, y + offset.y, 1, 1);
+                }
+            });
+        });
+    }
+
+    merge(arena, player) {
+        player.matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    arena[y + player.pos.y][x + player.pos.x] = value;
+                }
+            });
+        });
+    }
+
+    collide(arena, player) {
+        const [m, o] = [player.matrix, player.pos];
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < m[y].length; ++x) {
+                if (m[y][x] !== 0 &&
+                    (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    arenaSweep() {
+        let rowCount = 1;
+        outer: for (let y = this.arena.length - 1; y > 0; --y) {
+            for (let x = 0; x < this.arena[y].length; ++x) {
+                if (this.arena[y][x] === 0) {
+                    continue outer;
+                }
+            }
+
+            const row = this.arena.splice(y, 1)[0].fill(0);
+            this.arena.unshift(row);
+            ++y;
+
+            this.player.score += rowCount * 10;
+            this.player.lines += 1;
+            rowCount *= 2;
+        }
+        this.setScore(this.player.score - this.getScore());
+        this.updateDifficulty();
+        if (this.linesDisplay) this.linesDisplay.textContent = this.player.lines;
+    }
+
+    updateDifficulty() {
+        const score = this.getScore();
+        // Tingkatkan kecepatan (kurangi interval turun) setiap kelipatan 50 skor.
+        // Batas maksimal kecepatan (interval minimal) adalah 300ms.
+        const speedIncrease = Math.floor(score / 50) * 50;
+        this.dropInterval = Math.max(300, 1000 - speedIncrease);
+    }
+
+    playerDrop() {
+        this.player.pos.y++;
+        if (this.collide(this.arena, this.player)) {
+            this.player.pos.y--;
+            this.merge(this.arena, this.player);
+            this.playerReset();
+            this.arenaSweep();
+        }
+        this.dropCounter = 0;
+    }
+
+    // Menjatuhkan block langsung ke dasar (Hard Drop)
+    playerHardDrop() {
+        const ghostPos = this.getGhostPos();
+        this.player.pos.y = ghostPos.y; // Pindahkan block ke posisi bayangan terbawah
+        this.merge(this.arena, this.player);
+        this.playerReset();
+        this.arenaSweep();
+        this.dropCounter = 0;
+    }
+
+    playerMove(dir) {
+        this.player.pos.x += dir;
+        if (this.collide(this.arena, this.player)) {
+            this.player.pos.x -= dir;
+        }
+    }
+
+    playerReset() {
+        const pieces = 'ILJOTSZ';
+
+        if (!this.nextPiece) {
+            this.nextPiece = this.createPiece(pieces[pieces.length * Math.random() | 0]);
+        }
+
+        this.player.matrix = this.nextPiece;
+        this.nextPiece = this.createPiece(pieces[pieces.length * Math.random() | 0]);
+        this.drawNext();
+
+        this.player.pos.y = 0;
+        this.player.pos.x = (this.arena[0].length / 2 | 0) -
+            (this.player.matrix[0].length / 2 | 0);
+
+        if (this.collide(this.arena, this.player)) {
+            this.gameOver();
+        }
+    }
+
+    playerRotate(dir) {
+        const pos = this.player.pos.x;
+        let offset = 1;
+        this.rotate(this.player.matrix, dir);
+        while (this.collide(this.arena, this.player)) {
+            this.player.pos.x += offset;
+            offset = -(offset + (offset > 0 ? 1 : -1));
+            if (offset > this.player.matrix[0].length) {
+                this.rotate(this.player.matrix, -dir);
+                this.player.pos.x = pos;
+                return;
+            }
+        }
+    }
+
+    rotate(matrix, dir) {
+        for (let y = 0; y < matrix.length; ++y) {
+            for (let x = 0; x < y; ++x) {
+                [
+                    matrix[x][y],
+                    matrix[y][x],
+                ] = [
+                    matrix[y][x],
+                    matrix[x][y],
+                ];
+            }
+        }
+        if (dir > 0) {
+            matrix.forEach(row => row.reverse());
+        } else {
+            matrix.reverse();
+        }
+    }
+
+    update(time = 0) {
+        if (this.isPaused) return;
+
+        const deltaTime = time - this.lastTime;
+        this.lastTime = time;
+
+        this.dropCounter += deltaTime;
+        if (this.dropCounter > this.dropInterval) {
+            this.playerDrop();
+        }
+
+        this.draw();
+        this.gameId = requestAnimationFrame(this.update.bind(this));
+    }
+
+    start() {
+        if (this.gameOverOverlay) this.gameOverOverlay.classList.add('hidden');
+        this.arena.forEach(row => row.fill(0));
+        this.player.score = 0;
+        this.player.lines = 0;
+        this.dropInterval = 1000;
+        this.nextPiece = null;
+        if (this.linesDisplay) this.linesDisplay.textContent = '0';
+        this.isPaused = false;
+
+        // Setup control event listener if it doesn't exist
+        if (!this.keyboardInit) {
+            document.addEventListener('keydown', event => {
+                if (!this.containerGame.classList.contains('flex')) return;
+
+                // Mencegah spasi melakukan scroll ke bawah pada halaman
+                if (event.keyCode === 32) event.preventDefault();
+
+                const key = event.key.toLowerCase();
+                if (event.keyCode === 37 || key === 'a') this.playerMove(-1);
+                else if (event.keyCode === 39 || key === 'd') this.playerMove(1);
+                else if (event.keyCode === 40 || key === 's') this.playerDrop();
+                else if (event.keyCode === 38 || key === 'w') this.playerRotate(1);
+                else if (event.keyCode === 32 || key === ' ') this.playerHardDrop(); // Deteksi spasi
+            });
+            this.keyboardInit = true;
+        }
+
+        super.start();
+        setTimeout(() => {
+            this.playerReset();
+            this.update();
+        }, 2100);
+    }
+
+    gameOver() {
+        this.isPaused = true;
+        cancelAnimationFrame(this.gameId);
+
+        const score = this.getScore();
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.classList.remove('hidden');
+            this.gameOverOverlay.classList.add('flex');
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        const data = {
+            gameType: 'tetris',
+            playerName: this.getPlayerName(),
+            score: score
+        };
+        this.setLeaderboard(data);
+    }
+
+    finish() {
+        this.isPaused = true;
+        cancelAnimationFrame(this.gameId);
+
+        const data = {
+            gameType: 'tetris',
+            playerName: this.getPlayerName(),
+            score: this.getScore()
+        };
+        this.setLeaderboard(data);
+
+        if (this.containerGame) {
+            this.containerGame.classList.remove('flex');
+            this.containerGame.classList.add('hidden');
+        }
+        if (this.containerPlay) this.containerPlay.classList.remove('hidden');
+
+        this.resetScore();
+    }
+}
+
 // Init Games
 const LOCAL_NAME = localStorage.getItem('playerName');
 const GAMES = new Games(LOCAL_NAME);
 const ROCK_PAPER_SCISSORS = new RPS();
 const CLICK_HERO = new ClickHero();
 const POKEMON = new Pokemon();
-
+const TETRIS = new Tetris();
 
 /**
  * Initializes the game by setting the player's name and hiding/showing the edit modal.
@@ -981,4 +1382,16 @@ function playPokemon() {
 
 function startPokemon() {
     POKEMON.start();
+}
+
+// Tetris Specific Triggers
+function playTetris() { TETRIS.play(); }
+function startTetris() { TETRIS.start(); }
+function finishTetris() { TETRIS.finish(); }
+function handleTetrisControl(action) {
+    if (action === 'a') TETRIS.playerMove(-1);
+    if (action === 'd') TETRIS.playerMove(1);
+    if (action === 's') TETRIS.playerDrop();
+    if (action === 'w') TETRIS.playerRotate(1);
+    if (action === 'space') TETRIS.playerHardDrop();
 }

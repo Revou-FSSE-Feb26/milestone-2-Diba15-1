@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Tetris Hero</title>
+        <!-- Import Tailwind CSS -->
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <!--  Import Font Awesome  -->
+        <script src="https://kit.fontawesome.com/c0f92099a8.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../assets/css/index.css">
+
+        <style type="text/tailwindcss">
+            @theme {
+                --color-main: #FF5733;
+                --color-sub: #FFC300;
+                --color-text: #2D2D2D;
+                --color-vanilla: #f5f4fc;
+                --color-dark-bg: #1e293b;
+                --font-default: 'Quicksand', sans-serif;
+                --font-title: 'Fredoka', sans-serif;
+            }
+
+            @layer base {
+                * {
+                    @apply font-default scroll-smooth;
+                }
+
+                body {
+                    @apply bg-dark-bg
+                }
+
+                header {
+                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0
+                    bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main
+                    transition-colors duration-300;
+                }
+
+                main {
+                    @apply flex flex-col p-4 gap-4;
+                }
+            }
+
+            @layer components {
+
+                /*Button*/
+                .btn {
+                    @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title
+                    transition-all
+                    transform hover:scale-105 shadow-lg shadow-main/20;
+                }
+
+                .btn-sub {
+                    @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                    font-bold font-title transition-all;
+                }
+
+                .control-btn-main {
+                    @apply bg-main hover:bg-main/80 active:scale-95 p-4 rounded-xl text-2xl transition-all text-white;
+                }
+
+                .control-btn {
+                    @apply bg-transparent border-2 border-white/20 hover:border-sub active:scale-95 p-4 rounded-xl
+                    text-2xl transition-all text-white;
+                }
+
+                /* Game Card Styling */
+                .game-card:hover .game-icon {
+                    @apply scale-125 rotate-12 text-main;
+                }
+
+                /*  Edit Modal  */
+                .edit-modal {
+                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
+                }
+
+                .edit-modal form {
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4
+                    transition-all duration-500 w-xl mx-4;
+                }
+
+                .edit-modal form input {
+                    @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
+                }
+            }
+
+            /* Custom Tetris Canvas Styling */
+            #tetris-canvas {
+                @apply bg-black/40 border-4 border-white/10 rounded-xl shadow-2xl;
+                image-rendering: pixelated;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <a href="../index.html"
+               class="flex items-center gap-2 text-sm md:text-lg"><i
+                    class="fa-solid fa-arrow-left"></i>Back to
+                Home</a>
+            <div class="flex items-center gap-4 text-md md:text-xl">
+                <div id="leaderBoard_btn" onclick="openLeaderboard('tetris')"
+                     class="flex gap-2 items-center cursor-pointer text-yellow-900 hover:text-yellow-300 bg-yellow-500 hover:bg-yellow-500/20 px-4 py-2 rounded-xl transition-colors duration-300">
+                    <i class="fa-solid fa-trophy"></i>
+                    <h1
+                            class="font-title font-bold hidden md:block ">Leaderboards</h1>
+                </div>
+                <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
+                    <i class="fa-solid fa-pencil"></i>
+                    <h1
+                            class="font-title font-bold cursor-pointer"
+                            id="playerName">Random Player</h1>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Background Decor -->
+            <div
+                    class="absolute -z-50 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+            <div
+                    class="absolute -z-50 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+
+            <section id="tetris-container"
+                     class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+
+                <!-- Play Screen -->
+                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
+                    <h3 class="text-2xl font-title font-bold text-center text-white">Tetris Hero</h3>
+                    <p class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="playTetris()" class="btn cursor-pointer">Play Now!</button>
+                </div>
+
+                <!-- Loading -->
+                <div class="font-default font-semibold text-2xl text-white hidden text-center" id="loading">
+                    <div class="animate-bounce mb-2">🧱 ⬛ 🧱</div>
+                    <p>Loading...</p>
+                </div>
+
+                <!-- Tutorial Screen -->
+                <div id="tutorial-container"
+                     class="flex-col items-center justify-center gap-4 w-full max-w-xl text-center hidden">
+                    <h3 class="text-2xl font-title font-bold text-sub">How to Play</h3>
+                    <div class="text-gray-300 text-lg/relaxed space-y-2">
+                        <p>1. Use <b>W</b> for rotate the block.</p>
+                        <p>2. <b>A/D</b> for change position block.</p>
+                        <p>3. <b>S</b> for make block drop faster.</p>
+                        <p>4. <b>Space</b> for instant drop.</p>
+                        <p>Clear the row for get the score!</p>
+                    </div>
+                    <button onclick="startTetris()" class="btn cursor-pointer mt-4">Start Game!</button>
+                </div>
+
+                <!-- Game Active Screen -->
+                <div id="game-container" class="flex-col md:flex-row justify-center items-start gap-8 w-full hidden">
+
+                    <!-- Left: Info -->
+                    <div class="flex flex-col gap-4 w-full md:w-48 order-2 md:order-1">
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5">
+                            <p class="text-gray-400 text-sm font-bold uppercase">Score</p>
+                            <p id="playerScore" class="text-3xl font-title font-bold text-sub">0</p>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5">
+                            <p class="text-gray-400 text-sm font-bold uppercase">Rows</p>
+                            <p id="linesDisplay" class="text-3xl font-title font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5 text-center">
+                            <p class="text-gray-400 text-sm font-bold uppercase mb-2">Next</p>
+                            <canvas id="next-canvas" width="80" height="80"
+                                    class="mx-auto bg-black/40 rounded-lg border border-white/10"
+                                    style="image-rendering: pixelated;"></canvas>
+                        </div>
+                        <button onclick="finishTetris()"
+                                class="btn-sub bg-red-500/20 hover:bg-red-500/40 border-red-500/50">
+                            End
+                        </button>
+                    </div>
+
+                    <!-- Center: Board -->
+                    <div class="relative order-1 md:order-2 mx-auto">
+                        <canvas id="tetris-canvas" width="240" height="480"></canvas>
+
+                        <!-- Game Over Overlay (Inside Canvas Container) -->
+                        <div id="game-over-overlay"
+                             class="absolute inset-0 bg-black/80 hidden flex-col items-center justify-center text-center p-4 rounded-xl">
+                            <h2 class="text-3xl font-title font-bold text-red-500">GAME OVER</h2>
+                            <p class="mb-4">Last Score: <span id="finalScore">0</span></p>
+                            <button onclick="startTetris()" class="btn py-2 px-6">Play Again</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Controls (Desktop Only) -->
+                    <div class="hidden md:grid grid-cols-3 gap-2 w-auto order-3">
+                        <div class="col-start-2">
+                            <button onmousedown="handleTetrisControl('w')" class="control-btn w-full font-bold font-title">W</button>
+                        </div>
+                        <div class="col-start-1 row-start-2">
+                            <button onmousedown="handleTetrisControl('a')" class="control-btn w-full font-bold font-title">A</button>
+                        </div>
+                        <div class="col-start-2 row-start-2">
+                            <button onmousedown="handleTetrisControl('s')" class="control-btn w-full font-bold font-title">S</button>
+                        </div>
+                        <div class="col-start-3 row-start-2">
+                            <button onmousedown="handleTetrisControl('d')" class="control-btn w-full font-bold font-title">D</button>
+                        </div>
+                        <div class="col-span-3 row-start-3 mt-1">
+                            <button onmousedown="handleTetrisControl('space')"
+                                    class="control-btn-main w-full font-bold font-title tracking-widest text-lg">
+                                SPACE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CONTROLS (Mobile Only) -->
+                    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-[60] flex md:hidden flex-col gap-2">
+                        <!-- W A S D Grid -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-start-2">
+                                <button onmousedown="handleTetrisControl('w')" ontouchstart="handleTetrisControl('w'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">W</button>
+                            </div>
+                            <div class="col-start-1 row-start-2">
+                                <button onmousedown="handleTetrisControl('a')" ontouchstart="handleTetrisControl('a'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">A</button>
+                            </div>
+                            <div class="col-start-2 row-start-2">
+                                <button onmousedown="handleTetrisControl('s')" ontouchstart="handleTetrisControl('s'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">S</button>
+                            </div>
+                            <div class="col-start-3 row-start-2">
+                                <button onmousedown="handleTetrisControl('d')" ontouchstart="handleTetrisControl('d'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">D</button>
+                            </div>
+                        </div>
+                        <!-- Space Hard Drop -->
+                        <button onmousedown="handleTetrisControl('space')" ontouchstart="handleTetrisControl('space'); event.preventDefault()" class="bg-main/90 hover:bg-main text-white w-full py-4 rounded-2xl shadow-lg shadow-main/30 font-bold font-title tracking-widest text-xl border-t border-white/20 active:scale-95 transition-all backdrop-blur-md">
+                            SPACE (HARD DROP)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <section id="gameNav-container" class="w-full max-w-4xl mx-auto flex justify-between mt-4">
+                <a href="clicker.html" class="btn-sub">
+                    <i class="fa-solid fa-arrow-left"></i> Click Hero
+                </a>
+                <a href="rps.html" class="btn">
+                    RPS <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </section>
+        </main>
+
+        <footer>
+            <div class="flex justify-center items-center py-4 px-8 bg-transparent text-white">
+                <p>© 2026 Revofun. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!--Modal for change display name-->
+        <div class="edit-modal hidden">
+            <form onsubmit="submitName(event)">
+                <div class="flex justify-between">
+                    <h2 class="text-white text-lg font-bold">Edit Player
+                        Name</h2>
+                    <button onclick="clickShowNameModal()" title="Close Button"
+                            type="button"
+                            class="text-white text-md text-end cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <label class="text-white" for="name">Player Name</label>
+                <input type="text" name="playerName" id="name"
+                       placeholder="Input Player Name" required>
+                <button class="btn-sub" type="submit">Save</button>
+            </form>
+        </div>
+
+        <!-- Modal for Leaderboard -->
+        <div id="leaderBoard_modal"
+             class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4"
+             onclick="if(event.target===this) closeLeaderboard()">
+
+            <div
+                    class="bg-dark-bg rounded-2xl w-[320px] overflow-hidden border border-white/10">
+
+                <!-- Header -->
+                <div class="bg-yellow-500 px-[18px] pt-4 pb-3">
+                    <div class="flex items-center justify-between mb-0.5">
+                        <div
+                                class="flex items-center gap-2 font-bold text-yellow-900 text-[17px]">
+                            <i class="fa-solid fa-trophy text-yellow-300"></i>
+                            Leaderboards
+                        </div>
+                        <button onclick="closeLeaderboard()"
+                                title="Close Button"
+                                class="w-6 h-6 rounded-full bg-black/20 text-yellow-900 font-bold text-sm flex items-center justify-center hover:bg-black/30 transition-colors">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <p
+                            class="text-[11px] text-yellow-900/70 font-semibold">Tetris · Top Players</p>
+                </div>
+
+                <!-- Rank List -->
+                <div id="lb-list"
+                     class="max-h-48 overflow-y-auto divide-y divide-white/[0.04] p-4 list-none"></div>
+
+                <!-- Footer -->
+                <div class="px-4 py-3 border-t border-white/[0.06] text-center">
+                    <p class="text-[11px] text-gray-500 font-semibold" id="latestRankInfo">
+
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script src="../assets/javascript/games.js"></script>
+    </body>
+</html>
