@@ -51,13 +51,13 @@
 @keyframes confetti-fall-left {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
     25% { transform: translate(15vw, -50vh) rotate(90deg); }
-    100% { transform: translate(30vw, 100vh) rotate(720deg); opacity: 0; }
+    100% { transform: translate(30vw) rotate(720deg); opacity: 0; }
 }
 
 @keyframes confetti-fall-right {
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
     25% { transform: translate(-15vw, -50vh) rotate(-90deg); }
-    100% { transform: translate(-30vw, 100vh) rotate(-720deg); opacity: 0; }
+    100% { transform: translate(-30vw) rotate(-720deg); opacity: 0; }
 }
 
 @keyframes pop-in {
