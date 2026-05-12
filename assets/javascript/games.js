@@ -1127,6 +1127,7 @@ class Tetris extends Games {
         }
         if (swept) {
             this.setScore(this.player.score - this.getScore());
+            this.updateDifficulty();
             this.screenShake();
         }
     }
