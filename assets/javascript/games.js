@@ -1351,12 +1351,12 @@ function clickShowNameModal() {
  * If no data is available, displays a "No data yet!" message.
  * @param {string} gameType - The type of game for which to display the leaderboard (e.g., 'clicker', 'pokemon').
  */
-function openLeaderboard(gameType) {
+function openLeaderboard() {
     const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal');
     LEADERBOARD_MODAL.classList.toggle('hidden');
     LEADERBOARD_MODAL.classList.toggle('flex');
 
-    GAMES.renderLeaderboard(gameType);
+
 }
 
 /**
@@ -1389,6 +1389,19 @@ function submitName(e) {
 
     e.preventDefault();
 }
+
+function toggleSidebar(gameType) {
+    const SIDEBAR = document.getElementById('sidebar');
+    SIDEBAR.classList.toggle('translate-x-96');
+    SIDEBAR.classList.toggle('hidden');
+    SIDEBAR.classList.toggle('translate-x-0');
+
+    GAMES.renderLeaderboard(gameType);
+
+    console.log("Open Sesame!")
+}
+
+// Games Trigger Section
 
 // RPS Section
 function playRps() {

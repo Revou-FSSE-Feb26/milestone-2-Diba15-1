@@ -59,7 +59,7 @@
 
                 /*  Edit Modal  */
                 .edit-modal {
-                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center;
+                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[99];
                 }
 
                 .edit-modal form {
@@ -80,6 +80,31 @@
                     @apply translate-y-1 shadow-md scale-95 bg-sub;
                     box-shadow: 0 0 20px rgba(255, 195, 0, 0.6);
                 }
+
+                /*  Sidebar  */
+
+                .hamburger-btn {
+                    @apply flex gap-2 border-2 border-white/10 items-center cursor-pointer hover:bg-white/10 px-4 py-2 rounded-xl
+                    transition-colors
+                    duration-300
+                }
+
+                .close-btn {
+                    @apply flex border-2 border-white/10 mb-5 gap-2 items-center cursor-pointer w-fit hover:bg-white/10
+                    px-4 py-2 rounded-xl transition-colors duration-300
+                }
+
+                .game-box {
+                    @apply flex flex-col justify-center gap-2 px-2 *:px-4 *:py-2 *:cursor-pointer
+                    *:hover:bg-white/10 *:rounded-xl
+                    transition-colors duration-300 *:border-2 *:border-white/10;
+                }
+
+                .active-game {
+                    @apply bg-main hover:bg-main/80 text-white font-title font-bold
+                    transition-all
+                    transform hover:scale-105 shadow-lg shadow-main/20;
+                }
             }
         </style>
     </head>
@@ -90,17 +115,55 @@
                     class="fa-solid fa-arrow-left"></i>Back to
                 Home</a>
             <div class="flex items-center gap-4 text-md md:text-xl">
-                <div id="leaderBoard_btn" onclick="openLeaderboard('click_hero')"
-                    class="flex gap-2 items-center cursor-pointer text-yellow-900 hover:text-yellow-300 bg-yellow-500 hover:bg-yellow-500/20 px-4 py-2 rounded-xl transition-colors duration-300">
-                    <i class="fa-solid fa-trophy"></i>
-                    <h1
-                        class="font-title font-bold hidden md:block ">Leaderboards</h1>
+                <div class="hamburger-btn" onclick="toggleSidebar('click_hero')">
+                    <i class="fa-solid fa-angles-left text-lg text-white"></i>
                 </div>
-                <div onclick="clickShowNameModal()" class="flex gap-2 items-center">
-                    <i class="fa-solid fa-pencil"></i>
-                    <h1
-                        class="font-title font-bold cursor-pointer"
-                        id="playerName">Random Player</h1>
+            </div>
+
+            <div id="sidebar"
+                 class="fixed top-0 right-0 w-full md:w-64 h-screen bg-dark-bg border border-white/10 p-4 z-50 transform
+                translate-x-96 hidden transition-transform duration-300">
+                <div class="close-btn" onclick="toggleSidebar('click_hero')">
+                    <i class="fa-solid fa-angles-right text-lg text-white"></i>
+                </div>
+                <div id="sidebar-header" class="flex flex-col gap-2">
+                    <!--List of Games and Player Names-->
+                    <div onclick="clickShowNameModal()" class="flex justify-between gap-2 items-center text-xl">
+                        <h1 class="font-title font-bold cursor-pointer" id="playerName">Random Player</h1>
+                        <i class="fa-solid fa-pencil"></i>
+                    </div>
+
+                    <div id="gamesList" class="flex flex-col gap-2">
+                        <h2 class="text-lg font-title font-bold text-white">List Games</h2>
+                        <div class="game-box">
+                            <a href="rps.html">✌️ RPS</a>
+                            <a href="clicker.html" class="active-game">👆 Click Hero</a>
+                            <a href="pokemon.html">👹 Pokemon</a>
+                            <a href="tetris.html">🟥 Tetris</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="sidebar-content" class="flex flex-col gap-2 mt-5">
+                    <!--Leaderboard top 3-->
+                    <div
+                            class="flex items-center gap-2 font-bold text-yellow-500 text-[17px]">
+                        <i class="fa-solid fa-trophy text-yellow-300"></i>
+                        Leaderboards
+                    </div>
+                    <p class="text-[11px] text-yellow-500/70 font-semibold">Click Hero · Top Players</p>
+
+                    <div>
+                        <!-- Rank List -->
+                        <div id="lb-list"
+                             class="max-h-48 overflow-y-auto divide-y divide-white/[0.04] p-4 list-none"></div>
+
+                        <!-- Footer -->
+                        <div class="px-4 py-3 border-t border-white/[0.06] text-center">
+                            <p class="text-[11px] text-gray-500 font-semibold" id="latestRankInfo">
+
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -197,19 +260,6 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Game Navigation -->
-            <section id="gameNav-container"
-                class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between">
-                <a href="pokemon.html" class="flex items-center gap-2 btn-sub">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Pokemon
-                </a>
-                <a href="rps.html" id="next" class="btn">
-                    RPS
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </section>
         </main>
 
         <footer>
@@ -236,45 +286,6 @@
                     placeholder="Input Player Name" required>
                 <button class="btn-sub" type="submit">Save</button>
             </form>
-        </div>
-
-        <!-- Modal for Leaderboard -->
-        <div id="leaderBoard_modal"
-            class="hidden fixed inset-0 z-50 bg-black/50 items-center justify-center p-4"
-            onclick="if(event.target===this) closeLeaderboard()">
-
-            <div
-                class="bg-dark-bg rounded-2xl w-[320px] overflow-hidden border border-white/10">
-
-                <!-- Header -->
-                <div class="bg-yellow-500 px-[18px] pt-4 pb-3">
-                    <div class="flex items-center justify-between mb-0.5">
-                        <div
-                            class="flex items-center gap-2 font-bold text-yellow-900 text-[17px]">
-                            <i class="fa-solid fa-trophy text-yellow-300"></i>
-                            Leaderboards
-                        </div>
-                        <button onclick="closeLeaderboard()"
-                            title="Close Button"
-                            class="w-6 h-6 rounded-full bg-black/20 text-yellow-900 font-bold text-sm flex items-center justify-center hover:bg-black/30 transition-colors">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <p
-                        class="text-[11px] text-yellow-900/70 font-semibold">Click Hero · Top Players</p>
-                </div>
-
-                <!-- Rank List -->
-                <div id="lb-list"
-                    class="max-h-48 overflow-y-auto divide-y divide-white/[0.04] p-4 list-none"></div>
-
-                <!-- Footer -->
-                <div class="px-4 py-3 border-t border-white/[0.06] text-center">
-                    <p class="text-[11px] text-gray-500 font-semibold" id="latestRankInfo">
-                        
-                    </p>
-                </div>
-            </div>
         </div>
         <script src="../assets/javascript/games.js"></script>
     </body>
