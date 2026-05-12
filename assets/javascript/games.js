@@ -895,6 +895,7 @@ class Pokemon extends Games {
             gameType: 'pokemon', playerName: this.getPlayerName(), score: this.getScore()
         };
         this.setLeaderboard(PLAYER_DATA);
+        this.renderLeaderboard('pokemon');
 
         // Reset Pokemon game data
         this.pokemon.currentStage = 1;
@@ -1343,37 +1344,6 @@ function clickShowNameModal() {
     EDIT_MODAL.classList.toggle('hidden');
 }
 
-
-/**
- * Opens the leaderboard modal and populates it with entries for the specified game type.
- * Retrieves leaderboard data from the games instance, generates a ranked list of players,
- * and displays it in the modal. Special styling is applied for the top rank.
- * If no data is available, displays a "No data yet!" message.
- * @param {string} gameType - The type of game for which to display the leaderboard (e.g., 'clicker', 'pokemon').
- */
-function openLeaderboard() {
-    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal');
-    LEADERBOARD_MODAL.classList.toggle('hidden');
-    LEADERBOARD_MODAL.classList.toggle('flex');
-
-
-}
-
-/**
- * Closes the leaderboard modal and clears the leaderboard list.
- * This function is called when the user clicks the close button on the leaderboard modal.
- * It toggles the visibility of the modal and clears the contents of the leaderboard list container.
- */
-function closeLeaderboard() {
-    const LEADERBOARD_MODAL = document.getElementById('leaderBoard_modal');
-    LEADERBOARD_MODAL.classList.toggle('hidden');
-    LEADERBOARD_MODAL.classList.toggle('flex');
-
-    const LIST_CONTAINER = document.getElementById('lb-list');
-    // Clear previous leaderboard list
-    LIST_CONTAINER.textContent = '';
-}
-
 /**
  * Submits the user's name and saves it to local storage.
  * @description
@@ -1418,6 +1388,7 @@ function rps(choice) {
 
 function finishRps() {
     ROCK_PAPER_SCISSORS.finish();
+    GAMES.renderLeaderboard('rps')
 }
 
 // Click Hero Section
@@ -1443,6 +1414,7 @@ function addAuto() {
 
 function finishClick() {
     CLICK_HERO.finish();
+    GAMES.renderLeaderboard('click_hero')
 }
 
 // Pokemon Section
@@ -1458,7 +1430,7 @@ function startPokemon() {
 // Tetris Specific Triggers
 function playTetris() { TETRIS.play(); }
 function startTetris() { TETRIS.start(); }
-function finishTetris() { TETRIS.finish(); }
+function finishTetris() { TETRIS.finish(); GAMES.renderLeaderboard('tetris') }
 function handleTetrisControl(action) {
     if (action === 'a') TETRIS.playerMove(-1);
     if (action === 'd') TETRIS.playerMove(1);
