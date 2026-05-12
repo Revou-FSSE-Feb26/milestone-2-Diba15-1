@@ -66,6 +66,9 @@ function redirectGame(gameType) {
         case "pokemon":
             window.location.href = 'pages/pokemon.html';
             break;
+        case "tetris":
+            window.location.href = "pages/tetris.html";
+            break;
         default:
             window.location.href = 'pages/clicker.html';
             break;
