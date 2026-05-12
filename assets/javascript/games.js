@@ -193,6 +193,59 @@ class Games {
     resetGame() {
         this.resetScore();
     }
+
+    triggerConfetti() {
+        const colors = ['#FF5733', '#FFC300', '#2ECC71', '#3498DB', '#9B59B6', '#E74C3C'];
+        const count = 40;
+
+        for (let i = 0; i < count; i++) {
+            this.#createConfettiPiece(true, colors[Math.floor(Math.random() * colors.length)]);
+            this.#createConfettiPiece(false, colors[Math.floor(Math.random() * colors.length)]);
+        }
+    }
+
+    #createConfettiPiece(isLeft, color) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti';
+        piece.style.backgroundColor = color;
+        piece.style.left = isLeft ? '0' : 'auto';
+        piece.style.right = isLeft ? 'auto' : '0';
+        piece.style.bottom = '0';
+
+        // Variasi bentuk dan rotasi
+        const isSquare = Math.random() > 0.5;
+        piece.style.borderRadius = isSquare ? '2px' : '50%';
+        piece.style.width = (Math.random() * 8 + 6) + 'px';
+        piece.style.height = (Math.random() * 12 + 8) + 'px';
+
+        // Animasi
+        const duration = Math.random() * 2 + 2;
+        piece.style.animation = `${isLeft ? 'confetti-fall-left' : 'confetti-fall-right'} ${duration}s ease-out forwards`;
+        piece.style.animationDelay = (Math.random() * 0.5) + 's';
+
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), (duration + 1) * 1000);
+    }
+
+    screenShake() {
+        const target = this.containerGame || document.body;
+        target.classList.add('animate-shake');
+        setTimeout(() => target.classList.remove('animate-shake'), 500);
+    }
+
+    flashEffect(colorClass = 'bg-white') {
+        const flash = document.createElement('div');
+        flash.className = `fixed inset-0 ${colorClass} z-[100] pointer-events-none opacity-0 transition-opacity duration-150`;
+        document.body.appendChild(flash);
+
+        requestAnimationFrame(() => {
+            flash.style.opacity = '0.4';
+            setTimeout(() => {
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 200);
+            }, 100);
+        });
+    }
 }
 
 /*
@@ -279,11 +332,14 @@ class RPS extends Games {
             this.enemyContainer.classList.add("border-red-600");
             this.setScore(100);
             this.determineWin.textContent = "YOU WIN🎉";
+            this.triggerConfetti();
+            this.flashEffect();
         } else {
             // CASE: PLAYER LOSE
             this.playerContainer.classList.add("border-red-600");
             this.enemyContainer.classList.add("border-green-600");
             this.determineWin.textContent = "YOU LOSE😢";
+            this.screenShake();
         }
     }
 
@@ -432,6 +488,9 @@ class ClickHero extends Games {
 
             this.praiseText.classList.add('animate-praise', 'text-sub');
 
+            this.triggerConfetti(); // Efek milestone
+            this.flashEffect();
+
             setTimeout(() => {
                 this.praiseText.textContent = "";
                 this.praiseText.classList.remove('animate-praise', 'text-sub');
@@ -465,7 +524,8 @@ class ClickHero extends Games {
             // Attack Data 2^10
             this.clickHero.atk *= 2;
             this.clickHero.upPrice *= 2;
-            this.clickHero.currentAtkUp += 1;
+            this.clickHero.currentAtkUp++;
+            this.flashEffect('bg-yellow-400');
 
             localStorage.setItem('atk', JSON.stringify(this.clickHero.atk));
             localStorage.setItem('upPrice', JSON.stringify(this.clickHero.upPrice));
@@ -477,6 +537,8 @@ class ClickHero extends Games {
             } else {
                 this.atkPriceDisplay.textContent = this.clickHero.upPrice;
             }
+        } else {
+            this.screenShake();
         }
     }
 
@@ -487,9 +549,6 @@ class ClickHero extends Games {
      * and start auto click interval, also update auto click status display
      */
     addAuto() {
-        // Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
-        // set auto click to true, save auto click status to localStorage, 
-        // and start auto click interval, also update auto click status display
         const UP_PRICE = 1000; // Price for auto click
 
         if (!this.clickHero.auto && this.getScore() >= UP_PRICE) {
@@ -734,6 +793,7 @@ class Pokemon extends Games {
             this.pokemonName.textContent = this.pokemon.currentData.name.toUpperCase();
             this.hintText.textContent = "CORRECT! GET READY FOR THE NEXT POKEMON!";
             this.setScore(20);
+            this.flashEffect('bg-green-400');
 
             // Delay before next stage
             setTimeout(async () => {
@@ -744,6 +804,7 @@ class Pokemon extends Games {
                     this.renderPokemonGame(nextData);
                 } else {
                     // Game Clear Logic
+                    this.triggerConfetti();
                     alert("CONGRATULATIONS! You cleared all stages!");
                     this.finish();
                 }
@@ -752,6 +813,7 @@ class Pokemon extends Games {
         } else {
             // Wrong Answer Logic
             this.pokemon.trials--;
+            this.screenShake();
             this.trialText.textContent = `Lives: ${this.pokemon.trials}`;
 
             // Give hint if trials > 0
@@ -1051,25 +1113,21 @@ class Tetris extends Games {
     }
 
     arenaSweep() {
-        let rowCount = 1;
+        let swept = false;
         outer: for (let y = this.arena.length - 1; y > 0; --y) {
             for (let x = 0; x < this.arena[y].length; ++x) {
-                if (this.arena[y][x] === 0) {
-                    continue outer;
-                }
+                if (this.arena[y][x] === 0) continue outer;
             }
-
             const row = this.arena.splice(y, 1)[0].fill(0);
             this.arena.unshift(row);
             ++y;
-
-            this.player.score += rowCount * 10;
-            this.player.lines += 1;
-            rowCount *= 2;
+            this.player.score += 10;
+            swept = true;
         }
-        this.setScore(this.player.score - this.getScore());
-        this.updateDifficulty();
-        if (this.linesDisplay) this.linesDisplay.textContent = this.player.lines;
+        if (swept) {
+            this.setScore(this.player.score - this.getScore());
+            this.screenShake();
+        }
     }
 
     updateDifficulty() {
