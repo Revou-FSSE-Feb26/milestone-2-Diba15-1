@@ -107,21 +107,22 @@
     </head>
     <body>
         <header>
-            <a href="../index.html"
-                class="flex items-center gap-2 text-sm md:text-lg"><i
-                    class="fa-solid fa-arrow-left"></i>Back to
-                Home</a>
             <div class="flex items-center gap-4 text-md md:text-xl">
                 <div class="hamburger-btn" onclick="toggleSidebar('rps')">
-                    <i class="fa-solid fa-angles-left text-lg text-white"></i>
+                    <i class="fa-solid fa-angles-right text-lg text-white"></i>
                 </div>
             </div>
 
             <div id="sidebar"
-                 class="fixed top-0 right-0 w-full md:w-64 h-screen bg-dark-bg border border-white/10 p-4 z-50 transform
-                translate-x-96 hidden transition-transform duration-300">
-                <div class="close-btn" onclick="toggleSidebar('rps')">
-                    <i class="fa-solid fa-angles-right text-lg text-white"></i>
+                 class="fixed top-0 left-0 w-full md:w-64 h-screen bg-dark-bg border border-white/10 p-4 z-50 transform
+                -translate-x-96 transition-all duration-300 ease-in-out">
+                <div class="flex justify-between items-center">
+                    <a href="../index.html"
+                       class="close-btn"><i
+                            class="fa-solid fa-house"></i></a>
+                    <div class="close-btn" onclick="toggleSidebar('rps')">
+                        <i class="fa-solid fa-angles-left text-lg text-white"></i>
+                    </div>
                 </div>
                 <div id="sidebar-header" class="flex flex-col gap-2">
                     <!--List of Games and Player Names-->
@@ -165,7 +166,7 @@
             </div>
         </header>
 
-        <main>
+        <main id="main-content" class="transition-all duration-300 ease-in-out">
             <!-- Background Decor -->
             <div
                 class="absolute -z-50 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
@@ -261,7 +262,7 @@
             </section>
         </main>
 
-        <footer>
+        <footer id="footer" class="transition-all duration-300 ease-in-out">
             <div
                 class="flex justify-center items-center py-4 px-8 bg-transparent text-white">
                 <p>© 2026 Revofun. All rights reserved.</p>

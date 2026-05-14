@@ -1363,13 +1363,24 @@ function submitName(e) {
 
 function toggleSidebar(gameType) {
     const SIDEBAR = document.getElementById('sidebar');
-    SIDEBAR.classList.toggle('translate-x-96');
-    SIDEBAR.classList.toggle('hidden');
+    const MAIN_CONTENT = document.getElementById('main-content');
+    const FOOTER = document.getElementById('footer');
+
+    SIDEBAR.classList.toggle('-translate-x-96');
+    // SIDEBAR.classList.toggle('hidden');
     SIDEBAR.classList.toggle('translate-x-0');
 
-    GAMES.renderLeaderboard(gameType);
+    if (MAIN_CONTENT) {
+        if (SIDEBAR.classList.contains('translate-x-0')) {
+            MAIN_CONTENT.classList.add('md:ms-64');
+            FOOTER.classList.add('md:ms-64');
+        } else {
+            MAIN_CONTENT.classList.remove('md:ms-64');
+            FOOTER.classList.remove('md:ms-64');
+        }
+    }
 
-    console.log("Open Sesame!")
+    GAMES.renderLeaderboard(gameType);
 }
 
 // Games Trigger Section
