@@ -11,7 +11,7 @@ class Games {
     /**
      * Constructor for Games class
      * @param {string} [playerName='Random Player'] - Player name to be used in game
-     * 
+     *
      * This constructor will initialize the game object with the given player name, and set default values for game score and stage.
      * It will also initialize the leaderboard data structure as an empty array if it does not exist in local storage, otherwise it will retrieve the existing leaderboard data from local storage.
      */
@@ -91,11 +91,11 @@ class Games {
     }
 
 
-    /** 
+    /**
      * Retrieves and returns the leaderboard entries for a specific game type, sorted in descending order by score.
      * @param {string} type - The type of game for which to retrieve the leaderboard entries.
      * @returns {Array} An array of leaderboard entries for the specified game type, sorted by score in descending order.
-    */
+     */
     getLeaderboardEntries(type) {
         const LEADERBOARD_ENTRIES = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
@@ -105,9 +105,9 @@ class Games {
     }
 
     /**
-     * Renders the leaderboard for a specific game type by fetching the leaderboard entries, determining the player's best score and rank, 
-     * and displaying the top 3 entries in the leaderboard. If the player has not played the game yet, 
-     * a message is displayed to encourage them to play. If there are no entries in the leaderboard, 
+     * Renders the leaderboard for a specific game type by fetching the leaderboard entries, determining the player's best score and rank,
+     * and displaying the top 3 entries in the leaderboard. If the player has not played the game yet,
+     * a message is displayed to encourage them to play. If there are no entries in the leaderboard,
      * a message is displayed to encourage players to play and get on the leaderboard.
      * @param {string} gameType - The type of game for which to render the leaderboard.
      */
@@ -142,14 +142,16 @@ class Games {
         LB_DATA.slice(0, 3).forEach((entry, index) => {
             const numberLb = index + 1;
             const RANK = numberLb < 10 ? `0${numberLb}` : numberLb;
+            const NAME = this.escapeHTML(entry.playerName);
+            const SCORE = this.escapeHTML(String(entry.score));
 
             const DIVISION = document.createElement('div');
             DIVISION.className = 'flex justify-between items-center gap-4 border-b border-white/20 py-2';
             DIVISION.innerHTML = `
                 <span class="font-bold ${numberLb === 1 ? 'text-sub' : 'text-gray-400'}">${RANK}.</span>
                 <div class="flex flex-col w-full">
-                    <span class="text-md text-white font-bold">${entry.playerName}</span>
-                    <span class="text-sm font-semibold text-gray-400">${entry.score} pts</span>
+                    <span class="text-md text-white font-bold">${NAME}</span>
+                    <span class="text-sm font-semibold text-gray-400">${SCORE} pts</span>
                 </div>
                 ${numberLb === 1 ? '<span>👑</span>' : ''}
             `;
@@ -192,6 +194,17 @@ class Games {
 
     resetGame() {
         this.resetScore();
+    }
+
+    escapeHTML(str) {
+        if (!str) return "";
+        
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     triggerConfetti() {
@@ -266,9 +279,9 @@ class RPS extends Games {
 
         // RPS Choices
         this.CHOICES = [
-            { value: 0, choice: '✊' }, // Rock
-            { value: 1, choice: '✌️' }, // Scissor
-            { value: 2, choice: '✋' }  // Paper
+            {value: 0, choice: '✊'}, // Rock
+            {value: 1, choice: '✌️'}, // Scissor
+            {value: 2, choice: '✋'}  // Paper
         ];
     }
 
@@ -544,8 +557,8 @@ class ClickHero extends Games {
 
 
     /**
-     * Check if player has enough score to buy auto click, if yes then reduce score by auto click price, 
-     * set auto click to true, save auto click status to localStorage, 
+     * Check if player has enough score to buy auto click, if yes then reduce score by auto click price,
+     * set auto click to true, save auto click status to localStorage,
      * and start auto click interval, also update auto click status display
      */
     addAuto() {
@@ -566,7 +579,7 @@ class ClickHero extends Games {
 
 
     /**
-     * If auto click is active, start an interval that clicks the hero every 500ms, 
+     * If auto click is active, start an interval that clicks the hero every 500ms,
      * and add a pressing animation to the button. The animation will be removed after 100ms.
      */
     activeAuto() {
@@ -668,7 +681,7 @@ class Pokemon extends Games {
 
 
     /**
-     * Randomly selects a Pokemon type, fetches a Pokemon of that type, 
+     * Randomly selects a Pokemon type, fetches a Pokemon of that type,
      * and returns the details of the selected Pokemon.
      * @returns {Object} Details of the selected Pokemon, including its type, name, and image.
      * @throws {Error} If there is an error while fetching the data.
@@ -1017,7 +1030,7 @@ class Tetris extends Games {
     getGhostPos() {
         const ghost = {
             matrix: this.player.matrix,
-            pos: { x: this.player.pos.x, y: this.player.pos.y }
+            pos: {x: this.player.pos.x, y: this.player.pos.y}
         };
         // Turunkan bayangan sampai menabrak sesuatu
         while (!this.collide(this.arena, ghost)) {
@@ -1355,6 +1368,12 @@ function clickShowNameModal() {
  */
 function submitName(e) {
     const NAME = document.getElementById('name').value;
+
+    if (!NAME || NAME.trim() === '') {
+        alert('Please enter a valid name');
+        return;
+    }
+
     GAMES.setPlayerName(NAME);
     clickShowNameModal();
 
@@ -1440,9 +1459,19 @@ function startPokemon() {
 }
 
 // Tetris Specific Triggers
-function playTetris() { TETRIS.play(); }
-function startTetris() { TETRIS.start(); }
-function finishTetris() { TETRIS.finish(); GAMES.renderLeaderboard('tetris') }
+function playTetris() {
+    TETRIS.play();
+}
+
+function startTetris() {
+    TETRIS.start();
+}
+
+function finishTetris() {
+    TETRIS.finish();
+    GAMES.renderLeaderboard('tetris')
+}
+
 function handleTetrisControl(action) {
     if (action === 'a') TETRIS.playerMove(-1);
     if (action === 'd') TETRIS.playerMove(1);
