@@ -55,24 +55,8 @@ window.addEventListener('scroll', () => {
 });
 
 //Button redirect logic
-function redirectGame(gameType) {
-    switch (gameType) {
-        case "clicker":
-            window.location.href = 'pages/clicker.html';
-            break;
-        case "rps":
-            window.location.href = 'pages/rps.html';
-            break;
-        case "pokemon":
-            window.location.href = 'pages/pokemon.html';
-            break;
-        case "tetris":
-            window.location.href = "pages/tetris.html";
-            break;
-        default:
-            window.location.href = 'pages/clicker.html';
-            break;
-    }
+function redirectGame() {
+    window.location.href = './games.html';
 }
 
 function contactResponse() {
