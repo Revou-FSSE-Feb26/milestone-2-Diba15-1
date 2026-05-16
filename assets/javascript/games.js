@@ -1,3 +1,487 @@
+
+// Array for put some html
+const GAME_TEMPLATES = {
+    modal: `<div class="edit-modal hidden">
+            <form onsubmit="submitName(event)">
+                <div class="flex justify-between">
+                    <h2 class="text-white text-lg font-bold">Edit Player
+                        Name</h2>
+                    <button onclick="clickShowNameModal()" title="Close Button"
+                        type="button"
+                        class="text-white text-md text-end cursor-pointer"><i
+                            class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <label class="text-white" for="name">Player Name</label>
+                <input type="text" name="playerName" id="name"
+                    placeholder="Input Player Name" required>
+                <button class="btn-sub" type="submit">Save</button>
+            </form>
+        </div>`,
+    rps: `<div id="play-container"
+                    class="flex flex-col items-center justify-center gap-4">
+                    <h3
+                        class="text-2xl font-title font-bold text-center text-white">Rock
+                        Paper Scissor</h3>
+                    <p
+                        class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="play()" class="btn cursor-pointer">Play
+                        Now!</button>
+                </div>
+                <!--Loading-->
+                <div
+                    class="font-default font-semibold text-2xl text-white hidden"
+                    id="loading">
+                    <div class="animate-bounce">✌️ 🤚 ✊</div>
+                    <p>Loading...</p>
+                </div>
+
+                <!-- Tutorial Container -->
+                <div id="tutorial-container"
+                    class="flex-col items-center justify-center gap-4 w-full max-w-xl text-center text-white hidden">
+                    <h3 class="text-2xl font-title font-bold">How to Play?</h3>
+                    <p class="text-gray-300 text-lg/relaxed text-justify">Click the hand icons to
+                        choose your move. The computer will randomly select its
+                        move, and the winner will be determined based on the
+                        classic rules of Rock, Paper, Scissors.</p>
+                    <button onclick="start()" class="btn cursor-pointer">Start Game</button>
+                </div>
+
+                <!--Game Container-->
+                <div id="game-container"
+                    class="flex-col justify-center items-center gap-8 w-full hidden">
+                    <!--Header Like Score and stage-->
+                    <div id="gameHeaderContainer"
+                        class="flex justify-between w-full">
+                        <div class="font-title text-xl text-white">Score: <span
+                                id="playerScore">0</span></div>
+                    </div>
+                    <!--Game winner determine display-->
+                    <h3 id="determineWin"
+                        class="font-title font-bold text-2xl text-center text-white"></h3>
+                    <!--Game Display-->
+                    <div id="gameDisplayContainer"
+                        class="flex flex-col md:flex-row justify-around gap-4 w-full">
+                        <!--Player Container-->
+                        <div id="playerContainer"
+                            class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            font-bold font-title transition-all flex flex-col items-center gap-4">
+                            <h3 class="text-xl md:text-2xl">Player</h3>
+                            <div id="playerChoiceDisplay"
+                                class="text-6xl">??</div>
+                        </div>
+                        <!--Pemisah-->
+                        <div
+                            class="max-h-2 h-0.5 md:h-auto md:max-h-full bg-sub max-w-full md:w-0.5 rounded-full"></div>
+                        <!--Enemy Container-->
+                        <div id="enemyContainer"
+                            class="bg-transparent w-full max-w-full md:max-w-sm border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl
+                            font-bold font-title transition-all flex flex-col items-center gap-4">
+                            <h3 class="text-xl md:text-2xl">Computer</h3>
+                            <div id="enemyChoiceDisplay"
+                                class="text-6xl">??
+                            </div>
+                        </div>
+                    </div>
+                    <!--Choice Container-->
+                    <div
+                        class="w-full flex flex-col sm:flex-row justify-center sm:justify-evenly items-center gap-4 sm:gap-4">
+                        <div id="playerChoiceContainer"
+                            class="flex flex-wrap gap-4 justify-center items-center">
+                            <div onclick="rps(2)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">🤚</div>
+                            <div onclick="rps(1)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">✌️</div>
+                            <div onclick="rps(0)"
+                                class="btn-sub text-xl md:text-2xl cursor-pointer">✊</div>
+                        </div>
+                        <button onclick="finish('rps')" class="btn">Finish
+                            Game</button>
+                    </div>
+                </div>`,
+    click_hero: `<!-- Title -->
+                <div id="play-container"
+                    class="flex flex-col items-center justify-center gap-4">
+                    <h3
+                        class="text-2xl font-title font-bold text-center text-white">Click
+                        Hero</h3>
+                    <p
+                        class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="play()"
+                        class="btn cursor-pointer">Play Now!</button>
+                </div>
+                <!-- Loading -->
+                <div
+                    class="font-default font-semibold text-2xl text-white text-center hidden"
+                    id="loading">
+                    <div class="animate-bounce">️⚔️ 👆</div>
+                    <p>Loading...</p>
+                </div>
+
+                <!-- Tutorial Container -->
+                <div id="tutorial-container"
+                    class="flex-col justify-center items-center gap-8 w-full hidden">
+                    <h2 class="font-title text-white text-2xl font-bold">Welcome
+                        to Click Hero!</h2>
+                    <p
+                        class="text-gray-300 text-lg/relaxed text-justify font-semibold">In
+                        this game, your objective is to defeat the monster by
+                        clicking the "ATTACK" button. Each click will
+                        increase your score, and you can use your points to
+                        upgrade your attack or enable auto-clicking. Upgrade
+                        your attack to deal more damage with each click, or turn
+                        on auto-clicking to automatically earn points over time.
+                        Can you defeat the monster and reach the highest score?
+                        Click now and start your adventure!</p>
+                    <button onclick="start()"
+                        class="btn cursor-pointer">Start Game</button>
+                </div>
+
+                <div id="game-container"
+                    class="flex-col justify-center items-center gap-8 w-full hidden">
+                    <!--Header Like Score and stage-->
+                    <div id="gameHeaderContainer"
+                        class="flex justify-center w-full">
+                        <div
+                            class="font-title text-2xl text-white text-center font-bold"><span
+                                id="playerScore">0
+                            </span></div>
+                    </div>
+                    <!-- Game Display -->
+                    <div id="gameDisplayContainer"
+                        class="flex flex-col justify-around items-center gap-4">
+                        <h2 id="praiseText"
+                            class="font-title text-white text-2xl font-bold"></h2>
+                        <button onclick="clickHero()" id="hero-btn"
+                            class="hero-button">👹 ATTACK</button>
+                    </div>
+                    <!--Choice Container-->
+                    <div id="playerChoiceContainer"
+                        class="flex flex-col md:flex-row gap-4 w-full">
+                        <div onclick="upgradeATK()"
+                            class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center text-center">
+                            <h2 id="atk-price">10</h2>
+                            <h3>⚔️</h3>
+                            <h4>Upgrade ATK <span id="atk-max">1/10</span></h4>
+                        </div>
+                        <div onclick="addAuto()"
+                            class="btn-sub w-full text-xl md:text-2xl cursor-pointer flex flex-col gap-2 items-center">
+                            <h2 id="auto-price">1000</h2>
+                            <h3>👆</h3>
+                            <h4>Auto Click <span
+                                    id="auto-status">OFF</span></h4>
+                        </div>
+                    </div>
+
+                    <!-- Finish Button -->
+                    <div onclick="finish('click_hero')" id="finishBtn"
+                        class="btn w-full text-xl md:text-2xl cursor-pointer flex-col gap-2 items-center text-center hidden">
+                        <h2 id="finish">Finish Game</h2>
+                    </div>
+                </div>`,
+    pokemon: `<!-- Title -->
+                <div id="play-container"
+                    class="flex flex-col items-center justify-center gap-4">
+                    <h3
+                        class="text-2xl font-title font-bold text-center text-white">Pokemon
+                        Type Guess</h3>
+                    <p
+                        class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="play()"
+                        class="btn cursor-pointer">Play Now!</button>
+                </div>
+
+                <!-- Loading -->
+                <div
+                    class="font-default font-semibold text-2xl text-white hidden"
+                    id="loading">
+                    <div class="animate-bounce">
+                        <img src="./assets/images/pikachu.png" alt
+                            class="w-32 h-32">
+                    </div>
+                    <p>Loading...</p>
+                </div>
+
+                <!-- Tutorial Container -->
+                <div id="tutorial-container"
+                    class="flex-col items-center justify-center gap-4 w-full max-w-xl text-center text-white hidden">
+                    <h3 class="text-2xl font-title font-bold">How to Play?</h3>
+                    <p class="text-gray-300 text-lg/relaxed text-justify">Guess
+                        the type of the Pokemon shown. You have 5 lives and 5
+                        stages to get as many correct as possible!</p>
+                    <button onclick="start()"
+                        class="btn cursor-pointer">Start Game</button>
+                </div>
+
+                <!-- Game Container -->
+                <div id="game-container"
+                    class="flex-col justify-center items-center gap-8 w-full hidden">
+                    <div id="gameHeaderContainer"
+                        class="flex flex-wrap items-center justify-between w-full px-4">
+                        <div
+                            class="font-title text-lg sm:text-xl text-white">Score:
+                            <span id="playerScore">0</span></div>
+                        <div
+                            class="font-title text-lg sm:text-xl text-white"><span
+                                id="stageDisplay">Stage: 1 / 5</span></div>
+                        <div
+                            class="font-title text-lg sm:text-xl text-white"><span
+                                id="trialDisplay">Lives: 5</span>
+                        </div>
+                    </div>
+
+                    <div id="hintText"
+                        class="font-body text-sm text-center min-h-[20px] italic text-sub animate-pulse"></div>
+
+                    <div id="gameDisplayContainer"
+                        class="flex flex-col items-center gap-4 w-full bg-white/10 p-8 rounded-3xl border-4 border-white/20">
+                        <div id="pokemonContainer"
+                            class="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+                            <img id="pokemonImage" src alt="Pokemon"
+                                class="w-full h-full max-w-lg md:max-w-full object-contain transition-all duration-500">
+                        </div>
+                        <h2 id="pokemonName"
+                            class="font-title text-xl md:text-3xl text-white tracking-widest uppercase">???</h2>
+                    </div>
+
+                    <div id="pokemonQuestionContainer">
+                        <p class="text-white text-lg font-semibold">What type is this Pokemon?</p>
+                    </div>
+
+                    <div id="playerChoiceContainer"
+                        class="grid grid-cols-3 md:grid-cols-5 gap-3 w-full max-w-2xl">
+                    </div>
+                </div>`,
+    tetris: `<!-- Play Screen -->
+                <div id="play-container" class="flex flex-col items-center justify-center gap-4">
+                    <h3 class="text-2xl font-title font-bold text-center text-white">Tetris Hero</h3>
+                    <p class="text-gray-300 text-center text-lg font-semibold">🖥️
+                        Recommended play in desktop for best experience!</p>
+                    <button onclick="play()" class="btn cursor-pointer">Play Now!</button>
+                </div>
+
+                <!-- Loading -->
+                <div class="font-default font-semibold text-2xl text-white hidden text-center" id="loading">
+                    <div class="animate-bounce mb-2">🧱 ⬛ 🧱</div>
+                    <p>Loading...</p>
+                </div>
+
+                <!-- Tutorial Screen -->
+                <div id="tutorial-container"
+                     class="flex-col items-center justify-center gap-4 w-full max-w-xl text-center hidden">
+                    <h3 class="text-2xl font-title font-bold text-sub">How to Play</h3>
+                    <div class="text-gray-300 text-lg/relaxed space-y-2">
+                        <p>1. Use <b>W</b> for rotate the block.</p>
+                        <p>2. <b>A/D</b> for change position block.</p>
+                        <p>3. <b>S</b> for make block drop faster.</p>
+                        <p>4. <b>Space</b> for instant drop.</p>
+                        <p>Clear the row for get the score!</p>
+                    </div>
+                    <button onclick="start()" class="btn cursor-pointer mt-4">Start Game!</button>
+                </div>
+
+                <!-- Game Active Screen -->
+                <div id="game-container" class="flex-col md:flex-row justify-center items-start gap-8 w-full hidden">
+
+                    <!-- Left: Info -->
+                    <div class="flex flex-col gap-4 w-full md:w-48 order-2 md:order-1">
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5">
+                            <p class="text-gray-400 text-sm font-bold uppercase">Score</p>
+                            <p id="playerScore" class="text-3xl font-title font-bold text-sub">0</p>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5">
+                            <p class="text-gray-400 text-sm font-bold uppercase">Rows</p>
+                            <p id="linesDisplay" class="text-3xl font-title font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/5 text-center">
+                            <p class="text-gray-400 text-sm font-bold uppercase mb-2">Next</p>
+                            <canvas id="next-canvas" width="80" height="80"
+                                    class="mx-auto bg-black/40 rounded-lg border border-white/10"
+                                    style="image-rendering: pixelated;"></canvas>
+                        </div>
+                        <button onclick="finish('tetris')"
+                                class="btn-sub bg-red-500/20 hover:bg-red-500/40 border-red-500/50">
+                            End
+                        </button>
+                    </div>
+
+                    <!-- Center: Board -->
+                    <div class="relative order-1 md:order-2 mx-auto">
+                        <canvas id="tetris-canvas" width="240" height="480"></canvas>
+
+                        <!-- Game Over Overlay (Inside Canvas Container) -->
+                        <div id="game-over-overlay"
+                             class="absolute inset-0 bg-black/80 hidden flex-col items-center justify-center text-center p-4 rounded-xl">
+                            <h2 class="text-3xl font-title font-bold text-red-500">GAME OVER</h2>
+                            <p class="mb-4">Last Score: <span id="finalScore">0</span></p>
+                            <button onclick="startTetris()" class="btn py-2 px-6">Play Again</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Controls (Desktop Only) -->
+                    <div class="hidden md:grid grid-cols-3 gap-2 w-auto order-3">
+                        <div class="col-start-2">
+                            <button onmousedown="handleTetrisControl('w')" class="control-btn w-full font-bold font-title">W</button>
+                        </div>
+                        <div class="col-start-1 row-start-2">
+                            <button onmousedown="handleTetrisControl('a')" class="control-btn w-full font-bold font-title">A</button>
+                        </div>
+                        <div class="col-start-2 row-start-2">
+                            <button onmousedown="handleTetrisControl('s')" class="control-btn w-full font-bold font-title">S</button>
+                        </div>
+                        <div class="col-start-3 row-start-2">
+                            <button onmousedown="handleTetrisControl('d')" class="control-btn w-full font-bold font-title">D</button>
+                        </div>
+                        <div class="col-span-3 row-start-3 mt-1">
+                            <button onmousedown="handleTetrisControl('space')"
+                                    class="control-btn-main w-full font-bold font-title tracking-widest text-lg">
+                                SPACE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CONTROLS (Mobile Only) -->
+                    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-sm z-[60] flex md:hidden flex-col gap-2">
+                        <!-- W A S D Grid -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-start-2">
+                                <button onmousedown="handleTetrisControl('w')" ontouchstart="handleTetrisControl('w'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">W</button>
+                            </div>
+                            <div class="col-start-1 row-start-2">
+                                <button onmousedown="handleTetrisControl('a')" ontouchstart="handleTetrisControl('a'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">A</button>
+                            </div>
+                            <div class="col-start-2 row-start-2">
+                                <button onmousedown="handleTetrisControl('s')" ontouchstart="handleTetrisControl('s'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">S</button>
+                            </div>
+                            <div class="col-start-3 row-start-2">
+                                <button onmousedown="handleTetrisControl('d')" ontouchstart="handleTetrisControl('d'); event.preventDefault()" class="control-btn w-full font-bold font-title bg-white/10 backdrop-blur-md shadow-lg border border-white/20">D</button>
+                            </div>
+                        </div>
+                        <!-- Space Hard Drop -->
+                        <button onmousedown="handleTetrisControl('space')" ontouchstart="handleTetrisControl('space'); event.preventDefault()" class="bg-main/90 hover:bg-main text-white w-full py-4 rounded-2xl shadow-lg shadow-main/30 font-bold font-title tracking-widest text-xl border-t border-white/20 active:scale-95 transition-all backdrop-blur-md">
+                            SPACE (HARD DROP)
+                        </button>
+                    </div>
+                </div>` ,
+}
+
+/*
+* AppLayout Class
+* This class will be responsible for rendering the common layout of the games, such as the header, sidebar, and modals.
+*/
+class AppLayout {
+
+    #playerName;
+    #activeGame;
+    #gameName;
+
+    constructor(playerName = 'Random Player') {
+        this.#playerName = localStorage.getItem('playerName') || playerName;
+        this.#activeGame = document.body.dataset.game;
+        this.#gameName = "Rock Paper Scissors";
+
+        this.renderTemplate();
+    }
+
+    renderTemplate() {
+        const HEADER = document.getElementById('header-shared');
+        const MODAL_NAME = document.getElementById('modal-shared');
+
+        HEADER.innerHTML = `<div class="flex items-center gap-4 text-md md:text-xl">
+                <div class="hamburger-btn" onclick="toggleSidebar('${this.#activeGame}')">
+                    <i class="fa-solid fa-angles-right text-lg text-white"></i>
+                </div>
+            </div>
+
+            <div id="sidebar"
+                 class="fixed top-0 left-0 w-full md:w-64 h-screen bg-dark-bg border border-white/10 p-4 z-50 transform
+                -translate-x-96 transition-all duration-300 ease-in-out">
+                <div class="flex justify-between items-center">
+                    <a href="./index.html" title="Home"
+                       class="close-btn"><i
+                            class="fa-solid fa-house"></i></a>
+                    <div class="close-btn" onclick="toggleSidebar('${this.#activeGame}')">
+                        <i class="fa-solid fa-angles-left text-lg text-white"></i>
+                    </div>
+                </div>
+                <div id="sidebar-header" class="flex flex-col gap-2">
+                    <!--List of Games and Player Names-->
+                    <div onclick="clickShowNameModal()" class="flex justify-between gap-2 items-center text-xl cursor-pointer">
+                        <h1 class="font-title font-bold cursor-pointer" id="playerName">Random Player</h1>
+                        <i class="fa-solid fa-pencil"></i>
+                    </div>
+
+                    <div id="gamesList" class="flex flex-col gap-2">
+                        <h2 class="text-lg font-title font-bold text-white">List Games</h2>
+                        <div class="game-box">
+                            <button id="nav-rps" onclick="navigateTo('rps')">✌️ RPS</button>
+                            <button id="nav-click_hero" onclick="navigateTo('click_hero')">👆 Click Hero</button>
+                            <button id="nav-pokemon" onclick="navigateTo('pokemon')">👹 Pokemon</button>
+                            <button id="nav-tetris" onclick="navigateTo('tetris')">🟥 Tetris</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="sidebar-content" class="flex flex-col mt-5">
+                    <!--Leaderboard top 3-->
+                    <div
+                            class="flex items-center gap-2 font-bold text-yellow-500 text-[17px]">
+                        <i class="fa-solid fa-trophy text-yellow-300"></i>
+                        Leaderboards
+                    </div>
+                    <p id="gameName" class="text-[11px] text-yellow-500/70 font-semibold">'${this.#gameName}' · Top Players</p>
+
+                    <div>
+                        <!-- Rank List -->
+                        <div id="lb-list"
+                             class="max-h-48 overflow-y-auto divide-y divide-white/[0.04] p-4 list-none"></div>
+
+                        <!-- Footer -->
+                        <div class="px-4 py-3 border-t border-white/[0.06] text-center">
+                            <p class="text-[11px] text-gray-500 font-semibold" id="latestRankInfo">
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        MODAL_NAME.innerHTML = GAME_TEMPLATES['modal'];
+    }
+
+    // Set player name and store in localStorage, also update the display
+    setPlayerName(playerName) {
+        this.#playerName = playerName;
+        localStorage.setItem('playerName', playerName);
+        document.getElementById('playerName').textContent = playerName;
+    }
+
+    // Get player name
+    getPlayerName() {
+        return localStorage.getItem('playerName') || this.#playerName;
+    }
+
+    updateActiveLink(activeGameId) {
+        // Hapus kelas aktif dari semua tombol navigasi
+        document.querySelectorAll('.game-box button').forEach(btn => {
+            btn.classList.remove('active-game');
+        });
+
+        this.#gameName = activeGameId === 'rps' ? 'Rock Paper Scissors' : activeGameId === 'click_hero' ? 'Click Hero' : activeGameId === 'pokemon' ? 'Pokemon Type Guess' : activeGameId === 'tetris' ? 'Tetris Hero' : 'Games';
+
+        document.getElementById('gameName').textContent = `${this.#gameName} · Top Players`;
+
+        // Tambahkan kelas aktif hanya ke game yang sedang dimainkan
+        const activeBtn = document.getElementById(`nav-${activeGameId}`);
+        if (activeBtn) {
+            activeBtn.classList.add('active-game');
+        }
+    }
+}
+
 /*
 * Games Class
 * This class will be the parent class for all games, it will contain the common methods and properties that all games will use, 
@@ -16,6 +500,7 @@ class Games {
      * It will also initialize the leaderboard data structure as an empty array if it does not exist in local storage, otherwise it will retrieve the existing leaderboard data from local storage.
      */
     constructor(playerName = 'Random Player') {
+
         // Centralized DOM Elements
         this.containerGame = document.getElementById('game-container');
         this.containerPlay = document.getElementById('play-container');
@@ -32,16 +517,6 @@ class Games {
         this.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
     }
 
-    // 😊 Player Data Management
-
-    // Set player name and store in localStorage, also update the display
-    setPlayerName(playerName) {
-        this.#playerName = playerName;
-        localStorage.setItem('playerName', playerName);
-        document.getElementById('playerName').textContent = playerName;
-    }
-
-    // Get player name
     getPlayerName() {
         return localStorage.getItem('playerName') || this.#playerName;
     }
@@ -117,7 +592,7 @@ class Games {
         LIST_CONTAINER.textContent = '';
 
         // Fetch leaderboard data
-        const LB_DATA = GAMES.getLeaderboardEntries(gameType);
+        const LB_DATA = this.getLeaderboardEntries(gameType);
 
         // Find player's best score and rank in the leaderboard
         const PLAYER_SCORE = LB_DATA.find(entry => entry.playerName === this.getPlayerName());
@@ -198,7 +673,7 @@ class Games {
 
     escapeHTML(str) {
         if (!str) return "";
-        
+
         return String(str)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -279,9 +754,9 @@ class RPS extends Games {
 
         // RPS Choices
         this.CHOICES = [
-            {value: 0, choice: '✊'}, // Rock
-            {value: 1, choice: '✌️'}, // Scissor
-            {value: 2, choice: '✋'}  // Paper
+            { value: 0, choice: '✊' }, // Rock
+            { value: 1, choice: '✌️' }, // Scissor
+            { value: 2, choice: '✋' }  // Paper
         ];
     }
 
@@ -956,7 +1431,7 @@ class Tetris extends Games {
         ];
 
         this.player = {
-            pos: {x: 0, y: 0},
+            pos: { x: 0, y: 0 },
             matrix: null,
             score: 0,
             lines: 0
@@ -1030,7 +1505,7 @@ class Tetris extends Games {
     getGhostPos() {
         const ghost = {
             matrix: this.player.matrix,
-            pos: {x: this.player.pos.x, y: this.player.pos.y}
+            pos: { x: this.player.pos.x, y: this.player.pos.y }
         };
         // Turunkan bayangan sampai menabrak sesuatu
         while (!this.collide(this.arena, ghost)) {
@@ -1045,7 +1520,7 @@ class Tetris extends Games {
         this.ctx.fillStyle = '#000'; // Latar belakang hitam dengan sedikit transparansi
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.drawMatrix(this.arena, {x: 0, y: 0}, this.ctx);
+        this.drawMatrix(this.arena, { x: 0, y: 0 }, this.ctx);
 
         // Gambar bayangan putih transparan
         if (this.player.matrix) {
@@ -1223,9 +1698,9 @@ class Tetris extends Games {
                     matrix[x][y],
                     matrix[y][x],
                 ] = [
-                    matrix[y][x],
-                    matrix[x][y],
-                ];
+                        matrix[y][x],
+                        matrix[x][y],
+                    ];
             }
         }
         if (dir > 0) {
@@ -1325,13 +1800,13 @@ class Tetris extends Games {
     }
 }
 
+// Render Layout
+let layoutEngine;
+let viewport;
+let gameInstance;
+
 // Init Games
 const LOCAL_NAME = localStorage.getItem('playerName');
-const GAMES = new Games(LOCAL_NAME);
-const ROCK_PAPER_SCISSORS = new RPS();
-const CLICK_HERO = new ClickHero();
-const POKEMON = new Pokemon();
-const TETRIS = new Tetris();
 
 /**
  * Initializes the game by setting the player's name and hiding/showing the edit modal.
@@ -1340,8 +1815,8 @@ const TETRIS = new Tetris();
  */
 function initGames() {
     const EDIT_MODAL = document.querySelector('.edit-modal');
-    GAMES.setPlayerName(LOCAL_NAME || "Random Player");
-    GAMES.resetGame();
+    layoutEngine.setPlayerName(LOCAL_NAME || "Random Player");
+    gameInstance.resetGame();
 
     if (LOCAL_NAME) {
         EDIT_MODAL.classList.add('hidden');
@@ -1350,7 +1825,45 @@ function initGames() {
     }
 }
 
-window.addEventListener('load', initGames)
+window.navigateTo = function (gameType) {
+    document.body.dataset.game = gameType;
+    viewport.innerHTML = GAME_TEMPLATES[gameType] || "<p>Coming Soon!</p>";
+    switch (gameType) {
+        case 'rps':
+            gameInstance = new RPS(LOCAL_NAME);
+            layoutEngine.updateActiveLink('rps');
+            gameInstance.renderLeaderboard('rps');
+            break;
+        case 'click_hero':
+            gameInstance = new ClickHero(LOCAL_NAME);
+            layoutEngine.updateActiveLink('click_hero');
+            gameInstance.renderLeaderboard('click_hero');
+            break;
+        case 'pokemon':
+            gameInstance = new Pokemon(LOCAL_NAME);
+            layoutEngine.updateActiveLink('pokemon');
+            gameInstance.renderLeaderboard('pokemon');
+            break;
+        case 'tetris':
+            gameInstance = new Tetris(LOCAL_NAME);
+            layoutEngine.updateActiveLink('tetris');
+            gameInstance.renderLeaderboard('tetris');
+            break;
+        default:
+            gameInstance = new RPS(LOCAL_NAME);
+            layoutEngine.updateActiveLink('rps');
+            gameInstance.renderLeaderboard('rps');
+            break;
+    }
+}
+
+window.onload = () => {
+    viewport = document.getElementById('game-viewport');
+    layoutEngine = new AppLayout(LOCAL_NAME);
+    navigateTo('rps');
+    initGames();
+
+}
 
 // Event Listeners for Games Section
 function clickShowNameModal() {
@@ -1374,7 +1887,7 @@ function submitName(e) {
         return;
     }
 
-    GAMES.setPlayerName(NAME);
+    layoutEngine.setPlayerName(NAME);
     clickShowNameModal();
 
     e.preventDefault();
@@ -1399,83 +1912,50 @@ function toggleSidebar(gameType) {
         }
     }
 
-    GAMES.renderLeaderboard(gameType);
+    gameInstance.renderLeaderboard(gameType);
 }
 
 // Games Trigger Section
 
-// RPS Section
-function playRps() {
-    ROCK_PAPER_SCISSORS.play();
+function play() {
+    gameInstance.play();
 }
 
-function startRps() {
-    ROCK_PAPER_SCISSORS.start();
+function start() {
+    gameInstance.start();
 }
+
+function finish(gameType) {
+    gameInstance.finish();
+    gameInstance.renderLeaderboard(gameType);
+}
+
+// RPS Section
 
 function rps(choice) {
-    ROCK_PAPER_SCISSORS.rps(choice);
+    gameInstance.rps(choice);
 }
 
-function finishRps() {
-    ROCK_PAPER_SCISSORS.finish();
-    GAMES.renderLeaderboard('rps')
-}
-
-// Click Hero Section
-function playClickHero() {
-    CLICK_HERO.play();
-}
-
-function startClickHero() {
-    CLICK_HERO.start();
-}
+// Click Hero
 
 function clickHero() {
-    CLICK_HERO.clicked();
+    gameInstance.clicked();
 }
 
 function upgradeATK() {
-    CLICK_HERO.upgradeAtk();
+    gameInstance.upgradeAtk();
 }
 
 function addAuto() {
-    CLICK_HERO.addAuto();
+    gameInstance.addAuto();
 }
 
-function finishClick() {
-    CLICK_HERO.finish();
-    GAMES.renderLeaderboard('click_hero')
-}
-
-// Pokemon Section
-
-function playPokemon() {
-    POKEMON.play();
-}
-
-function startPokemon() {
-    POKEMON.start();
-}
-
-// Tetris Specific Triggers
-function playTetris() {
-    TETRIS.play();
-}
-
-function startTetris() {
-    TETRIS.start();
-}
-
-function finishTetris() {
-    TETRIS.finish();
-    GAMES.renderLeaderboard('tetris')
-}
+// Tetris Section
 
 function handleTetrisControl(action) {
-    if (action === 'a') TETRIS.playerMove(-1);
-    if (action === 'd') TETRIS.playerMove(1);
-    if (action === 's') TETRIS.playerDrop();
-    if (action === 'w') TETRIS.playerRotate(1);
-    if (action === 'space') TETRIS.playerHardDrop();
+    if (action === 'a') gameInstance.playerMove(-1);
+    if (action === 'd') gameInstance.playerMove(1);
+    if (action === 's') gameInstance.playerDrop();
+    if (action === 'w') gameInstance.playerRotate(1);
+    if (action === 'space') gameInstance.playerHardDrop();
 }

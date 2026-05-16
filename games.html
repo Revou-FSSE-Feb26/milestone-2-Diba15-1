@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Revofun - Games</title>
+        <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="stylesheet" href="assets/css/index.css">
+        <script src="https://kit.fontawesome.com/c0f92099a8.js"
+            crossorigin="anonymous"></script>
+
+        <style type="text/tailwindcss">
+            @theme {
+                --color-main: #FF5733;
+                --color-sub: #FFC300;
+                --color-text: #2D2D2D;
+                --color-vanilla: #f5f4fc;
+                --color-dark-bg: #1e293b;
+                --font-default: 'Quicksand', sans-serif;
+                --font-title: 'Fredoka', sans-serif;
+            }
+
+            @layer base {
+                * {
+                    @apply font-default scroll-smooth;
+                }
+
+                body {
+                    @apply bg-dark-bg
+                }
+
+                header {
+                    @apply flex justify-between items-center py-4 px-8 text-white sticky top-0 bg-transparent backdrop-blur-md z-50 [&_nav]:flex [&_nav]:gap-8 [&_nav]:*:hover:text-main transition-colors duration-300;
+                }
+
+                main {
+                    @apply flex flex-col p-4 gap-4;
+                }
+            }
+
+            @layer components {
+                /*Button*/
+                .btn {
+                    @apply bg-main hover:bg-main/80 text-white px-8 py-4 rounded-2xl font-bold font-title transition-all transform hover:scale-105 shadow-lg shadow-main/20;
+                }
+
+                .btn-sub {
+                    @apply bg-transparent border-2 border-white/20 hover:border-sub text-white px-8 py-4 rounded-2xl font-bold font-title transition-all;
+                }
+
+                .btn-types {
+                    @apply bg-main hover:bg-yellow-400 text-white font-title text-xs py-3 rounded-xl border-b-4 
+                    border-black/20 active:border-b-0 active:translate-y-1 transition-all;
+                }
+
+                .control-btn-main {
+                    @apply bg-main hover:bg-main/80 active:scale-95 p-4 rounded-xl text-2xl transition-all text-white;
+                }
+
+                .control-btn {
+                    @apply bg-transparent border-2 border-white/20 hover:border-sub active:scale-95 p-4 rounded-xl
+                    text-2xl transition-all text-white;
+                }
+
+                /* Game Card Styling */
+                .game-card:hover .game-icon {
+                    @apply scale-125 rotate-12 text-main;
+                }
+
+                /* Custom Tetris Canvas Styling */
+                #tetris-canvas {
+                    @apply bg-black/40 border-4 border-white/10 rounded-xl shadow-2xl;
+                    image-rendering: pixelated;
+                }
+
+                /*  Edit Modal  */
+                .edit-modal {
+                    @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[99];
+                }
+
+                .edit-modal form {
+                    @apply p-6 rounded-[2.5rem] bg-dark-bg border border-white/10 flex flex-col justify-between gap-4 transition-all duration-500 w-xl mx-4;
+                }
+
+                .edit-modal form input {
+                    @apply p-2 rounded-lg bg-white/5 border border-white/10 text-white;
+                }
+
+                .hero-button {
+                    @apply rounded-full font-title text-2xl text-white transition-all duration-75 inset-shadow-sm inset-shadow-black/50 font-bold bg-main py-16 px-4 border-b-4 border-black/20 active:border-b-0;
+                }
+
+                .hero-button.auto-pressing,
+                .hero-button:active {
+                    @apply translate-y-1 shadow-md scale-95 bg-sub;
+                    box-shadow: 0 0 20px rgba(255, 195, 0, 0.6);
+                }
+
+                /*  Sidebar  */
+
+                .hamburger-btn {
+                    @apply flex gap-2 border-2 border-white/10 items-center cursor-pointer hover:bg-white/10 px-4 py-2 rounded-xl transition-colors duration-300
+                }
+
+                .close-btn {
+                    @apply flex border-2 border-white/10 mb-5 gap-2 items-center cursor-pointer w-fit hover:bg-white/10 px-4 py-2 rounded-xl transition-colors duration-300
+                }
+
+                .game-box {
+                    @apply flex flex-col justify-center gap-2 px-2 *:px-4 *:py-2 *:cursor-pointer *:hover:bg-white/10 *:rounded-xl transition-colors duration-300 *:border-2 *:border-white/10;
+                }
+
+                .active-game {
+                    @apply bg-main hover:bg-main/80 text-white font-title font-bold transition-all transform hover:scale-105 shadow-lg shadow-main/20;
+                }
+            }
+        </style>
+    </head>
+    <body data-game="rps">
+        <!-- Sidebar & Header di-inject di sini -->
+        <header id="header-shared"></header>
+
+        <!-- Area utama tempat game dirender -->
+        <main id="main-content"
+            class="transition-all duration-300 ease-in-out ">
+
+            <!-- Background Decor -->
+            <div
+                class="absolute -z-50 bottom-20 right-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+            <div
+                class="absolute -z-50 top-20 left-20 w-64 h-64 bg-main opacity-20 blur-[100px] rounded-full"></div>
+
+            <div id="game-viewport"
+                class="w-full max-w-4xl min-h-[400px] mx-auto mt-10 p-6 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col justify-center items-center gap-4">
+                <!-- Konten dinamis akan masuk ke sini -->
+            </div>
+        </main>
+
+        <footer id="footer" class="transition-all duration-300 ease-in-out">
+            <div
+                class="flex justify-center items-center py-4 px-8 bg-transparent text-white">
+                <p>© 2026 Revofun. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <div id="modal-shared"></div>
+
+        <script src="assets/javascript/games.js"></script>
+    </body>
+</html>
